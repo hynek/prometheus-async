@@ -2,9 +2,16 @@
 prometheus_async
 ================
 
+.. image:: https://travis-ci.org/hynek/prometheus_async.svg?branch=master
+   :target: https://travis-ci.org/hynek/prometheus_async
+
+.. image:: https://codecov.io/github/hynek/prometheus_async/coverage.svg?branch=master
+    :target: https://codecov.io/github/hynek/prometheus_async?branch=master
+
+
 `prometheus_async` adds support for asynchronous frameworks in the official prometheus_client_.
 
-Currently asyncio_ (Python 3.4, 3.5) and Twisted_ (2.6, 2.7, 3.4, 3.5, PyPy) are supported.
+Currently asyncio_ (Python 3.4, 3.5) and Twisted_ (Python 2.6, 2.7, 3.4, 3.5, PyPy) are supported.
 
 The only public API at the moment is the decorator ``prometheus_async.async_time``.
 It wraps a metric object and calls ``observe(value)`` on it with ``value`` being the total runtime in seconds:
