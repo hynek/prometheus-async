@@ -1,0 +1,3 @@
+include .coveragerc tox.ini LICENSE
+exclude conftest.py
+prune tests
