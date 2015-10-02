@@ -30,6 +30,16 @@ def test_async_time_sync(fo, patch_timer):
     assert [1] == fo._observed
 
 
+def test_no_system(monkeypatch):
+    """
+    mk_get_async_system raises RuntimeError if no async system is available.
+    """
+    for v in ("tx", "aio"):
+        monkeypatch.setattr(decorators, v, None)
+    with pytest.raises(RuntimeError):
+        decorators.mk_get_async_system()
+
+
 class TestMkTime(object):
     @py2_only
     def test_py2(self):
