@@ -13,9 +13,13 @@ matrix:
     - python: "2.7"
       env: TOXENV=py27
     - python: "3.4"
-      env: TOXENV=py34
+      env: TOXENV=py34-twisted
+    - python: "3.4"
+      env: TOXENV=py34-aionly
     - python: "3.5"
-      env: TOXENV=py35
+      env: TOXENV=py35-twisted
+    - python: "3.5"
+      env: TOXENV=py35-aionly
     - python: "pypy"
       env: TOXENV=pypy
 
