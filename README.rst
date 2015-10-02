@@ -13,6 +13,10 @@ prometheus_async
 
 Currently asyncio_ (Python 3.4, 3.5) and Twisted_ (Python 2.6, 2.7, 3.4, 3.5, PyPy) are supported.
 
+
+API
+---
+
 The only public API at the moment is the decorator ``prometheus_async.async_time``.
 It wraps a metric object and calls ``observe(value)`` on it with ``value`` being the total runtime in seconds:
 
