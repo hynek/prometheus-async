@@ -15,11 +15,11 @@ matrix:
     - python: "3.4"
       env: TOXENV=py34-twisted
     - python: "3.4"
-      env: TOXENV=py34-aionly
+      env: TOXENV=py34
     - python: "3.5"
       env: TOXENV=py35-twisted
     - python: "3.5"
-      env: TOXENV=py35-aionly
+      env: TOXENV=py35
     - python: "pypy"
       env: TOXENV=pypy
 
