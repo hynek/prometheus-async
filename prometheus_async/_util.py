@@ -22,11 +22,11 @@ def mk_get_time():
 get_time = mk_get_time()
 
 
-def mk_async_time(is_async, add_cb):
+def mk_time(is_async, add_cb):
     """
-    Create a async_time decorator that uses *is_async_ and *add_cb*.
+    Create a time decorator that uses *is_async_ and *add_cb*.
     """
-    def async_time(metric):
+    def time(metric):
         """
         Decorator that wraps *metric* and calls ``metric.observe()`` w/ run
         time.
@@ -50,4 +50,4 @@ def mk_async_time(is_async, add_cb):
 
             return measure
         return decorator
-    return async_time
+    return time

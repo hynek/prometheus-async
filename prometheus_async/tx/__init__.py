@@ -2,9 +2,9 @@
 Twisted-related functionality.
 """
 
-from ._decorators import async_time
+from ._decorators import time
 
 
 __all__ = [
-    "async_time",
+    "time",
 ]

@@ -5,7 +5,7 @@ Decorators for asyncio.
 import asyncio
 import sys
 
-from .._util import mk_async_time
+from .._util import mk_time
 
 
 vi = sys.version_info
@@ -25,4 +25,4 @@ def add_cb(val, observer):
     return fut
 
 
-async_time = mk_async_time(is_async, add_cb)
+time = mk_time(is_async, add_cb)

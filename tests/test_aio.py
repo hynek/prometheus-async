@@ -23,11 +23,11 @@ def coro():
 
 
 class TestAsyncIO:
-    def test_async_time_sync(self, fo, patch_timer):
+    def test_time_sync(self, fo, patch_timer):
         """
-        async_time works with sync results functions.
+        time works with sync results functions.
         """
-        @aio.async_time(fo)
+        @aio.time(fo)
         def func():
             return 42
 
@@ -60,9 +60,9 @@ class TestAsyncIO:
     @pytest.mark.asyncio
     def test_asyncio(self, fo, patch_timer):
         """
-        async_time works with asyncio results functions.
+        time works with asyncio results functions.
         """
-        @aio.async_time(fo)
+        @aio.time(fo)
         @asyncio.coroutine
         def func():
             yield from asyncio.sleep(0)
@@ -82,7 +82,7 @@ class TestAsyncIO:
         """
         Does not swallow exceptions.
         """
-        @aio.async_time(fo)
+        @aio.time(fo)
         @asyncio.coroutine
         def func():
             yield from asyncio.sleep(0)

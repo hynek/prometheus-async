@@ -30,9 +30,9 @@ class TestTwisted(object):
     @pytest.inlineCallbacks
     def test_deferred(self, fo, patch_timer):
         """
-        async_time works with Deferreds.
+        time works with Deferreds.
         """
-        @tx.async_time(fo)
+        @tx.time(fo)
         def func():
             return succeed(42)
 
@@ -48,7 +48,7 @@ class TestTwisted(object):
         """
         Does not swallow exceptions.
         """
-        @tx.async_time(fo)
+        @tx.time(fo)
         def func():
             return fail(ValueError("foo"))
 

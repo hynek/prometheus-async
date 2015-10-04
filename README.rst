@@ -24,7 +24,7 @@ As their names suggest, they work with asyncio_ and Twisted_ respectively.
 Decorator Wrappers
 ------------------
 
-Both packages contain a function ``async_time`` that wraps a metric object and calls ``observe(value)`` on it with ``value`` being the total runtime in seconds:
+Both packages contain a decorator ``time`` that wraps a metric object and calls ``observe(value)`` on it with ``value`` being the total runtime in seconds:
 
 .. code-block:: python
 
@@ -32,11 +32,11 @@ Both packages contain a function ``async_time`` that wraps a metric object and c
 
    from aiohttp import web
    from prometheus_client import Histogram
-   from prometheus_async.aio import async_time
+   from prometheus_async.aio import time
 
    REQ_TIME = Histogram("req_time_seconds", "time spent in requests")
 
-   @async_time(REQ_TIME)
+   @time(REQ_TIME)
    async def req(request):
       await asyncio.sleep(1)
       return web.Response(body=b"hello")
