@@ -3,9 +3,16 @@ import asyncio
 import pytest
 
 try:
+    import aiohttp
+except ImportError:
+    aiohttp = None
+
+try:
     from twisted.internet.defer import Deferred
 except ImportError:
     Deferred = object
+
+from prometheus_client import Counter
 
 from prometheus_async import decorators, aio
 
@@ -71,3 +78,41 @@ class TestAsyncIO:
 
         with pytest.raises(ValueError):
             yield from func()
+
+
+@pytest.mark.skipif(aiohttp is None, reason="Tests require aiohttp")
+class TestWeb:
+    def test_server_stats(self):
+        """
+        Returns a response with the current stats.
+        """
+        Counter("test_server_stats", "cnt").inc()
+        rv = aio.server_stats(None)
+        assert (
+            b'# HELP test_server_stats cnt\n# TYPE test_server_stats counter\n'
+            b'test_server_stats 1.0\n'
+            in rv.body
+        )
+
+    @pytest.mark.asyncio
+    def test_start_http_server(self, event_loop):
+        """
+        Integration test: server gets started and serves stats.
+        """
+        srv, handler = yield from aio.start_http_server(0, loop=event_loop)
+        addr, port = srv.sockets[0].getsockname()
+        Counter("test_start_http_server", "cnt").inc()
+
+        rv = yield from aiohttp.request(
+            "GET",
+            "http://{addr}:{port}/metrics"
+            .format(addr=addr, port=port)
+        )
+        body = yield from rv.text()
+        assert (
+            '# HELP test_start_http_server cnt\n# TYPE test_start_http_server'
+            ' counter\ntest_start_http_server 1.0\n'
+            in body
+        )
+        yield from handler.finish_connections(3)
+        srv.close()

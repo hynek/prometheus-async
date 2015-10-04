@@ -15,10 +15,13 @@ Currently asyncio_ (Python 3.4, 3.5) and Twisted_ (Python 2.6, 2.7, 3.4, 3.5, Py
 
 
 API
----
+===
 
-The only public API at the moment is the decorator ``prometheus_async.async_time``.
-It wraps a metric object and calls ``observe(value)`` on it with ``value`` being the total runtime in seconds:
+
+Decorator Wrappers
+------------------
+
+``prometheus_async.async_time`` wraps a metric object and calls ``observe(value)`` on it with ``value`` being the total runtime in seconds:
 
 .. code-block:: python
 
@@ -36,10 +39,26 @@ It wraps a metric object and calls ``observe(value)`` on it with ``value`` being
       return web.Response(body=b"hello")
 
 
+Metric Exposure
+---------------
+
+``prometheus_async.aio.start_http_server(port, addr='', ssl_ctx=None, loop=None)`` will start an aiohttp_ web server in the background.
+You can also use ``prometheus_async.aio.server_stats`` as a route and add it to your own application:
+
+.. code-block:: python
+
+      from aiohttp import web
+      from prometheus_async import aio
+
+      app = web.Application()
+      app.router.add_route("GET", "/metrics", aio.server_stats)
+      # your other routes go here.
+
+
 Future Plans
 ------------
 
-- aiohttp_/twisted.web_ based metrics exposure.
+- twisted.web_ based metrics exposure.
 - ``Counter.count_exceptions``
 - ``Gauge.track_inprogress``
 - Tornado_?
