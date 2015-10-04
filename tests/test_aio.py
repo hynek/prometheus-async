@@ -14,7 +14,7 @@ except ImportError:
 
 from prometheus_client import Counter
 
-from prometheus_async import decorators, aio
+from prometheus_async import aio
 
 
 @asyncio.coroutine
@@ -23,6 +23,18 @@ def coro():
 
 
 class TestAsyncIO:
+    def test_async_time_sync(self, fo, patch_timer):
+        """
+        async_time works with sync results functions.
+        """
+        @aio.async_time(fo)
+        def func():
+            return 42
+
+        func()
+
+        assert [1] == fo._observed
+
     @pytest.mark.parametrize("async_val", [
         asyncio.Future(),
         coro(),
@@ -31,7 +43,7 @@ class TestAsyncIO:
         """
         is_async recognizes asynchronous objects.
         """
-        assert True is aio.is_async(async_val)
+        assert True is aio._decorators.is_async(async_val)
 
     @pytest.mark.parametrize("sync_val", [
         None,
@@ -43,14 +55,14 @@ class TestAsyncIO:
         """
         is_async rejects everything else.
         """
-        assert False is aio.is_async(sync_val)
+        assert False is aio._decorators.is_async(sync_val)
 
     @pytest.mark.asyncio
     def test_asyncio(self, fo, patch_timer):
         """
         async_time works with asyncio results functions.
         """
-        @decorators.async_time(fo)
+        @aio.async_time(fo)
         @asyncio.coroutine
         def func():
             yield from asyncio.sleep(0)
@@ -70,7 +82,7 @@ class TestAsyncIO:
         """
         Does not swallow exceptions.
         """
-        @decorators.async_time(fo)
+        @aio.async_time(fo)
         @asyncio.coroutine
         def func():
             yield from asyncio.sleep(0)
@@ -87,7 +99,7 @@ class TestWeb:
         Returns a response with the current stats.
         """
         Counter("test_server_stats", "cnt").inc()
-        rv = aio.server_stats(None)
+        rv = aio.web.server_stats(None)
         assert (
             b'# HELP test_server_stats cnt\n# TYPE test_server_stats counter\n'
             b'test_server_stats 1.0\n'
@@ -99,7 +111,7 @@ class TestWeb:
         """
         Integration test: server gets started and serves stats.
         """
-        srv, handler = yield from aio.start_http_server(0, loop=event_loop)
+        srv, handler = yield from aio.web.start_http_server(0, loop=event_loop)
         addr, port = srv.sockets[0].getsockname()
         Counter("test_start_http_server", "cnt").inc()
 

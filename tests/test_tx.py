@@ -6,7 +6,7 @@ pytest.importorskip("twisted")
 
 from twisted.internet.defer import Deferred, succeed, fail
 
-from prometheus_async import tx, decorators
+from prometheus_async import tx
 
 
 class TestTwisted(object):
@@ -14,7 +14,7 @@ class TestTwisted(object):
         """
         is_async recognizes Deferreds.
         """
-        assert True is tx.is_async(Deferred())
+        assert True is tx._decorators.is_async(Deferred())
 
     @pytest.mark.parametrize("sync_val", [
         None,
@@ -25,14 +25,14 @@ class TestTwisted(object):
         """
         is_async rejects everything else.
         """
-        assert False is tx.is_async(sync_val)
+        assert False is tx._decorators.is_async(sync_val)
 
     @pytest.inlineCallbacks
     def test_deferred(self, fo, patch_timer):
         """
         async_time works with Deferreds.
         """
-        @decorators.async_time(fo)
+        @tx.async_time(fo)
         def func():
             return succeed(42)
 
@@ -48,7 +48,7 @@ class TestTwisted(object):
         """
         Does not swallow exceptions.
         """
-        @decorators.async_time(fo)
+        @tx.async_time(fo)
         def func():
             return fail(ValueError("foo"))
 

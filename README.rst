@@ -17,11 +17,14 @@ Currently asyncio_ (Python 3.4, 3.5) and Twisted_ (Python 2.6, 2.7, 3.4, 3.5, Py
 API
 ===
 
+``prometheus_async`` consists of two packages: ``aio`` and ``tx``.
+As their names suggest, they work with asyncio_ and Twisted_ respectively.
+
 
 Decorator Wrappers
 ------------------
 
-``prometheus_async.async_time`` wraps a metric object and calls ``observe(value)`` on it with ``value`` being the total runtime in seconds:
+Both packages contain a function ``async_time`` that wraps a metric object and calls ``observe(value)`` on it with ``value`` being the total runtime in seconds:
 
 .. code-block:: python
 
@@ -29,7 +32,7 @@ Decorator Wrappers
 
    from aiohttp import web
    from prometheus_client import Histogram
-   from prometheus_async import async_time
+   from prometheus_async.aio import async_time
 
    REQ_TIME = Histogram("req_time_seconds", "time spent in requests")
 
@@ -42,8 +45,11 @@ Decorator Wrappers
 Metric Exposure
 ---------------
 
-``prometheus_async.aio.start_http_server(port, addr='', ssl_ctx=None, loop=None)`` will start an aiohttp_ web server in the background.
-You can also use ``prometheus_async.aio.server_stats`` as a route and add it to your own application:
+asyncio
+-------
+
+``prometheus_async.aio.web.start_http_server(port, addr='', ssl_ctx=None, loop=None)`` will start an aiohttp_ web server in the background.
+You can also use ``prometheus_async.aio.web.server_stats`` as a route and add it to your own application:
 
 .. code-block:: python
 
@@ -51,7 +57,7 @@ You can also use ``prometheus_async.aio.server_stats`` as a route and add it to 
       from prometheus_async import aio
 
       app = web.Application()
-      app.router.add_route("GET", "/metrics", aio.server_stats)
+      app.router.add_route("GET", "/metrics", aio.web.server_stats)
       # your other routes go here.
 
 
