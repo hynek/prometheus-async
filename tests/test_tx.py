@@ -11,6 +11,18 @@ from prometheus_async import tx
 
 class TestTime(object):
     @pytest.inlineCallbacks
+    def test_decorator_sync(self, fo, patch_timer):
+        """
+        time works with sync results functions.
+        """
+        @tx.time(fo)
+        def func():
+            return 42
+
+        assert 42 == (yield func())
+        assert [1] == fo._observed
+
+    @pytest.inlineCallbacks
     def test_decorator(self, fo, patch_timer):
         """
         time works with functions returning Deferreds.
