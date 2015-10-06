@@ -22,8 +22,9 @@ def coro():
     yield from asyncio.sleep(0)
 
 
-class TestAsyncIO:
-    def test_time_sync(self, fo, patch_timer):
+class TestTime:
+    @pytest.mark.asyncio
+    def test_decorator_sync(self, fo, patch_timer):
         """
         time works with sync results functions.
         """
@@ -31,34 +32,11 @@ class TestAsyncIO:
         def func():
             return 42
 
-        func()
-
+        assert 42 == (yield from func())
         assert [1] == fo._observed
 
-    @pytest.mark.parametrize("async_val", [
-        asyncio.Future(),
-        coro(),
-    ])
-    def test_is_async_true(self, async_val):
-        """
-        is_async recognizes asynchronous objects.
-        """
-        assert True is aio._decorators.is_async(async_val)
-
-    @pytest.mark.parametrize("sync_val", [
-        None,
-        "sync",
-        object(),
-        Deferred(),
-    ])
-    def test_is_async_false(self, sync_val):
-        """
-        is_async rejects everything else.
-        """
-        assert False is aio._decorators.is_async(sync_val)
-
     @pytest.mark.asyncio
-    def test_asyncio(self, fo, patch_timer):
+    def test_decorator(self, fo, patch_timer):
         """
         time works with asyncio results functions.
         """
@@ -70,7 +48,7 @@ class TestAsyncIO:
 
         rv = func()
 
-        assert isinstance(rv, asyncio.Future)
+        assert asyncio.iscoroutine(rv)
         assert [] == fo._observed
 
         rv = yield from rv
@@ -78,18 +56,57 @@ class TestAsyncIO:
         assert 42 == rv
 
     @pytest.mark.asyncio
-    def test_asyncio_exc(self, fo, patch_timer):
+    def test_decorator_exc(self, fo, patch_timer):
         """
         Does not swallow exceptions.
         """
+        v = ValueError("foo")
+
         @aio.time(fo)
         @asyncio.coroutine
         def func():
             yield from asyncio.sleep(0)
-            raise ValueError
+            raise v
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             yield from func()
+
+        assert v is e.value
+        assert [1] == fo._observed
+
+    @pytest.mark.asyncio
+    def test_future(self, fo, patch_timer, event_loop):
+        """
+        time works with a asyncio.Future.
+        """
+        orig_fut = asyncio.Future(loop=event_loop)
+        fut = aio.time(fo, orig_fut, loop=event_loop)
+
+        assert [] == fo._observed
+
+        orig_fut.set_result(42)
+
+        assert 42 == (yield from fut)
+        assert [1] == fo._observed
+
+    @pytest.mark.asyncio
+    def test_future_exc(self, fo, patch_timer, event_loop):
+        """
+        Does not swallow exceptions.
+        """
+        orig_fut = asyncio.Future(loop=event_loop)
+        fut = aio.time(fo, orig_fut, loop=event_loop)
+        v = ValueError("foo")
+
+        assert [] == fo._observed
+
+        orig_fut.set_exception(v)
+
+        with pytest.raises(ValueError) as e:
+            yield from fut
+
+        assert [1] == fo._observed
+        assert v is e.value
 
 
 @pytest.mark.skipif(aiohttp is None, reason="Tests require aiohttp")

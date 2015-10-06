@@ -41,5 +41,13 @@ def fo():
 
 @pytest.fixture
 def patch_timer(monkeypatch):
-    from prometheus_async import _util
-    monkeypatch.setattr(_util, "get_time", mk_monotonic_timer())
+    try:
+        from prometheus_async.tx import _decorators
+        monkeypatch.setattr(_decorators, "get_time", mk_monotonic_timer())
+    except:
+        pass
+    try:
+        from prometheus_async.aio import _decorators
+        monkeypatch.setattr(_decorators, "get_time", mk_monotonic_timer())
+    except:
+        print("failed")
