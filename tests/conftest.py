@@ -7,7 +7,7 @@ import pytest
 
 collect_ignore = []
 if sys.version_info[0] == 2:
-    collect_ignore.append("tests/test_aio.py")
+    collect_ignore.append("test_aio.py")
 
 
 def mk_monotonic_timer():
