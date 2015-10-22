@@ -1,4 +1,5 @@
 import asyncio
+import http.client
 
 import pytest
 
@@ -220,7 +221,9 @@ class TestWeb:
         """
         Integration test: server gets started and serves stats.
         """
-        srv, handler = yield from aio.web.start_http_server(0, loop=event_loop)
+        app, srv, handler = (
+            yield from aio.web.start_http_server(0, loop=event_loop)
+        )
         addr, port = srv.sockets[0].getsockname()
         Counter("test_start_http_server", "cnt").inc()
 
@@ -237,6 +240,26 @@ class TestWeb:
         )
         yield from handler.finish_connections(3)
         srv.close()
+
+    def test_start_in_thread(self):
+        """
+        Threaded version starts and exits properly.
+        """
+        Counter("test_start_http_server_in_thread", "cnt").inc()
+        t = aio.web.start_http_server_in_thread(0)
+        s = t.sockets[0]
+        h = http.client.HTTPConnection(str(s[0]), port=s[1])
+        h.request("GET", "/metrics")
+        rsp = h.getresponse()
+        body = rsp.read().decode()
+        rsp.close()
+        h.close()
+
+        assert "HELP test_start_http_server_in_thread cnt" in body
+
+        t.stop()
+
+        assert False is t._thread.is_alive()
 
 
 @pytest.mark.skipif(aiohttp is not None, reason="aiohttp must be missing.")
