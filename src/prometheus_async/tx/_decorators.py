@@ -42,3 +42,34 @@ def time(metric, deferred=None):
 
         start_time = get_time()
         return deferred.addBoth(observe)
+
+
+def count_exceptions(metric, deferred=None, exc=BaseException):
+    """
+    Decorator that calls ``metric.inc()`` whenever *exc* is caught.
+    """
+    def inc(fail):
+        fail.trap(exc)
+        metric.inc()
+        return fail
+
+    if deferred is None:
+        def decorator(f):
+            @wraps(f)
+            def count(*a, **kw):
+                try:
+                    rv = f(*a, **kw)
+                except exc:
+                    metric.inc()
+                    raise
+
+                if isinstance(rv, Deferred):
+                    return rv.addErrback(inc)
+                else:
+                    return rv
+
+            return count
+
+        return decorator
+    else:
+        return deferred.addErrback(inc)

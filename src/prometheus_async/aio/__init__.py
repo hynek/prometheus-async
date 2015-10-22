@@ -3,9 +3,9 @@ asyncio-related functionality.
 """
 
 from . import web
-from ._decorators import time
+from ._decorators import count_exceptions, time
 
 
 __all__ = [
-    "time", "web",
+    "count_exceptions", "time", "web",
 ]

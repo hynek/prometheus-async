@@ -9,7 +9,7 @@ from functools import wraps
 from .._util import get_time
 
 
-def time(metric, future=None, *, loop=None):
+def time(metric, future=None):
     """
     Decorator that calls ``metric.observe()`` with total runtime time.
 
@@ -19,9 +19,6 @@ def time(metric, future=None, *, loop=None):
 
     :returns: coroutine function (if decorator) or coroutine.
     """
-    if loop is None:
-        loop = asyncio.get_event_loop()
-
     if future is None:
         def decorator(f):
             @asyncio.coroutine
@@ -30,13 +27,11 @@ def time(metric, future=None, *, loop=None):
                 def observe():
                     metric.observe(get_time() - start_time)
                 start_time = get_time()
-                rv = f(*a, **kw)
-                if asyncio.iscoroutine(rv) or isinstance(rv, asyncio.Future):
-                    try:
-                        rv = yield from rv
-                    except:
-                        observe()
-                        raise
+                try:
+                    rv = yield from f(*a, **kw)
+                except:
+                    observe()
+                    raise
                 observe()
                 return rv
 
@@ -57,3 +52,33 @@ def time(metric, future=None, *, loop=None):
 
         start_time = get_time()
         return measure()
+
+
+def count_exceptions(metric, future=None, exc=BaseException):
+    """
+    Decorator that calls ``metric.inc()`` whenever *exc* is caught.
+    """
+    if future is None:
+        def decorator(f):
+            @asyncio.coroutine
+            @wraps(f)
+            def count(*a, **kw):
+                try:
+                    rv = yield from f(*a, **kw)
+                except exc:
+                    metric.inc()
+                    raise
+                return rv
+
+            return count
+        return decorator
+    else:
+        @asyncio.coroutine
+        def count():
+            try:
+                rv = yield from future
+            except exc:
+                metric.inc()
+                raise
+            return rv
+        return count()

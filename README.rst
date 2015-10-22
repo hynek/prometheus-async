@@ -24,6 +24,9 @@ As their names suggest, they work with asyncio_ and Twisted_ respectively.
 Decorator Wrappers
 ------------------
 
+time
+^^^^
+
 Both packages contain a decorator ``time`` that wraps a metric object and calls ``observe(value)`` on it with ``value`` being the total runtime in seconds:
 
 .. code-block:: python
@@ -67,11 +70,17 @@ This is especially useful in conjunction with `twisted.web`_ views that don't al
          return NOT_DONE_YET
 
 
+count_exceptions
+^^^^^^^^^^^^^^^^
+
+``count_exceptions(metric, deferred/future=None, exc=BaseException)`` works exactly the same way, except that it will call ``metric.inc()`` whenever ``exc`` is caught.
+
+
 Metric Exposure
 ---------------
 
 asyncio
--------
+^^^^^^^
 
 ``prometheus_async.aio.web.start_http_server(port, addr='', ssl_ctx=None, loop=None)`` will start an aiohttp_ web server in the background.
 You can also use ``prometheus_async.aio.web.server_stats`` as a route and add it to your own application:
@@ -90,7 +99,6 @@ Future Plans
 ------------
 
 - twisted.web_ based metrics exposure.
-- ``Counter.count_exceptions``
 - ``Gauge.track_inprogress``
 - Tornado_?
 

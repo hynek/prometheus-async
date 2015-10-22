@@ -67,3 +67,81 @@ class TestTime(object):
 
         assert 42 == (yield d)
         assert [1] == fo._observed
+
+
+class TestCountExceptions(object):
+    @pytest.inlineCallbacks
+    def test_decorator_no_exc(self, fc):
+        """
+        If no exception is raised, the counter does not change.
+        """
+        @tx.count_exceptions(fc)
+        def func():
+            return succeed(42)
+
+        assert 42 == (yield func())
+        assert 0 == fc._val
+
+    def test_decorator_no_exc_sync(self, fc):
+        """
+        If no exception is raised, the counter does not change.
+        """
+        @tx.count_exceptions(fc)
+        def func():
+            return 42
+
+        assert 42 == func()
+        assert 0 == fc._val
+
+    @pytest.inlineCallbacks
+    def test_decorator_wrong_exc(self, fc):
+        """
+        If a wrong exception is raised, the counter does not change.
+        """
+        @tx.count_exceptions(fc, exc=ValueError)
+        def func():
+            return fail(TypeError())
+
+        with pytest.raises(TypeError):
+            yield func()
+
+        assert 0 == fc._val
+
+    @pytest.inlineCallbacks
+    def test_decorator_exc(self, fc):
+        """
+        If the correct exception is raised, count it.
+        """
+        @tx.count_exceptions(fc, exc=TypeError)
+        def func():
+            return fail(TypeError())
+
+        with pytest.raises(TypeError):
+            yield func()
+
+        assert 1 == fc._val
+
+    def test_decorator_exc_sync(self, fc):
+        """
+        If the correct synchronous exception is raised, count it.
+        """
+        @tx.count_exceptions(fc)
+        def func():
+            if True:
+                raise TypeError("foo")
+            return succeed(42)
+
+        with pytest.raises(TypeError):
+            func()
+
+        assert 1 == fc._val
+
+    @pytest.inlineCallbacks
+    def test_deferred_no_exc(self, fc):
+        """
+        If no exception is raised, the counter does not change.
+        """
+        d = succeed(42)
+
+        assert 42 == (yield tx.count_exceptions(fc, d))
+        assert 0 == fc._val

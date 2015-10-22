@@ -34,9 +34,25 @@ class FakeObserver(object):
         self._observed.append(value)
 
 
+class FakeCounter(object):
+    """
+    A fake counter metric.
+    """
+    def __init__(self):
+        self._val = 0
+
+    def inc(self):
+        self._val += 1
+
+
 @pytest.fixture
 def fo():
     return FakeObserver()
+
+
+@pytest.fixture
+def fc():
+    return FakeCounter()
 
 
 @pytest.fixture
