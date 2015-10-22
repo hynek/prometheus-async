@@ -9,7 +9,7 @@ prometheus_async
     :target: https://codecov.io/github/hynek/prometheus_async?branch=master
 
 
-``prometheus_async`` adds support for asynchronous frameworks in the official prometheus_client_.
+``prometheus_async`` adds support for asynchronous frameworks to the official prometheus_client_.
 
 Currently asyncio_ (Python 3.4, 3.5) and Twisted_ (Python 2.6, 2.7, 3.4, 3.5, PyPy) are supported.
 
