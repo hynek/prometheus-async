@@ -13,7 +13,7 @@ import sys
 ###############################################################################
 
 NAME = "prometheus_async"
-PACKAGES = find_packages(where="src", exclude=['tests*'])
+PACKAGES = find_packages(where="src")
 META_PATH = os.path.join("src", "prometheus_async", "__init__.py")
 KEYWORDS = ["metrics", "prometheus", "twisted", "asyncio"]
 CLASSIFIERS = [
