@@ -4,6 +4,8 @@ aiohttp-based metrics exposure.
 
 import asyncio
 
+from functools import wraps
+
 try:
     from aiohttp import web
 except ImportError:
@@ -23,7 +25,17 @@ def server_stats(request):
     return rsp
 
 
+def needs_aiohttp(f):
+    @wraps(f)
+    def wrapper(*a, **kw):
+        if web is None:
+            raise RuntimeError("aiohttp is required for the http server.")
+        return f(*a, **kw)
+    return wrapper
+
+
 @asyncio.coroutine
+@needs_aiohttp
 def start_http_server(port, addr="", ssl_ctx=None, loop=None):
     """
     Start an HTTP(S) server on *addr*:*port* using *loop*.

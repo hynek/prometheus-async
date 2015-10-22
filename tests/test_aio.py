@@ -237,3 +237,15 @@ class TestWeb:
         )
         yield from handler.finish_connections(3)
         srv.close()
+
+
+@pytest.mark.skipif(aiohttp is not None, reason="aiohttp must be missing.")
+@pytest.mark.asyncio
+def test_start_http_server_web_missing():
+    """
+    Raises RuntimeError if start_http_server is called with aiohttp.
+    """
+    with pytest.raises(RuntimeError) as e:
+        yield from aio.web.start_http_server(0)
+
+    assert "aiohttp is required for the http server." == e.value.args[0]
