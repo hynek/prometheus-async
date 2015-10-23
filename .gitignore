@@ -4,3 +4,4 @@
 prometheus_async.egg-info
 *.pyc
 dist
+docs/_build

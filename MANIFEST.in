@@ -1,3 +1,6 @@
-include .coveragerc tox.ini LICENSE
+include .coveragerc tox.ini LICENSE *.rst
 exclude conftest.py
 prune tests
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs Makefile
