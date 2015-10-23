@@ -5,7 +5,7 @@ asyncio Support
 
 .. currentmodule:: prometheus_async.aio
 
-The asyncio-related APIs can be found within the ``prometheus.aio`` package.
+The asyncio-related APIs can be found within the ``prometheus_async.aio`` package.
 
 
 Decorator Wrappers

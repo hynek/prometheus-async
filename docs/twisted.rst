@@ -5,7 +5,7 @@ Twisted Support
 
 .. currentmodule:: prometheus_async.tx
 
-The Twisted-related APIs can be found within the ``prometheus.tx`` package.
+The Twisted-related APIs can be found within the ``prometheus_async.tx`` package.
 
 
 Decorator Wrappers
