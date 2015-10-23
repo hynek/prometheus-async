@@ -26,9 +26,9 @@ Project Information
 
    future
    backward-compatibility
-   license
    contributing
    changelog
+   license
 
 
 
