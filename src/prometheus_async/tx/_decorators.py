@@ -11,11 +11,13 @@ from .._util import get_time
 
 def time(metric, deferred=None):
     """
-    Call ``metric.observe()`` with total runtime time.
+    Call ``metric.observe(time)`` with  runtime in seconds.
 
-    Can be used as a decorator or on a Deferred.
+    Can be used as a decorator as well as on ``Deferred``\ s.
 
-    Works with both sync and async results.  Run time is in seconds.
+    Works with both sync and async results.
+
+    :returns: callable or ``Deferred``.
     """
     if deferred is None:
         def decorator(f):
@@ -46,7 +48,9 @@ def time(metric, deferred=None):
 
 def count_exceptions(metric, deferred=None, exc=BaseException):
     """
-    Decorator that calls ``metric.inc()`` whenever *exc* is caught.
+    Call ``metric.inc()`` whenever *exc* is caught.
+
+    Can be used as a decorator or on a ``Deferred``.
     """
     def inc(fail):
         fail.trap(exc)

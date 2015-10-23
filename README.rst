@@ -14,7 +14,7 @@ prometheus_async
 
 Currently asyncio_ (Python 3.4, 3.5) and Twisted_ (Python 2.6, 2.7, 3.4, 3.5, PyPy) are supported.
 
-For *synchronous* applications, the metrics exposure methods can be useful since they are more powerful than the one shipped with the official client.
+Even for *synchronous* applications, the metrics exposure methods can be useful since they are more powerful than the one shipped with the official client.
 For that, helper functions have been added that run them in separate threads.
 
 The source code is hosted on GitHub_ and the documentation on `Read The Docs`_.

@@ -221,10 +221,12 @@ class TestWeb:
         """
         Integration test: server gets started and serves stats.
         """
-        app, srv, handler = (
+        server = (
             yield from aio.web.start_http_server(0, loop=event_loop)
         )
-        addr, port = srv.sockets[0].getsockname()
+        assert isinstance(server, aio.web.MetricsHTTPServer)
+
+        addr, port = server.sockets[0]
         Counter("test_start_http_server", "cnt").inc()
 
         rv = yield from aiohttp.request(
@@ -238,8 +240,7 @@ class TestWeb:
             ' counter\ntest_start_http_server 1.0\n'
             in body
         )
-        yield from handler.finish_connections(3)
-        srv.close()
+        yield from server.stop()
 
     def test_start_in_thread(self):
         """
@@ -247,6 +248,8 @@ class TestWeb:
         """
         Counter("test_start_http_server_in_thread", "cnt").inc()
         t = aio.web.start_http_server_in_thread(0)
+        assert isinstance(t, aio.web.ThreadedMetricsHTTPServer)
+
         s = t.sockets[0]
         h = http.client.HTTPConnection(str(s[0]), port=s[1])
         h.request("GET", "/metrics")

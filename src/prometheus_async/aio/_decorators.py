@@ -11,11 +11,9 @@ from .._util import get_time
 
 def time(metric, future=None):
     """
-    Decorator that calls ``metric.observe()`` with total runtime time.
+    Call ``metric.observe(time)`` with the runtime in seconds.
 
-    Works as a decorator as well as on :class:`asyncio.Future`.
-
-    Transforms decorated callable into a co-routine.  Run time is in seconds.
+    Works as a decorator as well as on :class:`asyncio.Future`\ s.
 
     :returns: coroutine function (if decorator) or coroutine.
     """
@@ -56,7 +54,11 @@ def time(metric, future=None):
 
 def count_exceptions(metric, future=None, exc=BaseException):
     """
-    Decorator that calls ``metric.inc()`` whenever *exc* is caught.
+    Call ``metric.inc()`` whenever *exc* is caught.
+
+    Works as a decorator as well as on :class:`asyncio.Future`\ s.
+
+    :returns: coroutine function (if decorator) or coroutine.
     """
     if future is None:
         def decorator(f):
