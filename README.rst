@@ -14,6 +14,23 @@ prometheus_async
 
 Currently asyncio_ (Python 3.4, 3.5) and Twisted_ (Python 2.6, 2.7, 3.4, 3.5, PyPy) are supported.
 
+
+.. code-block:: python
+
+   import asyncio
+
+   from aiohttp import web
+   from prometheus_client import Histogram
+   from prometheus_async.aio import time
+
+   REQ_TIME = Histogram("req_time_seconds", "time spent in requests")
+
+   @time(REQ_TIME)
+   async def req(request):
+       await asyncio.sleep(1)
+       return web.Response(body=b"hello")
+
+
 Even for *synchronous* applications, the metrics exposure methods can be useful since they are more powerful than the one shipped with the official client.
 For that, helper functions have been added that run them in separate threads.
 
