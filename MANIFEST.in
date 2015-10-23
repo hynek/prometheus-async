@@ -1,5 +1,5 @@
-include .coveragerc tox.ini LICENSE *.rst docs-requirements.txt
-exclude conftest.py
+include .coveragerc tox.ini LICENSE *.rst
+exclude conftest.py docs-requirements.txt
 prune tests
 recursive-include docs *.py
 recursive-include docs *.rst
