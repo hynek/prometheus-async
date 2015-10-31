@@ -216,6 +216,16 @@ class TestWeb:
             in rv.body
         )
 
+    def test_cheap(self):
+        """
+        Returns a simple string.
+        """
+        rv = aio.web.cheap(None)
+        assert (
+            b'<html><body><a href="/metrics">Metrics</a></body></html>'
+            == rv.body
+        )
+
     @pytest.mark.asyncio
     def test_start_http_server(self, event_loop):
         """

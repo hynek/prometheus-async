@@ -29,6 +29,17 @@ def server_stats(request):
     return rsp
 
 
+def cheap(request):
+    """
+    A view that links to metrics.
+
+    Useful for cheap health checks.
+    """
+    return web.Response(
+        body=b'<html><body><a href="/metrics">Metrics</a></body></html>'
+    )
+
+
 def needs_aiohttp(f):
     @wraps(f)
     def wrapper(*a, **kw):
@@ -59,6 +70,7 @@ def start_http_server(port, addr="", ssl_ctx=None, loop=None):
     @asyncio.coroutine
     def start():
         app = web.Application()
+        app.router.add_route("GET", "/", cheap)
         app.router.add_route("GET", "/metrics", server_stats)
         handler = app.make_handler()
         srv = yield from loop.create_server(
