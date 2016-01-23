@@ -6,6 +6,7 @@ import asyncio
 import queue
 import threading
 
+from collections import namedtuple
 from functools import wraps
 
 try:
@@ -51,7 +52,7 @@ def needs_aiohttp(f):
 
 @asyncio.coroutine
 @needs_aiohttp
-def start_http_server(port, addr="", ssl_ctx=None, loop=None):
+def start_http_server(*, port=0, addr="", ssl_ctx=None, loop=None):
     """
     Start an HTTP(S) server on *addr*:*port* using *loop*.
 
@@ -128,6 +129,9 @@ class MetricsHTTPServer:
         yield from self._app.finish()
 
 
+Socket = namedtuple("Socket", "address port")
+
+
 class ThreadedMetricsHTTPServer:
     """
     A stoppable metrics HTTP server that runs in a separate thread.
@@ -135,8 +139,8 @@ class ThreadedMetricsHTTPServer:
     Returned by :func:`start_http_server_in_thread`.  Do *not* instantiate it
     yourself.
 
-    :attribute sockets: Sockets the server is listening on.  List of tuples of
-        either ``(address, port)``.
+    :attribute sockets: Sockets the server is listening on.  List of
+        namedtuples of ``Socket(address, port)``.
     """
     def __init__(self, http_server, thread):
         self._http_server = http_server
@@ -155,16 +159,16 @@ class ThreadedMetricsHTTPServer:
 
     @property
     def sockets(self):
-        return self._http_server.sockets
+        return [Socket(*socket) for socket in self._http_server.sockets]
 
 
 @needs_aiohttp
-def start_http_server_in_thread(port, addr="", ssl_ctx=None):
+def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None):
     """
     Start an asyncio HTTP(S) server in a new thread with an own event loop.
 
-    Ideal to expose your metrics in regulat (non-asyncio) Python
-    3 applications.
+    Ideal to expose your metrics in regular (non-asyncio) Python 3
+    applications.
 
     For arguments see :func:`start_http_server`.
 
@@ -176,7 +180,7 @@ def start_http_server_in_thread(port, addr="", ssl_ctx=None):
     def server():
         asyncio.set_event_loop(loop)
         http = loop.run_until_complete(
-            start_http_server(port, addr, ssl_ctx=ssl_ctx, loop=loop)
+            start_http_server(port=port, addr=addr, ssl_ctx=ssl_ctx, loop=loop)
         )
         q.put(http)
         loop.run_forever()

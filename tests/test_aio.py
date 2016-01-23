@@ -222,8 +222,8 @@ class TestWeb:
         """
         rv = aio.web.cheap(None)
         assert (
-            b'<html><body><a href="/metrics">Metrics</a></body></html>'
-            == rv.body
+            b'<html><body><a href="/metrics">Metrics</a></body></html>' ==
+            rv.body
         )
 
     @pytest.mark.asyncio
@@ -231,8 +231,8 @@ class TestWeb:
         """
         Integration test: server gets started and serves stats.
         """
-        server = (
-            yield from aio.web.start_http_server(0, loop=event_loop)
+        server = yield from aio.web.start_http_server(
+            addr="127.0.0.1", loop=event_loop
         )
         assert isinstance(server, aio.web.MetricsHTTPServer)
 
@@ -257,11 +257,11 @@ class TestWeb:
         Threaded version starts and exits properly.
         """
         Counter("test_start_http_server_in_thread", "cnt").inc()
-        t = aio.web.start_http_server_in_thread(0)
+        t = aio.web.start_http_server_in_thread(addr="127.0.0.1")
         assert isinstance(t, aio.web.ThreadedMetricsHTTPServer)
 
         s = t.sockets[0]
-        h = http.client.HTTPConnection(str(s[0]), port=s[1])
+        h = http.client.HTTPConnection(s.address, port=s[1])
         h.request("GET", "/metrics")
         rsp = h.getresponse()
         body = rsp.read().decode()
