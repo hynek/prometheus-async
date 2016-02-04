@@ -73,7 +73,7 @@ def start_http_server(*, port=0, addr="", ssl_ctx=None, loop=None):
         app = web.Application()
         app.router.add_route("GET", "/", cheap)
         app.router.add_route("GET", "/metrics", server_stats)
-        handler = app.make_handler()
+        handler = app.make_handler(access_log=None)
         srv = yield from loop.create_server(
             handler,
             addr, port, ssl=ssl_ctx,
