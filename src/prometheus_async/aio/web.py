@@ -91,8 +91,8 @@ class MetricsHTTPServer:
 
     Returned by :func:`start_http_server`.  Do *not* instantiate it yourself.
 
-    :attribute sockets: Sockets the server is listening on.  List of tuples of
-        either (:class:`ipaddress.IPv4Address`, port) or
+    :attribute sockets: Sockets the server is listening on.  Tuple of
+        namedtuples of either (:class:`ipaddress.IPv4Address`, port) or
         (:class:`ipaddress.IPv6Address`, port).
     :attribute loop: The :class:`event loop <asyncio.BaseEventLoop>` the server
         uses.
@@ -108,10 +108,10 @@ class MetricsHTTPServer:
     @classmethod
     def from_server(cls, server, app, handler, loop):
         return cls(
-            sockets=[
-                (s.getsockname()[0], s.getsockname()[1])
+            sockets=tuple(
+                Socket(s.getsockname()[0], s.getsockname()[1])
                 for s in server.sockets
-            ],
+            ),
             server=server,
             app=app,
             handler=handler,
@@ -139,7 +139,7 @@ class ThreadedMetricsHTTPServer:
     Returned by :func:`start_http_server_in_thread`.  Do *not* instantiate it
     yourself.
 
-    :attribute sockets: Sockets the server is listening on.  List of
+    :attribute sockets: Sockets the server is listening on.  Tuple of
         namedtuples of ``Socket(address, port)``.
     """
     def __init__(self, http_server, thread):
@@ -159,7 +159,7 @@ class ThreadedMetricsHTTPServer:
 
     @property
     def sockets(self):
-        return [Socket(*socket) for socket in self._http_server.sockets]
+        return self._http_server.sockets
 
 
 @needs_aiohttp

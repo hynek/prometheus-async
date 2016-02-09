@@ -7,7 +7,7 @@ from __future__ import absolute_import, division, print_function
 import six
 
 
-__version__ = "15.0.0.dev1"
+__version__ = "15.0.0.dev2"
 
 __title__ = "prometheus_async"
 __description__ = "Async helpers for prometheus_client."
