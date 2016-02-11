@@ -2,7 +2,7 @@
 Decorators for Twisted.
 """
 
-from functools import wraps
+import wrapt
 
 from twisted.internet.defer import Deferred
 
@@ -20,22 +20,19 @@ def time(metric, deferred=None):
     :returns: callable or ``Deferred``.
     """
     if deferred is None:
-        def decorator(f):
-            @wraps(f)
-            def measure(*a, **kw):
-                def observe(value):
-                    metric.observe(get_time() - start_time)
-                    return value
+        @wrapt.decorator
+        def decorator(f, _, args, kw):
+            def observe(value):
+                metric.observe(get_time() - start_time)
+                return value
 
-                start_time = get_time()
-                rv = f(*a, **kw)
-                if isinstance(rv, Deferred):
-                    return rv.addBoth(observe)
-                else:
-                    observe(None)
-                    return rv
+            start_time = get_time()
+            rv = f(*args, **kw)
+            if isinstance(rv, Deferred):
+                return rv.addBoth(observe)
+            else:
+                return observe(rv)
 
-            return measure
         return decorator
     else:
         def observe(value):
@@ -58,21 +55,18 @@ def count_exceptions(metric, deferred=None, exc=BaseException):
         return fail
 
     if deferred is None:
-        def decorator(f):
-            @wraps(f)
-            def count(*a, **kw):
-                try:
-                    rv = f(*a, **kw)
-                except exc:
-                    metric.inc()
-                    raise
+        @wrapt.decorator
+        def decorator(f, _, args, kw):
+            try:
+                rv = f(*args, **kw)
+            except exc:
+                metric.inc()
+                raise
 
-                if isinstance(rv, Deferred):
-                    return rv.addErrback(inc)
-                else:
-                    return rv
-
-            return count
+            if isinstance(rv, Deferred):
+                return rv.addErrback(inc)
+            else:
+                return rv
 
         return decorator
     else:

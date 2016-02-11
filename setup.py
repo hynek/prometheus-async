@@ -27,7 +27,7 @@ CLASSIFIERS = [
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-INSTALL_REQUIRES = ["six", "prometheus-client"]
+INSTALL_REQUIRES = ["six", "prometheus-client", "wrapt"]
 
 if sys.version_info[0] == 2:
     INSTALL_REQUIRES.append("monotonic")

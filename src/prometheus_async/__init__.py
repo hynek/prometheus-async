@@ -7,11 +7,11 @@ from __future__ import absolute_import, division, print_function
 import six
 
 
-__version__ = "16.0.0.dev0"
+__version__ = "16.0.0.dev1"
 
 __title__ = "prometheus_async"
 __description__ = "Async helpers for prometheus_client."
-__uri__ = ""
+__uri__ = "https://prometheus-async.readthedocs.org/"
 
 __author__ = "Hynek Schlawack"
 __email__ = "hs@ox.cx"
