@@ -34,19 +34,25 @@ matrix:
       env: TOXENV=manifest
     - python: "2.7"
       env: TOXENV=docs
+    - python: "2.7"
+      env: TOXENV=readme
 
 
 install:
   - pip install tox
 
+
 script:
   - tox --hashseed 0
+
 
 before_install:
   - pip install codecov
 
+
 after_success:
   - codecov
+
 
 notifications:
   email: false
