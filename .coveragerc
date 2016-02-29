@@ -6,7 +6,7 @@ source = prometheus_async
 source =
    src/prometheus_async
    .tox/*/lib/python*/site-packages/prometheus_async
-   .tox/pypy/site-packages/prometheus_async
+   .tox/pypy*/site-packages/prometheus_async
 
 [report]
 show_missing = True

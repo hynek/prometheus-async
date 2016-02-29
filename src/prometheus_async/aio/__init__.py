@@ -16,10 +16,10 @@
 asyncio-related functionality.
 """
 
-from . import web
+from . import sd, web
 from ._decorators import count_exceptions, time
 
 
 __all__ = [
-    "count_exceptions", "time", "web",
+    "count_exceptions", "sd", "time", "web",
 ]

@@ -21,7 +21,6 @@ import queue
 import threading
 
 from collections import namedtuple
-from functools import wraps
 
 try:
     from aiohttp import web
@@ -37,11 +36,14 @@ def server_stats(request):
     """
     Return a web response with the plain text version of the metrics.
 
-    :rtype: bytes
+    :rtype: aiohttp.web.Response
     """
     rsp = web.Response(body=generate_latest(core.REGISTRY))
     rsp.content_type = CONTENT_TYPE_LATEST
     return rsp
+
+
+_REF = b'<html><body><a href="/metrics">Metrics</a></body></html>'
 
 
 def cheap(request):
@@ -50,53 +52,47 @@ def cheap(request):
 
     Useful for cheap health checks.
     """
-    return web.Response(
-        body=b'<html><body><a href="/metrics">Metrics</a></body></html>'
-    )
-
-
-def needs_aiohttp(f):
-    @wraps(f)
-    def wrapper(*a, **kw):
-        if web is None:
-            raise RuntimeError("aiohttp is required for the http server.")
-        return f(*a, **kw)
-    return wrapper
+    return web.Response(body=_REF)
 
 
 @asyncio.coroutine
-@needs_aiohttp
-def start_http_server(*, port=0, addr="", ssl_ctx=None, loop=None):
+def start_http_server(*, addr="", port=0, ssl_ctx=None, service_discovery=None,
+                      loop=None):
     """
     Start an HTTP(S) server on *addr*:*port* using *loop*.
 
     If *ssl_ctx* is set, use TLS.
 
+    :param str addr: Interface to listen on. Leaving empty will listen on all
+        interfaces.
     :param int port: Port to listen on.
-    :param str addr: Interface to listen on.
     :param ssl.SSLContext ssl_ctx: TLS settings
-    :param asyncio.BaseEventLoop loop: Event loop.
+    :param asyncio.BaseEventLoop loop: Event loop to use.
+    :param service_discovery: see :ref:`sd`
 
     :rtype: MetricsHTTPServer
     """
     if loop is None:  # pragma: nocover
         loop = asyncio.get_event_loop()
 
-    @asyncio.coroutine
-    def start():
-        app = web.Application()
-        app.router.add_route("GET", "/", cheap)
-        app.router.add_route("GET", "/metrics", server_stats)
-        handler = app.make_handler(access_log=None)
-        srv = yield from loop.create_server(
-            handler,
-            addr, port, ssl=ssl_ctx,
-        )
-        return MetricsHTTPServer.from_server(
-            srv, app, handler, loop,
-        )
-
-    return (yield from start())
+    app = web.Application()
+    app.router.add_route("GET", "/", cheap)
+    app.router.add_route("GET", "/metrics", server_stats)
+    handler = app.make_handler(access_log=None)
+    srv = yield from loop.create_server(
+        handler,
+        addr, port, ssl=ssl_ctx,
+    )
+    ms = MetricsHTTPServer.from_server(
+        server=srv,
+        app=app,
+        handler=handler,
+        https=ssl_ctx is not None,
+        loop=loop,
+    )
+    if service_discovery is not None:
+        ms._deregister = yield from service_discovery.register(ms, loop)
+    return ms
 
 
 class MetricsHTTPServer:
@@ -105,45 +101,66 @@ class MetricsHTTPServer:
 
     Returned by :func:`start_http_server`.  Do *not* instantiate it yourself.
 
-    :attribute sockets: Sockets the server is listening on.  Tuple of
-        namedtuples of either (:class:`ipaddress.IPv4Address`, port) or
+    :attribute socket: Socket the server is listening on.  namedtuples of
+        either (:class:`ipaddress.IPv4Address`, port) or
         (:class:`ipaddress.IPv6Address`, port).
+    :attribute bool https: Whether the server uses SSL/TLS.
     :attribute loop: The :class:`event loop <asyncio.BaseEventLoop>` the server
         uses.
+    :attribute str url: A valid URL to the metrics endpoint.
     """
-    def __init__(self, sockets, server, app, handler, loop):
+    def __init__(self, socket, server, app, handler, https, loop):
         self._app = app
         self._handler = handler
         self._server = server
+        self._deregister = None
 
-        self.sockets = sockets
+        self.socket = socket
+        self.https = https
         self.loop = loop
 
     @classmethod
-    def from_server(cls, server, app, handler, loop):
+    def from_server(cls, server, app, handler, https, loop):
+        sock = server.sockets[0].getsockname()
         return cls(
-            sockets=tuple(
-                Socket(s.getsockname()[0], s.getsockname()[1])
-                for s in server.sockets
-            ),
+            socket=Socket(*sock[:2]),
             server=server,
             app=app,
             handler=handler,
+            https=https,
             loop=loop,
         )
 
+    @property
+    def is_registered(self):
+        """
+        Is the web endpoint registered with a service discovery system?
+        """
+        return self._deregister is not None
+
+    @property
+    def url(self):
+        addr = self.socket.addr
+        return "http{s}://{host}:{port}/".format(
+            s="s" if self.https else "",
+            host=addr if ":" not in addr else "[{}]".format(addr),
+            port=self.socket.port,
+        )
+
     @asyncio.coroutine
-    def stop(self):
+    def close(self):
         """
-        Stop the server.
+        Stop the server and clean up.
         """
+        if self._deregister is not None:
+            yield from self._deregister()
         yield from self._handler.finish_connections(1.0)
         self._server.close()
         yield from self._server.wait_closed()
         yield from self._app.finish()
 
 
-Socket = namedtuple("Socket", "address port")
+Socket = namedtuple("Socket", "addr port")
 
 
 class ThreadedMetricsHTTPServer:
@@ -153,14 +170,14 @@ class ThreadedMetricsHTTPServer:
     Returned by :func:`start_http_server_in_thread`.  Do *not* instantiate it
     yourself.
 
-    :attribute sockets: Sockets the server is listening on.  Tuple of
-        namedtuples of ``Socket(address, port)``.
+    :attribute socket: Socket the server is listening on.  namedtuple of
+        ``Socket(addr, port)``.
     """
     def __init__(self, http_server, thread):
         self._http_server = http_server
         self._thread = thread
 
-    def stop(self):
+    def close(self):
         """
         Stop the server, close the event loop, and join the thread.
         """
@@ -172,12 +189,20 @@ class ThreadedMetricsHTTPServer:
         loop.close()
 
     @property
-    def sockets(self):
-        return self._http_server.sockets
+    def socket(self):
+        return self._http_server.socket
+
+    @property
+    def url(self):
+        return self._http_server.url
+
+    @property
+    def is_registered(self):
+        return self._http_server.is_registered
 
 
-@needs_aiohttp
-def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None):
+def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None,
+                                service_discovery=None):
     """
     Start an asyncio HTTP(S) server in a new thread with an own event loop.
 
@@ -194,11 +219,14 @@ def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None):
     def server():
         asyncio.set_event_loop(loop)
         http = loop.run_until_complete(
-            start_http_server(port=port, addr=addr, ssl_ctx=ssl_ctx, loop=loop)
+            start_http_server(
+                port=port, addr=addr, ssl_ctx=ssl_ctx,
+                service_discovery=service_discovery, loop=loop
+            )
         )
         q.put(http)
         loop.run_forever()
-        loop.run_until_complete(http.stop())
+        loop.run_until_complete(http.close())
 
     t = threading.Thread(target=server, daemon=True)
     t.start()

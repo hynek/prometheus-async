@@ -38,7 +38,7 @@ Metric Exposure
 
 .. currentmodule:: prometheus_async.aio.web
 
-``prometheus_async`` offers methods to expose your metrics using aiohttp_ under ``prometheus_async.aio.web``:
+``prometheus_async`` offers methods to expose your metrics using `aiohttp <http://aiohttp.readthedocs.org/>`_ under ``prometheus_async.aio.web``:
 
 
 .. autofunction:: start_http_server
@@ -59,10 +59,22 @@ Metric Exposure
          # your other routes go here.
 
 .. autoclass:: MetricsHTTPServer
-   :members: stop
+   :members: close
 
 .. autoclass:: ThreadedMetricsHTTPServer
-   :members: stop
+   :members: close
 
 
-.. _aiohttp: https://aiohttp.readthedocs.org
+
+.. _sd:
+
+Service Discovery
+-----------------
+
+.. currentmodule:: prometheus_async.aio.sd
+
+Web exposure is much more useful if it comes with an easy way to integrate it with service discovery.
+
+Currently ``prometheus_async`` only ships integration with a local Consul agent using `python-consul <https://github.com/cablehead/python-consul>`_ library that you have to install if you want to use it.
+
+.. autoclass:: ConsulAgent

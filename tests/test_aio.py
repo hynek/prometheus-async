@@ -22,11 +22,7 @@ try:
 except ImportError:
     aiohttp = None
 
-try:
-    from twisted.internet.defer import Deferred
-except ImportError:
-    Deferred = object
-
+from pretend import stub, call_recorder, call
 from prometheus_client import Counter
 
 from prometheus_async import aio
@@ -250,7 +246,7 @@ class TestWeb:
         )
         assert isinstance(server, aio.web.MetricsHTTPServer)
 
-        addr, port = server.sockets[0]
+        addr, port = server.socket
         Counter("test_start_http_server", "cnt").inc()
 
         rv = yield from aiohttp.request(
@@ -264,7 +260,7 @@ class TestWeb:
             ' counter\ntest_start_http_server 1.0\n'
             in body
         )
-        yield from server.stop()
+        yield from server.close()
 
     def test_start_in_thread(self):
         """
@@ -274,8 +270,8 @@ class TestWeb:
         t = aio.web.start_http_server_in_thread(addr="127.0.0.1")
         assert isinstance(t, aio.web.ThreadedMetricsHTTPServer)
 
-        s = t.sockets[0]
-        h = http.client.HTTPConnection(s.address, port=s[1])
+        s = t.socket
+        h = http.client.HTTPConnection(s.addr, port=s[1])
         h.request("GET", "/metrics")
         rsp = h.getresponse()
         body = rsp.read().decode()
@@ -284,18 +280,29 @@ class TestWeb:
 
         assert "HELP test_start_http_server_in_thread cnt" in body
 
-        t.stop()
+        t.close()
 
         assert False is t._thread.is_alive()
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("addr,url", [
+        ("127.0.0.1", "127.0.0.1:"),
+        ("::1", "[::1]:")
+    ]
+    )
+    def test_url(self, addr, url, event_loop):
+        """
+        The URL of a MetricsHTTPServer is correctly computed.
+        """
+        server = yield from aio.web.start_http_server(
+            addr=addr, loop=event_loop
+        )
+        sock = server.socket
 
-@pytest.mark.skipif(aiohttp is not None, reason="aiohttp must be missing.")
-@pytest.mark.asyncio
-def test_start_http_server_web_missing():
-    """
-    Raises RuntimeError if start_http_server is called with aiohttp.
-    """
-    with pytest.raises(RuntimeError) as e:
-        yield from aio.web.start_http_server(0)
+        part = url + str(sock.port) + "/"
+        assert "http://" + part == server.url
 
-    assert "aiohttp is required for the http server." == e.value.args[0]
+        server.https = True
+        assert "https://" + part == server.url
+
+        yield from server.close()
