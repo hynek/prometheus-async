@@ -32,6 +32,23 @@ from prometheus_client.exposition import (
 )
 
 
+def _needs_aiohttp(obj):
+    """
+    Decorator that returns *obj* if aiohttp is available else a callable that
+    raises a RuntimeError.
+    """
+    if web is None:
+        def raiser(*a, **kw):
+            """
+            Notifies about missing aiohttp dependency.
+            """
+            raise RuntimeError("'{}' requires aiohttp.".format(obj.__name__))
+        return raiser
+    else:
+        return obj
+
+
+@_needs_aiohttp
 def server_stats(request):
     """
     Return a web response with the plain text version of the metrics.
@@ -46,7 +63,7 @@ def server_stats(request):
 _REF = b'<html><body><a href="/metrics">Metrics</a></body></html>'
 
 
-def cheap(request):
+def _cheap(request):
     """
     A view that links to metrics.
 
@@ -56,6 +73,7 @@ def cheap(request):
 
 
 @asyncio.coroutine
+@_needs_aiohttp
 def start_http_server(*, addr="", port=0, ssl_ctx=None, service_discovery=None,
                       loop=None):
     """
@@ -76,7 +94,7 @@ def start_http_server(*, addr="", port=0, ssl_ctx=None, service_discovery=None,
         loop = asyncio.get_event_loop()
 
     app = web.Application()
-    app.router.add_route("GET", "/", cheap)
+    app.router.add_route("GET", "/", _cheap)
     app.router.add_route("GET", "/metrics", server_stats)
     handler = app.make_handler(access_log=None)
     srv = yield from loop.create_server(
@@ -201,6 +219,7 @@ class ThreadedMetricsHTTPServer:
         return self._http_server.is_registered
 
 
+@_needs_aiohttp
 def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None,
                                 service_discovery=None):
     """

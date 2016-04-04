@@ -22,7 +22,7 @@ try:
 except ImportError:
     aiohttp = None
 
-from pretend import stub, call_recorder, call
+# from pretend import stub, call_recorder, call
 from prometheus_client import Counter
 
 from prometheus_async import aio
@@ -230,7 +230,7 @@ class TestWeb:
         """
         Returns a simple string.
         """
-        rv = aio.web.cheap(None)
+        rv = aio.web._cheap(None)
         assert (
             b'<html><body><a href="/metrics">Metrics</a></body></html>' ==
             rv.body
@@ -306,3 +306,23 @@ class TestWeb:
         assert "https://" + part == server.url
 
         yield from server.close()
+
+
+class TestNeedsAioHTTP:
+    @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
+    def test_present(self):
+        """
+        If aiohttp is present, the original object is returned.
+        """
+        o = object()
+        assert o is aio.web._needs_aiohttp(o)
+
+    @pytest.mark.skipif(aiohttp is not None, reason="Needs missing aiohttp.")
+    def test_missing(self):
+        """
+        If aiohttp is missing, raise RuntimeError if called.
+        """
+        with pytest.raises(RuntimeError) as e:
+            aio.web._needs_aiohttp(coro)()
+
+        assert "'coro' requires aiohttp." == str(e.value)
