@@ -68,5 +68,7 @@ class ConsulAgent:
                 return False
             else:
                 return True
+            finally:
+                consul.close()
 
         return deregister
