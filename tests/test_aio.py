@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import asyncio
+import inspect
 import http.client
 
 import pytest
@@ -34,6 +35,18 @@ def coro():
 
 
 class TestTime:
+    def test_still_coroutine_function(self, fo):
+        """
+        It's ensured that a decorated function still passes as a coroutine
+        function.  Otherwise PYTHONASYNCIODEBUG=1 breaks.
+
+        iscoroutine[function] sadly only works with async def.
+        """
+        func = aio.time(fo)(coro)
+
+        assert inspect.isgenerator(func())
+        assert inspect.isgeneratorfunction(func)
+
     @pytest.mark.asyncio
     def test_decorator_sync(self, fo, patch_timer):
         """

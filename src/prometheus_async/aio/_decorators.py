@@ -32,8 +32,8 @@ def time(metric, future=None):
     :returns: coroutine function (if decorator) or coroutine.
     """
     if future is None:
-        @asyncio.coroutine
         @wrapt.decorator
+        @asyncio.coroutine
         def decorator(wrapped, _, args, kw):
             def observe():
                 metric.observe(get_time() - start_time)
