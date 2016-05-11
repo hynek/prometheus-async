@@ -33,7 +33,7 @@ Decorator Wrappers
 
          def render_GET(self, request):
             d = deferLater(reactor, 5, lambda: request)
-            time(d.addCallback(self._delayedRender))
+            time(REQ_TIME, d.addCallback(self._delayedRender))
             return NOT_DONE_YET
 
 .. autofunction:: count_exceptions
