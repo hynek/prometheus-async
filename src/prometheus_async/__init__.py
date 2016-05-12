@@ -37,11 +37,9 @@ __copyright__ = "Copyright (c) 2016 {0}".format(__author__)
 __all__ = []
 
 try:
-    import twisted  # noqa -- only to detect Twisted
+    from . import tx  # noqa -- flake8 doesn't understand the __all__.append
 except ImportError:
     pass
-else:
-    from . import tx  # noqa -- flake8 doesn't understand the __all__.append
 
     __all__.append("tx")
 
