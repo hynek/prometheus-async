@@ -12,13 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from setuptools import setup, find_packages
-
 import codecs
 import os
 import re
 import sys
 
+from distutils.version import LooseVersion
+
+import setuptools
+
+from setuptools import setup, find_packages
 
 ###############################################################################
 
@@ -42,14 +45,16 @@ CLASSIFIERS = [
 ]
 INSTALL_REQUIRES = ["six", "prometheus-client", "wrapt"]
 EXTRAS_REQUIRE = {
-    ':python_version<"3.4"': ["monotonic"],
     "consul": ["python-consul", "aiohttp"],
     "twisted": ["twisted"],
 }
 
-# For legacy setuptools + sdist.
-if sys.version_info[0] == 2:
-    INSTALL_REQUIRES.append("monotonic")
+if LooseVersion(setuptools.__version__) < LooseVersion("18.0"):
+    # For legacy setuptools + sdist.
+    if sys.version_info[0] == 2:
+        INSTALL_REQUIRES.append("monotonic")
+else:
+    EXTRAS_REQUIRE[':python_version<"3.4"'] = ["monotonic"]
 
 ###############################################################################
 
