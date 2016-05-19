@@ -24,8 +24,6 @@ from setuptools import setup, find_packages
 ###############################################################################
 
 NAME = "prometheus_async"
-PACKAGES = find_packages(where="src")
-META_PATH = os.path.join("src", "prometheus_async", "__init__.py")
 KEYWORDS = ["metrics", "prometheus", "twisted", "asyncio"]
 CLASSIFIERS = [
     "Development Status :: 4 - Beta",
@@ -41,7 +39,11 @@ CLASSIFIERS = [
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-INSTALL_REQUIRES = ["six", "prometheus-client", "wrapt"]
+INSTALL_REQUIRES = [
+    "prometheus_client",
+    "six",
+    "wrapt",
+]
 EXTRAS_REQUIRE = {
     "consul": ["python-consul", "aiohttp"],
     "twisted": ["twisted"],
@@ -69,7 +71,17 @@ def read(*parts):
         return f.read()
 
 
-META_FILE = read(META_PATH)
+try:
+    PACKAGES
+except NameError:
+    PACKAGES = find_packages(where="src")
+
+try:
+    META_PATH
+except NameError:
+    META_PATH = os.path.join(HERE, "src", NAME, "__init__.py")
+finally:
+    META_FILE = read(META_PATH)
 
 
 def find_meta(meta):
@@ -85,18 +97,31 @@ def find_meta(meta):
     raise RuntimeError("Unable to find __{meta}__ string.".format(meta=meta))
 
 
+URI = find_meta("uri")
+LONG = (
+    read("README.rst") + "\n\n" +
+    "Release Information\n" +
+    "===================\n\n" +
+    re.search("(\d{2}.\d.\d \(.*?\)\n.*?)\n\n\n",
+              read("CHANGELOG.rst"), re.S).group(1) +
+    "\n\n`Full changelog " +
+    "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URI) +
+    read("AUTHORS.rst")
+)
+
+
 if __name__ == "__main__":
     setup(
         name=NAME,
         description=find_meta("description"),
         license=find_meta("license"),
-        url=find_meta("uri"),
+        url=URI,
         version=find_meta("version"),
         author=find_meta("author"),
         author_email=find_meta("email"),
         maintainer=find_meta("author"),
         maintainer_email=find_meta("email"),
-        long_description=read("README.rst"),
+        long_description=LONG,
         keywords=KEYWORDS,
         packages=PACKAGES,
         package_dir={"": "src"},
