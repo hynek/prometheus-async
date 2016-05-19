@@ -314,6 +314,7 @@ class TestWeb:
 
         assert isinstance(t, aio.web.ThreadedMetricsHTTPServer)
         assert t.url.startswith("http")
+        assert False is t.https
         assert t.is_registered is (sd is not None)
         if sd is not None:
             assert sd.registered_ms is t._http_server

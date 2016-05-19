@@ -33,6 +33,10 @@ __all__ = [
 class ConsulAgent:
     """
     Service discovery via a local Consul agent.
+
+    Pass as ``service_discovery`` into
+    :func:`prometheus_async.aio.web.start_http_server`/
+    :func:`prometheus_async.aio.web.start_http_server_in_thread`.
     """
     def __init__(self, *, name="app-metrics", service_id=None, tags=(),
                  token=None):

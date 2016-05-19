@@ -119,13 +119,15 @@ class MetricsHTTPServer:
 
     Returned by :func:`start_http_server`.  Do *not* instantiate it yourself.
 
-    :attribute socket: Socket the server is listening on.  namedtuples of
+    :ivar socket: Socket the server is listening on.  namedtuples of
         either (:class:`ipaddress.IPv4Address`, port) or
         (:class:`ipaddress.IPv6Address`, port).
-    :attribute bool https: Whether the server uses SSL/TLS.
-    :attribute loop: The :class:`event loop <asyncio.BaseEventLoop>` the server
+    :ivar bool https: Whether the server uses SSL/TLS.
+    :ivar loop: The :class:`event loop <asyncio.BaseEventLoop>` the server
         uses.
-    :attribute str url: A valid URL to the metrics endpoint.
+    :ivar str url: A valid URL to the metrics endpoint.
+    :ivar bool is_registered: Is the web endpoint registered with a
+        service discovery system?
     """
     def __init__(self, socket, server, app, handler, https, loop):
         self._app = app
@@ -188,8 +190,14 @@ class ThreadedMetricsHTTPServer:
     Returned by :func:`start_http_server_in_thread`.  Do *not* instantiate it
     yourself.
 
-    :attribute socket: Socket the server is listening on.  namedtuple of
+    :ivar socket: Socket the server is listening on.  namedtuple of
         ``Socket(addr, port)``.
+    :ivar bool https: Whether the server uses SSL/TLS.
+    :ivar loop: The :class:`event loop <asyncio.BaseEventLoop>` the server
+        uses.
+    :ivar str url: A valid URL to the metrics endpoint.
+    :ivar bool is_registered: Is the web endpoint registered with a
+        service discovery system?
     """
     def __init__(self, http_server, thread):
         self._http_server = http_server
@@ -205,6 +213,10 @@ class ThreadedMetricsHTTPServer:
 
         self._thread.join()
         loop.close()
+
+    @property
+    def https(self):
+        return self._http_server.https
 
     @property
     def socket(self):

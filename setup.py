@@ -41,7 +41,13 @@ CLASSIFIERS = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 INSTALL_REQUIRES = ["six", "prometheus-client", "wrapt"]
+EXTRAS_REQUIRE = {
+    ':python_version<"3.4"': ["monotonic"],
+    "consul": ["python-consul", "aiohttp"],
+    "twisted": ["twisted"],
+}
 
+# For legacy setuptools + sdist.
 if sys.version_info[0] == 2:
     INSTALL_REQUIRES.append("monotonic")
 
@@ -93,5 +99,6 @@ if __name__ == "__main__":
         include_package_data=True,
         classifiers=CLASSIFIERS,
         install_requires=INSTALL_REQUIRES,
+        extras_require=EXTRAS_REQUIRE,
         zip_safe=False,
     )
