@@ -21,6 +21,8 @@ matrix:
     - python: "3.5"
       env: TOXENV=py35-aiohttp
     - python: "3.5"
+      env: TOXENV=py35-consul
+    - python: "3.5"
       env: TOXENV=py35
     - python: "pypy"
       env: TOXENV=pypy
