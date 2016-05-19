@@ -59,6 +59,23 @@ class FakeCounter(object):
         self._val += 1
 
 
+class FakeGauge(object):
+    """
+    A fake Gauge.
+    """
+    def __init__(self):
+        self._val = 0
+        self._calls = 0
+
+    def inc(self, val=1):
+        self._val += val
+        self._calls += 1
+
+    def dec(self, val=1):
+        self._val -= val
+        self._calls += 1
+
+
 @pytest.fixture
 def fo():
     return FakeObserver()
@@ -67,6 +84,11 @@ def fo():
 @pytest.fixture
 def fc():
     return FakeCounter()
+
+
+@pytest.fixture
+def fg():
+    return FakeGauge()
 
 
 @pytest.fixture

@@ -90,3 +90,37 @@ def count_exceptions(metric, future=None, exc=BaseException):
                 raise
             return rv
         return count()
+
+
+def track_inprogress(metric, future=None):
+    """
+    Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
+
+    Works as a decorator, as well on :class:`asyncio.Future`\ s.
+
+    :returns: coroutine function (if decorator) or coroutine.
+    """
+    if future is None:
+        @asyncio.coroutine
+        @wrapt.decorator
+        def track(wrapped, _, args, kw):
+            metric.inc()
+            try:
+                rv = yield from wrapped(*args, **kw)
+            finally:
+                metric.dec()
+
+            return rv
+
+        return track
+    else:
+        metric.inc()
+
+        @asyncio.coroutine
+        def track():
+            try:
+                rv = yield from future
+            finally:
+                metric.dec()
+            return rv
+        return track()

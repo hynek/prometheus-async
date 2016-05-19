@@ -17,9 +17,13 @@ asyncio-related functionality.
 """
 
 from . import sd, web
-from ._decorators import count_exceptions, time
+from ._decorators import count_exceptions, time, track_inprogress
 
 
 __all__ = [
-    "count_exceptions", "sd", "time", "web",
+    "count_exceptions",
+    "sd",
+    "time",
+    "track_inprogress",
+    "web",
 ]

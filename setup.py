@@ -17,8 +17,6 @@ import os
 import re
 import sys
 
-from distutils.version import LooseVersion
-
 import setuptools
 
 from setuptools import setup, find_packages
@@ -49,12 +47,13 @@ EXTRAS_REQUIRE = {
     "twisted": ["twisted"],
 }
 
-if LooseVersion(setuptools.__version__) < LooseVersion("18.0"):
+if int(setuptools.__version__.split(".", 1)[0]) < 18:
+    assert "bdist_wheel" not in sys.argv, "setuptools 18 required for wheels."
     # For legacy setuptools + sdist.
-    if sys.version_info[0] == 2:
+    if sys.version_info[0:2] < (3, 4):
         INSTALL_REQUIRES.append("monotonic")
 else:
-    EXTRAS_REQUIRE[':python_version<"3.4"'] = ["monotonic"]
+    EXTRAS_REQUIRE[":python_version<'3.4'"] = ["monotonic"]
 
 ###############################################################################
 

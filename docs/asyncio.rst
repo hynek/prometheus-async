@@ -30,6 +30,8 @@ Decorator Wrappers
 
 .. autocofunction:: count_exceptions
 
+.. autocofunction:: track_inprogress
+
 
 .. _asyncio-web:
 

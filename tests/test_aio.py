@@ -23,7 +23,6 @@ try:
 except ImportError:
     aiohttp = None
 
-# from pretend import stub, call_recorder, call
 from prometheus_client import Counter
 
 from prometheus_async import aio
@@ -223,6 +222,37 @@ class TestCountExceptions:
         with pytest.raises(Exception):
             assert 42 == (yield from coro)
         assert 1 == fc._val
+
+
+class TestTrackInprogress:
+    @pytest.mark.asyncio
+    def test_coroutine(self, fg):
+        """
+        Incs and decs.
+        """
+        f = aio.track_inprogress(fg)(coro)
+
+        yield from f()
+
+        assert 0 == fg._val
+        assert 2 == fg._calls
+
+    @pytest.mark.asyncio
+    def test_future(self, fg, event_loop):
+        """
+        Incs and decs.
+        """
+        fut = asyncio.Future(loop=event_loop)
+
+        wrapped = aio.track_inprogress(fg, fut)
+
+        assert 1 == fg._val
+
+        fut.set_result(42)
+
+        yield from wrapped
+
+        assert 0 == fg._val
 
 
 class FakeSD:
