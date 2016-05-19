@@ -80,4 +80,4 @@ def patch_timer(monkeypatch):
         from prometheus_async.aio import _decorators
         monkeypatch.setattr(_decorators, "get_time", mk_monotonic_timer())
     except:
-        print("failed")
+        pass

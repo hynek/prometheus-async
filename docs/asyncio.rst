@@ -11,7 +11,7 @@ The asyncio-related APIs can be found within the ``prometheus_async.aio`` packag
 Decorator Wrappers
 ------------------
 
-.. autofunction:: time
+.. autocofunction:: time
 
    .. code-block:: python
 
@@ -28,7 +28,7 @@ Decorator Wrappers
          await asyncio.sleep(1)
          return web.Response(body=b"hello")
 
-.. autofunction:: count_exceptions
+.. autocofunction:: count_exceptions
 
 
 .. _asyncio-web:
@@ -41,7 +41,7 @@ Metric Exposure
 ``prometheus_async`` offers methods to expose your metrics using `aiohttp <http://aiohttp.readthedocs.org/>`_ under ``prometheus_async.aio.web``:
 
 
-.. autofunction:: start_http_server
+.. autocofunction:: start_http_server
 
 .. autofunction:: start_http_server_in_thread
 

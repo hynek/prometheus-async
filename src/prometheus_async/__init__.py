@@ -37,13 +37,13 @@ __copyright__ = "Copyright (c) 2016 {0}".format(__author__)
 __all__ = []
 
 try:
-    from . import tx  # noqa -- flake8 doesn't understand the __all__.append
+    from . import tx  # noqa -- flake8 doesn't understand __all__.append
 except ImportError:
     pass
-
+else:
     __all__.append("tx")
 
 if not six.PY2:
-    from . import aio  # noqa -- flake8 doesn't understand the __all__.append
+    from . import aio  # noqa -- flake8 doesn't understand __all__.append
 
     __all__.append("aio")

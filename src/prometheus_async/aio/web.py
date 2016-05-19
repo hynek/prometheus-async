@@ -53,7 +53,7 @@ def server_stats(request):
     """
     Return a web response with the plain text version of the metrics.
 
-    :rtype: aiohttp.web.Response
+    :rtype: :class:`aiohttp.web.Response`
     """
     rsp = web.Response(body=generate_latest(core.REGISTRY))
     rsp.content_type = CONTENT_TYPE_LATEST
@@ -225,8 +225,7 @@ def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None,
     """
     Start an asyncio HTTP(S) server in a new thread with an own event loop.
 
-    Ideal to expose your metrics in regular (non-asyncio) Python 3
-    applications.
+    Ideal to expose your metrics in non-asyncio Python 3 applications.
 
     For arguments see :func:`start_http_server`.
 

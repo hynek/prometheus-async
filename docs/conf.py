@@ -63,6 +63,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
+    'sphinxcontrib.asyncio',
 ]
 
 
@@ -81,8 +82,8 @@ master_doc = 'index'
 # General information about the project.
 project = u'prometheus_async'
 year = datetime.date.today().year
-copyright = u'2015{0}, Hynek Schlawack'.format(
-    u'-{0}'.format(year) if year != 2015 else u""
+copyright = u'2016{0}, Hynek Schlawack'.format(
+    u'-{0}'.format(year) if year != 2016 else u""
 )
 
 # The version info for the project you're documenting, acts as replacement for
