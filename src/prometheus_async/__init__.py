@@ -25,7 +25,7 @@ __version__ = "16.0.0.dev5"
 
 __title__ = "prometheus_async"
 __description__ = "Async helpers for prometheus_client."
-__uri__ = "https://prometheus-async.readthedocs.org/"
+__uri__ = "https://prometheus-async.readthedocs.io/"
 
 __author__ = "Hynek Schlawack"
 __email__ = "hs@ox.cx"

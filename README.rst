@@ -41,7 +41,7 @@ The source code is hosted on GitHub_ and the documentation on `Read The Docs`_.
 
 .. _asyncio: https://docs.python.org/3/library/asyncio.html
 .. _`Python client`: https://github.com/prometheus/client_python
-.. _Prometheus: http://prometheus.io/
+.. _Prometheus: https://prometheus.io/
 .. _Twisted: https://twistedmatrix.com/
 .. _GitHub: https://github.com/hynek/prometheus_async
-.. _`Read The Docs`: https://prometheus-async.readthedocs.org/
+.. _`Read The Docs`: https://prometheus-async.readthedocs.io/

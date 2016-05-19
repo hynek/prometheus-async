@@ -22,7 +22,7 @@ Here are a few guidelines to get you started:
 
 Please note that this project is released with a Contributor `Code of Conduct`_.
 By participating in this project you agree to abide by its terms.
-Please report any harm to `Hynek Schlawack <me>`_ in any way you find appropriate.
+Please report any harm to me_ in any way you find appropriate.
 
 .. note::
    If you have something great but aren’t sure whether it adheres -- or even can adhere -- to the rules above: **please submit a pull request anyway**!
@@ -40,7 +40,7 @@ If you have any question or concerns, feel free to reach out to me_.
 .. _`good test docstrings`: https://jml.io/pages/test-docstrings.html
 .. _`Code of Conduct`: https://github.com/hynek/prometheus_async/blob/master/CODE_OF_CONDUCT.rst
 .. _changelog: https://github.com/hynek/prometheus_async/blob/master/docs/changelog.rst
-.. _`backward compatibility`: https://prometheus_async.readthedocs.org/en/latest/backward-compatibility.html
+.. _`backward compatibility`: https://prometheus-async.readthedocs.io/en/latest/backward-compatibility.html
 .. _`tox`: https://testrun.org/tox/
 .. _`Travis CI`: https://travis-ci.org/
 .. _pyenv: https://github.com/yyuu/pyenv

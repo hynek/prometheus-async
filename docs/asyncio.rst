@@ -40,7 +40,7 @@ Metric Exposure
 
 .. currentmodule:: prometheus_async.aio.web
 
-``prometheus_async`` offers methods to expose your metrics using `aiohttp <http://aiohttp.readthedocs.org/>`_ under ``prometheus_async.aio.web``:
+``prometheus_async`` offers methods to expose your metrics using `aiohttp <http://aiohttp.readthedocs.io/>`_ under ``prometheus_async.aio.web``:
 
 
 .. autocofunction:: start_http_server
