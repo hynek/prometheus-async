@@ -38,6 +38,8 @@ Decorator Wrappers
 
 .. autofunction:: count_exceptions
 
+.. autofunction:: track_inprogress
+
 
 .. _twisted-web:
 

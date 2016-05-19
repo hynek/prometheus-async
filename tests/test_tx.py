@@ -159,3 +159,55 @@ class TestCountExceptions(object):
 
         assert 42 == (yield tx.count_exceptions(fc, d))
         assert 0 == fc._val
+
+
+class TestTrackInprogress(object):
+    @pytest.inlineCallbacks
+    def test_deferred(self, fg):
+        """
+        Incs and decs if its passed a Deferred.
+        """
+        d = tx.track_inprogress(fg, Deferred())
+
+        assert 1 == fg._val
+
+        d.callback(42)
+        rv = yield d
+
+        assert 42 == rv
+        assert 0 == fg._val
+
+    @pytest.inlineCallbacks
+    def test_decorator_deferred(self, fg):
+        """
+        Incs and decs if the decorated function returns a Deferred.
+        """
+        d = Deferred()
+
+        @tx.track_inprogress(fg)
+        def func():
+            return d
+
+        rv = func()
+
+        assert 1 == fg._val
+
+        d.callback(42)
+        rv = yield rv
+
+        assert 42 == rv
+        assert 0 == fg._val
+
+    def test_decorator_value(self, fg):
+        """
+        Incs and decs if the decorated function returns a value.
+        """
+        @tx.track_inprogress(fg)
+        def func():
+            return 42
+
+        rv = func()
+
+        assert 42 == rv
+        assert 0 == fg._val
+        assert 2 == fg._calls

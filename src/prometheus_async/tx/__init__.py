@@ -16,9 +16,11 @@
 Twisted-related functionality.
 """
 
-from ._decorators import time, count_exceptions
+from ._decorators import time, count_exceptions, track_inprogress
 
 
 __all__ = [
-    "count_exceptions", "time",
+    "count_exceptions",
+    "time",
+    "track_inprogress",
 ]

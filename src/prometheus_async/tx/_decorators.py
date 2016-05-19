@@ -31,7 +31,7 @@ def time(metric, deferred=None):
 
     Works with both sync and async results.
 
-    :returns: callable or ``Deferred``.
+    :returns: function or ``Deferred``.
     """
     if deferred is None:
         @wrapt.decorator
@@ -62,6 +62,8 @@ def count_exceptions(metric, deferred=None, exc=BaseException):
     Call ``metric.inc()`` whenever *exc* is caught.
 
     Can be used as a decorator or on a ``Deferred``.
+
+    :returns: function (if decorator) or ``Deferred``.
     """
     def inc(fail):
         fail.trap(exc)
@@ -85,3 +87,33 @@ def count_exceptions(metric, deferred=None, exc=BaseException):
         return decorator
     else:
         return deferred.addErrback(inc)
+
+
+def track_inprogress(metric, deferred=None):
+    """
+    Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
+
+    Can be used as a decorator or on a ``Deferred``.
+
+    :returns: function (if decorator) or ``Deferred``.
+    """
+    def dec(rv):
+        metric.dec()
+        return rv
+
+    if deferred is None:
+        @wrapt.decorator
+        def decorator(f, _, args, kw):
+            metric.inc()
+            try:
+                rv = f(*args, **kw)
+            finally:
+                if isinstance(rv, Deferred):
+                    return rv.addBoth(dec)
+                else:
+                    metric.dec()
+                    return rv
+        return decorator
+    else:
+        metric.inc()
+        return deferred.addBoth(dec)
