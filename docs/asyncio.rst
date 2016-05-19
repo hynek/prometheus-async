@@ -13,7 +13,7 @@ Decorator Wrappers
 
 .. autocofunction:: time
 
-   .. code-block:: python
+   ::
 
       import asyncio
 
@@ -47,9 +47,7 @@ Metric Exposure
 
 .. autofunction:: server_stats
 
-    Useful if you want to install your metrics within your own application:
-
-   .. code-block:: python
+    Useful if you want to install your metrics within your own application::
 
          from aiohttp import web
          from prometheus_async import aio

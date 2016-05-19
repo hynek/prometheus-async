@@ -15,6 +15,8 @@ prometheus_async
 Currently asyncio_ (Python 3.4, 3.5) and Twisted_ (Python 2.7, 3.4, 3.5, PyPy) are supported.
 
 
+It works by wrapping the metrics from the official client:
+
 .. code-block:: python
 
    import asyncio
