@@ -43,7 +43,7 @@ except ImportError:
 
     __all__.append("tx")
 
-if six.PY3:
+if not six.PY2:
     from . import aio  # noqa -- flake8 doesn't understand the __all__.append
 
     __all__.append("aio")
