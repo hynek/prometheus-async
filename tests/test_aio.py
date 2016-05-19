@@ -225,6 +225,23 @@ class TestCountExceptions:
         assert 1 == fc._val
 
 
+class FakeSD:
+    """
+    Fake Service Discovery.
+    """
+    registered_ms = None
+
+    @asyncio.coroutine
+    def register(self, metrics_server, loop):
+        self.registered_ms = metrics_server
+
+        @asyncio.coroutine
+        def deregister():
+            return True
+
+        return deregister
+
+
 @pytest.mark.skipif(aiohttp is None, reason="Tests require aiohttp")
 class TestWeb:
     def test_server_stats(self):
@@ -250,14 +267,21 @@ class TestWeb:
         )
 
     @pytest.mark.asyncio
-    def test_start_http_server(self, event_loop):
+    @pytest.mark.parametrize("sd", [
+        None,
+        FakeSD(),
+    ])
+    def test_start_http_server(self, event_loop, sd):
         """
-        Integration test: server gets started and serves stats.
+        Integration test: server gets started, is registered, and serves stats.
         """
         server = yield from aio.web.start_http_server(
-            addr="127.0.0.1", loop=event_loop
+            addr="127.0.0.1", loop=event_loop, service_discovery=sd,
         )
         assert isinstance(server, aio.web.MetricsHTTPServer)
+        assert server.is_registered is (sd is not None)
+        if sd is not None:
+            assert sd.registered_ms is server
 
         addr, port = server.socket
         Counter("test_start_http_server", "cnt").inc()
@@ -275,13 +299,24 @@ class TestWeb:
         )
         yield from server.close()
 
-    def test_start_in_thread(self):
+    @pytest.mark.parametrize("sd", [
+        None,
+        FakeSD(),
+    ])
+    def test_start_in_thread(self, sd):
         """
-        Threaded version starts and exits properly.
+        Threaded version starts and exits properly, passes on service
+        discovery.
         """
         Counter("test_start_http_server_in_thread", "cnt").inc()
-        t = aio.web.start_http_server_in_thread(addr="127.0.0.1")
+        t = aio.web.start_http_server_in_thread(addr="127.0.0.1",
+                                                service_discovery=sd)
+
         assert isinstance(t, aio.web.ThreadedMetricsHTTPServer)
+        assert t.url.startswith("http")
+        assert t.is_registered is (sd is not None)
+        if sd is not None:
+            assert sd.registered_ms is t._http_server
 
         s = t.socket
         h = http.client.HTTPConnection(s.addr, port=s[1])
