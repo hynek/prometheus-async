@@ -23,6 +23,16 @@ try:
 except ImportError:
     aiohttp = None
 
+try:
+    import consul
+except ImportError:
+    consul = None
+else:
+    import uuid
+
+    from prometheus_async.aio.sd import ConsulAgent
+
+
 from prometheus_client import Counter
 
 from prometheus_async import aio
@@ -308,6 +318,7 @@ class TestWeb:
         server = yield from aio.web.start_http_server(
             addr="127.0.0.1", loop=event_loop, service_discovery=sd,
         )
+
         assert isinstance(server, aio.web.MetricsHTTPServer)
         assert server.is_registered is (sd is not None)
         if sd is not None:
@@ -405,3 +416,42 @@ class TestNeedsAioHTTP:
             aio.web._needs_aiohttp(coro)()
 
         assert "'coro' requires aiohttp." == str(e.value)
+
+
+@pytest.mark.skipif(consul is None, reason="Needs python-consul.")
+@pytest.mark.asyncio
+def test_consul_agent(event_loop):
+    """
+    Integration test with a real consul agent.  Start a service, register it,
+    close it, verify it's deregistered.
+    """
+    tags = ("foo", "bar")
+    service_id = str(uuid.uuid4())  # allow for parallel tests
+
+    con = consul.aio.Consul()
+    ca = ConsulAgent(
+        name="test-metrics",
+        service_id=service_id,
+        tags=tags
+    )
+
+    try:
+        server = yield from aio.web.start_http_server(
+            addr="127.0.0.1", loop=event_loop, service_discovery=ca,
+        )
+    except aiohttp.errors.ClientOSError:
+        pytest.skip("Missing consul agent.")
+
+    assert service_id in (yield from con.agent.services())
+
+    svc = (yield from con.agent.services())[service_id]
+
+    assert "test-metrics" == svc["Service"]
+    assert sorted(tags) == sorted(svc["Tags"])
+    assert server.socket.addr == svc["Address"]
+    assert server.socket.port == svc["Port"]
+
+    yield from server.close()
+
+    # Assert service is gone
+    assert service_id not in (yield from con.agent.services())

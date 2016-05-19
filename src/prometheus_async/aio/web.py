@@ -119,7 +119,7 @@ class MetricsHTTPServer:
 
     Returned by :func:`start_http_server`.  Do *not* instantiate it yourself.
 
-    :ivar socket: Socket the server is listening on.  namedtuples of
+    :ivar socket: Socket the server is listening on.  namedtuple of
         either (:class:`ipaddress.IPv4Address`, port) or
         (:class:`ipaddress.IPv6Address`, port).
     :ivar bool https: Whether the server uses SSL/TLS.

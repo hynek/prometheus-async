@@ -61,17 +61,13 @@ class ConsulAgent:
             check=Check.http(
                 metrics_server.url, "10s",
             )
-        )):
+        )):  # pragma: nocover
             return None
 
         @asyncio.coroutine
         def deregister():
             try:
                 yield from consul.agent.service.deregister(self.service_id)
-            except Exception:
-                return False
-            else:
-                return True
             finally:
                 consul.close()
 
