@@ -419,8 +419,9 @@ class TestNeedsAioHTTP:
 
 
 @pytest.mark.skipif(consul is None, reason="Needs python-consul.")
+@pytest.mark.parametrize("deregister", [True, False])
 @pytest.mark.asyncio
-def test_consul_agent(event_loop):
+def test_consul_agent(event_loop, deregister):
     """
     Integration test with a real consul agent.  Start a service, register it,
     close it, verify it's deregistered.
@@ -432,7 +433,8 @@ def test_consul_agent(event_loop):
     ca = ConsulAgent(
         name="test-metrics",
         service_id=service_id,
-        tags=tags
+        tags=tags,
+        deregister=deregister,
     )
 
     try:
@@ -453,5 +455,6 @@ def test_consul_agent(event_loop):
 
     yield from server.close()
 
-    # Assert service is gone
-    assert service_id not in (yield from con.agent.services())
+    services = yield from con.agent.services()
+    # Assert service is gone iff we are supposed to deregister.
+    assert (service_id in services) is not deregister

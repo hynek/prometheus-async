@@ -13,7 +13,7 @@ The third digit is only for regressions.
 Changes:
 ^^^^^^^^
 
-*none*
+- Service discovery deregistration is optional now.
 
 
 ----

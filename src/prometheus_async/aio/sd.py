@@ -37,13 +37,22 @@ class ConsulAgent:
     Pass as ``service_discovery`` into
     :func:`prometheus_async.aio.web.start_http_server`/
     :func:`prometheus_async.aio.web.start_http_server_in_thread`.
+
+    :param str name: Application name that is used for the name and the service
+        ID if not set.
+    :param str service_id: Consul Service ID.  If not set, *name* is used.
+    :param tuple tags: Tags to use in Consul registration.
+    :param str token: A consul access token.
+    :param bool deregister: Whether to deregister when the HTTP server is
+        closed.
     """
     def __init__(self, *, name="app-metrics", service_id=None, tags=(),
-                 token=None):
+                 token=None, deregister=True):
         self.name = name
         self.service_id = service_id or name
         self.tags = tags
         self.token = token
+        self.deregister = deregister
 
     @asyncio.coroutine
     def register(self, metrics_server, loop):
@@ -67,7 +76,8 @@ class ConsulAgent:
         @asyncio.coroutine
         def deregister():
             try:
-                yield from consul.agent.service.deregister(self.service_id)
+                if self.deregister is True:
+                    yield from consul.agent.service.deregister(self.service_id)
             finally:
                 consul.close()
 
