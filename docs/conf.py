@@ -313,4 +313,5 @@ linkcheck_ignore = [
 intersphinx_mapping = {
     "https://docs.python.org/3": None,
     "https://aiohttp.readthedocs.io/en/stable/": None,
+    "http://twistedmatrix.com/documents/current/api/": None,
 }

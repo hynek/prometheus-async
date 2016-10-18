@@ -46,7 +46,7 @@ Decorator Wrappers
 Metric Exposure
 ---------------
 
-The underlying prometheus client libarary, `prometheus_client`_ exposes a `twisted.web.Resource`, namely `prometheus_client.twisted.MetricsResource`_, that makes it extremely easy to surface your metrics.
+The underlying prometheus client library, `prometheus_client`_ exposes a :class:`twisted.web.resource.Resource` -- namely `prometheus_client.twisted.MetricsResource`_ -- that makes it extremely easy to expose your metrics.
 
      .. code-block:: python
 
@@ -62,7 +62,7 @@ The underlying prometheus client libarary, `prometheus_client`_ exposes a `twist
         reactor.listenTCP(8000, factory)
         reactor.run()
 
-As a slightly more in depth example, the following exposes the application's metrics under `/metrics` and sets up a `prometheus_client.Counter`_ for inbound HTTP requests.
+As a slightly more in-depth example, the following exposes the application's metrics under ``/metrics`` and sets up a `prometheus_client.Counter`_ for inbound HTTP requests.
 It also uses `Klein`_ to set up the routes instead of relying directly on `twisted.web`_ for routing.
 
      .. code-block:: python
