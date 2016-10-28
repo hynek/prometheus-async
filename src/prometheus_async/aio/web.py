@@ -93,7 +93,7 @@ def start_http_server(*, addr="", port=0, ssl_ctx=None, service_discovery=None,
     if loop is None:  # pragma: nocover
         loop = asyncio.get_event_loop()
 
-    app = web.Application()
+    app = web.Application(loop=loop)
     app.router.add_route("GET", "/", _cheap)
     app.router.add_route("GET", "/metrics", server_stats)
     handler = app.make_handler(access_log=None)
