@@ -13,7 +13,8 @@ The third digit is only for regressions.
 Changes:
 ^^^^^^^^
 
-*none*
+- When using the aiohttp metrics exporter, create the web application using an explicit loop argument.
+  `#6 <https://github.com/hynek/prometheus_async/pull/6>`_
 
 
 ----
