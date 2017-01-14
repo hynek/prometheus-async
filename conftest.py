@@ -76,6 +76,17 @@ class FakeGauge(object):
         self._calls += 1
 
 
+@pytest.fixture(autouse=True)
+def reset_registry(monkeypatch):
+    """
+    Ensures prometheus_client's CollectorRegistry is empty before each test.
+    """
+    from prometheus_client import REGISTRY
+
+    for c in list(REGISTRY._collector_to_names):
+        REGISTRY.unregister(c)
+
+
 @pytest.fixture
 def fo():
     return FakeObserver()
