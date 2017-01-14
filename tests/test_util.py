@@ -32,6 +32,15 @@ py3_only = pytest.mark.skipif(six.PY2, reason="Python 3-only test.")
 
 
 class TestMkTime(object):
+    def test_exec(self):
+        """
+        Timer is a function and monotonic.
+        """
+        t1 = _util.get_time()
+        t2 = _util.get_time()
+
+        assert t1 < t2
+
     @py2_only
     def test_py2(self):
         """
@@ -40,7 +49,7 @@ class TestMkTime(object):
         import monotonic
         assert (
             _util.get_time is
-            monotonic.time is
+            monotonic.monotonic is
             _util.mk_get_time()
         )
 

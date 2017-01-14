@@ -7,26 +7,14 @@ Versions are year-based with a strict backward compatibility policy.
 The third digit is only for regressions.
 
 
-16.3.0 (UNRELEASED)
+17.1.0 (UNRELEASED)
 -------------------
-
-
-Backward-incompatible changes:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-*none*
-
-
-Deprecations:
-^^^^^^^^^^^^^
-
-*none*
-
 
 Changes:
 ^^^^^^^^
 
-*none*
+- Fix monotonic timer on Python 2.
+  `#7 <https://github.com/hynek/prometheus_async/issues/7>`_
 
 
 ----
