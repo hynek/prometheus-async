@@ -2,11 +2,21 @@
 prometheus_async
 ================
 
+.. image:: https://img.shields.io/pypi/v/prometheus_async.svg
+   :target: https://pypi.org/project/prometheus_async/
+   :alt: PyPI
+
+.. image:: https://readthedocs.org/projects/attrs/badge/?version=stable
+   :target: http://attrs.readthedocs.io/en/stable/?badge=stable
+   :alt: Documentation Status
+
 .. image:: https://travis-ci.org/hynek/prometheus_async.svg?branch=master
    :target: https://travis-ci.org/hynek/prometheus_async
+   :alt: CI status
 
-.. image:: https://codecov.io/github/hynek/prometheus_async/coverage.svg?branch=master
-    :target: https://codecov.io/github/hynek/prometheus_async?branch=master
+.. image:: https://codecov.io/github/hynek/prometheus_async/branch/master/graph/badge.svg
+   :target: https://codecov.io/github/hynek/prometheus_async
+   :alt: Test Coverage
 
 .. teaser-begin
 
