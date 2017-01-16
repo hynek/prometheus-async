@@ -25,7 +25,7 @@ from .._util import get_time
 
 def time(metric, deferred=None):
     """
-    Call ``metric.observe(time)`` with  runtime in seconds.
+    Call ``metric.observe(time)`` with runtime in seconds.
 
     Can be used as a decorator as well as on ``Deferred``\ s.
 
