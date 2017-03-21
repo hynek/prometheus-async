@@ -177,7 +177,13 @@ class MetricsHTTPServer:
         yield from self._handler.finish_connections(1.0)
         self._server.close()
         yield from self._server.wait_closed()
-        yield from self._app.finish()
+        try:
+            cleanup = self._app.cleanup
+        except AttributeError:
+            # For aiohttp < 0.21.0
+            cleanup = self._app.finish
+
+        yield from cleanup()
 
 
 Socket = namedtuple("Socket", "addr port")
