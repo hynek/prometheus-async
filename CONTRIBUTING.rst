@@ -111,9 +111,9 @@ Thank you for considering contributing to ``prometheus_async``!
 .. _`good test docstrings`: https://jml.io/pages/test-docstrings.html
 .. _`Code of Conduct`: https://github.com/hynek/prometheus_async/blob/master/CODE_OF_CONDUCT.rst
 .. _changelog: https://github.com/hynek/prometheus_async/blob/master/CHANGELOG.rst
-.. _`backward compatibility`: https://prometheus_async.readthedocs.io/en/latest/backward-compatibility.html
-.. _`tox`: https://testrun.org/tox/
-.. _pyenv: https://github.com/yyuu/pyenv
+.. _`backward compatibility`: https://prometheus-async.readthedocs.io/en/latest/backward-compatibility.html
+.. _`tox`: https://tox.readthedocs.io/en/latest/
+.. _pyenv: https://github.com/pyenv/pyenv
 .. _reStructuredText: http://sphinx-doc.org/rest.html
 .. _semantic newlines: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
 .. _CI: https://travis-ci.org/hynek/prometheus_async/
