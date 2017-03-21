@@ -282,7 +282,7 @@ class FakeSD:
         return deregister
 
 
-@pytest.mark.skipif(aiohttp is None, reason="Tests require aiohttp")
+@pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
 class TestWeb:
     def test_server_stats(self):
         """
@@ -396,6 +396,18 @@ class TestWeb:
         assert "https://" + part == server.url
 
         yield from server.close()
+
+    @pytest.mark.asyncio
+    @pytest.mark.skipif(aiohttp is not None and aiohttp.__version__[0] != "0",
+                        reason="Needs an old aiohttp.")
+    def test_deprecation_warning(self):
+        """
+        aiohttp older than 0.21 will raise a DeprecationWarning.
+        """
+        server = yield from aio.web.start_http_server()
+
+        with pytest.warns(DeprecationWarning):
+            yield from server.close()
 
 
 class TestNeedsAioHTTP:

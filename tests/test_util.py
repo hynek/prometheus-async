@@ -27,8 +27,8 @@ import six
 from prometheus_async import _util
 
 
-py2_only = pytest.mark.skipif(six.PY3, reason="Python 2-only test.")
-py3_only = pytest.mark.skipif(six.PY2, reason="Python 3-only test.")
+py2_only = pytest.mark.skipif(six.PY3, reason="Needs Python 2.")
+py3_only = pytest.mark.skipif(six.PY2, reason="Needs Python 3.")
 
 
 class TestMkTime(object):

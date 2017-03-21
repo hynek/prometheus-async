@@ -19,6 +19,7 @@ aiohttp-based metrics exposure.
 import asyncio
 import queue
 import threading
+import warnings
 
 from collections import namedtuple
 
@@ -181,6 +182,7 @@ class MetricsHTTPServer:
             cleanup = self._app.cleanup
         except AttributeError:
             # For aiohttp < 0.21.0
+            warnings.warn("aiohttp 0.21 is deprecated.", DeprecationWarning)
             cleanup = self._app.finish
 
         yield from cleanup()
