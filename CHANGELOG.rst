@@ -11,22 +11,16 @@ The third digit is only for regressions.
 -------------------
 
 
-Backward-incompatible changes:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-*none*
-
-
 Deprecations:
 ^^^^^^^^^^^^^
 
-*none*
+- Using ``aiohttp`` older than 0.21 is now deprecated.
 
 
 Changes:
 ^^^^^^^^
 
-*none*
+- ``prometheus_async.aio.web`` now supports ``aiohttp`` 2.0.
 
 
 ----
