@@ -441,7 +441,7 @@ def test_consul_agent(event_loop, deregister):
         server = yield from aio.web.start_http_server(
             addr="127.0.0.1", loop=event_loop, service_discovery=ca,
         )
-    except aiohttp.errors.ClientOSError:
+    except aiohttp.ClientOSError:
         pytest.skip("Missing consul agent.")
 
     assert service_id in (yield from con.agent.services())
