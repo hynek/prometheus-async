@@ -26,7 +26,8 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- ``prometheus_async.aio.web.start_http_server()`` now passes the *loop* argument to ``aiohttp.web.Application.make_handler()`` instead of ``Application``\ 's initializer.
+  This fixes a "loop argument is deprecated" warning.
 
 
 ----
