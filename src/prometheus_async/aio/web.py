@@ -94,10 +94,17 @@ def start_http_server(*, addr="", port=0, ssl_ctx=None, service_discovery=None,
     if loop is None:  # pragma: nocover
         loop = asyncio.get_event_loop()
 
-    app = web.Application()
-    app.router.add_route("GET", "/", _cheap)
-    app.router.add_route("GET", "/metrics", server_stats)
-    handler = app.make_handler(access_log=None, loop=loop)
+    try:
+        app = web.Application()
+        app.router.add_route("GET", "/", _cheap)
+        app.router.add_route("GET", "/metrics", server_stats)
+        handler = app.make_handler(access_log=None, loop=loop)
+    except TypeError:  # For aiohttp < 0.21.0
+        app = web.Application(loop=loop)
+        app.router.add_route("GET", "/", _cheap)
+        app.router.add_route("GET", "/metrics", server_stats)
+        handler = app.make_handler(access_log=None)
+
     srv = yield from loop.create_server(
         handler,
         addr, port, ssl=ssl_ctx,
