@@ -470,3 +470,5 @@ def test_consul_agent(event_loop, deregister):
     services = yield from con.agent.services()
     # Assert service is gone iff we are supposed to deregister.
     assert (service_id in services) is not deregister
+
+    con.close()
