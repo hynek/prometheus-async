@@ -47,6 +47,13 @@ Metric Exposure
 
 .. autofunction:: start_http_server_in_thread
 
+.. warning::
+
+   Please note that if you want to use `uWSGI <http://uwsgi-docs.readthedocs.io/>`_ together with ``start_http_server_in_thread()``, you have to tell uWSGI to enable threads using its `configuration option <http://uwsgi-docs.readthedocs.io/en/latest/Options.html#enable-threads>`_ or by passing it ``--enable-threads``.
+
+   If you want to run uWSGI with ``--master`` (as it is recommended by its authors) and stop the metrics server using :mod:`atexit` handlers (as is recommended by me), you also have to enable uWSGI's lazy applications `using configuration <http://uwsgi-docs.readthedocs.io/en/latest/Options.html#lazy-apps>`_ or by passing it ``--lazy-apps``.  Otherwise your :mod:`atexit` handler will hang until the uWSGI master process kills it.
+
+
 .. autofunction:: server_stats
 
     Useful if you want to install your metrics within your own application::
