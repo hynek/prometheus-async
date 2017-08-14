@@ -305,6 +305,7 @@ class TestWeb:
             b'<html><body><a href="/metrics">Metrics</a></body></html>' ==
             rv.body
         )
+        assert "text/html" == rv.content_type
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("sd", [
@@ -471,4 +472,4 @@ def test_consul_agent(event_loop, deregister):
     # Assert service is gone iff we are supposed to deregister.
     assert (service_id in services) is not deregister
 
-    con.close()
+    yield from con.close()

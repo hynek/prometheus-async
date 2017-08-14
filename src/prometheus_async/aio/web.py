@@ -57,11 +57,14 @@ def server_stats(request):
     :rtype: :class:`aiohttp.web.Response`
     """
     rsp = web.Response(body=generate_latest(core.REGISTRY))
+    # This is set separately because aiohttp complains about `;` in
+    # content_type thinking it means there's also a charset.
+    # cf. https://github.com/aio-libs/aiohttp/issues/2197
     rsp.content_type = CONTENT_TYPE_LATEST
     return rsp
 
 
-_REF = b'<html><body><a href="/metrics">Metrics</a></body></html>'
+_REF = '<html><body><a href="/metrics">Metrics</a></body></html>'
 
 
 def _cheap(request):
@@ -70,7 +73,7 @@ def _cheap(request):
 
     Useful for cheap health checks.
     """
-    return web.Response(body=_REF)
+    return web.Response(text=_REF, content_type="text/html")
 
 
 @asyncio.coroutine

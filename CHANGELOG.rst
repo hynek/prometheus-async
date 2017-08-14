@@ -26,7 +26,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- Set proper content type header for the root redirection page.
 
 
 ----
