@@ -355,6 +355,7 @@ class TestWeb:
                                                 service_discovery=sd)
 
         assert isinstance(t, aio.web.ThreadedMetricsHTTPServer)
+        assert "PrometheusAsyncWebEndpoint" == t._thread.name
         assert t.url.startswith("http")
         assert False is t.https
         assert t.is_registered is (sd is not None)

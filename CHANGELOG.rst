@@ -26,7 +26,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- The thread created by ``prometheus_async.aio.start_http_server_in_thread()`` has a human-readable name now.
 
 
 ----

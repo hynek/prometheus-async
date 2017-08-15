@@ -276,7 +276,11 @@ def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None,
         loop.run_forever()
         loop.run_until_complete(http.close())
 
-    t = threading.Thread(target=server, daemon=True)
+    t = threading.Thread(
+        target=server,
+        name="PrometheusAsyncWebEndpoint",
+        daemon=True
+    )
     t.start()
 
     return ThreadedMetricsHTTPServer(q.get(), t)
