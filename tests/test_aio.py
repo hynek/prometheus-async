@@ -473,4 +473,4 @@ def test_consul_agent(event_loop, deregister):
     # Assert service is gone iff we are supposed to deregister.
     assert (service_id in services) is not deregister
 
-    yield from con.close()
+    con.close()
