@@ -107,10 +107,10 @@ def patch_timer(monkeypatch):
     try:
         from prometheus_async.tx import _decorators
         monkeypatch.setattr(_decorators, "get_time", mk_monotonic_timer())
-    except:
+    except BaseException:
         pass
     try:
         from prometheus_async.aio import _decorators
         monkeypatch.setattr(_decorators, "get_time", mk_monotonic_timer())
-    except:
+    except BaseException:
         pass
