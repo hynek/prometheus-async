@@ -284,23 +284,27 @@ class FakeSD:
 
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
 class TestWeb:
+    @pytest.mark.asyncio
     def test_server_stats(self):
         """
         Returns a response with the current stats.
         """
         Counter("test_server_stats", "cnt").inc()
-        rv = aio.web.server_stats(None)
+        rv = yield from aio.web.server_stats(None)
+
         assert (
             b'# HELP test_server_stats cnt\n# TYPE test_server_stats counter\n'
             b'test_server_stats 1.0\n'
             in rv.body
         )
 
+    @pytest.mark.asyncio
     def test_cheap(self):
         """
         Returns a simple string.
         """
-        rv = aio.web._cheap(None)
+        rv = yield from aio.web._cheap(None)
+
         assert (
             b'<html><body><a href="/metrics">Metrics</a></body></html>' ==
             rv.body
@@ -328,12 +332,14 @@ class TestWeb:
         addr, port = server.socket
         Counter("test_start_http_server", "cnt").inc()
 
-        rv = yield from aiohttp.request(
-            "GET",
-            "http://{addr}:{port}/metrics"
-            .format(addr=addr, port=port)
-        )
-        body = yield from rv.text()
+        with aiohttp.ClientSession() as s:
+            rv = yield from s.request(
+                "GET",
+                "http://{addr}:{port}/metrics"
+                .format(addr=addr, port=port)
+            )
+            body = yield from rv.text()
+
         assert (
             '# HELP test_start_http_server cnt\n# TYPE test_start_http_server'
             ' counter\ntest_start_http_server 1.0\n'

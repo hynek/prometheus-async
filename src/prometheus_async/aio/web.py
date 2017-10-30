@@ -19,7 +19,6 @@ aiohttp-based metrics exposure.
 import asyncio
 import queue
 import threading
-import warnings
 
 from collections import namedtuple
 
@@ -50,6 +49,7 @@ def _needs_aiohttp(obj):
 
 
 @_needs_aiohttp
+@asyncio.coroutine
 def server_stats(request):
     """
     Return a web response with the plain text version of the metrics.
@@ -67,6 +67,7 @@ def server_stats(request):
 _REF = '<html><body><a href="/metrics">Metrics</a></body></html>'
 
 
+@asyncio.coroutine
 def _cheap(request):
     """
     A view that links to metrics.
@@ -97,16 +98,10 @@ def start_http_server(*, addr="", port=0, ssl_ctx=None, service_discovery=None,
     if loop is None:  # pragma: nocover
         loop = asyncio.get_event_loop()
 
-    try:
-        app = web.Application()
-        app.router.add_route("GET", "/", _cheap)
-        app.router.add_route("GET", "/metrics", server_stats)
-        handler = app.make_handler(access_log=None, loop=loop)
-    except TypeError:  # For aiohttp < 0.21.0
-        app = web.Application(loop=loop)
-        app.router.add_route("GET", "/", _cheap)
-        app.router.add_route("GET", "/metrics", server_stats)
-        handler = app.make_handler(access_log=None)
+    app = web.Application()
+    app.router.add_route("GET", "/", _cheap)
+    app.router.add_route("GET", "/metrics", server_stats)
+    handler = app.make_handler(access_log=None, loop=loop)
 
     srv = yield from loop.create_server(
         handler,
@@ -185,17 +180,10 @@ class MetricsHTTPServer:
         """
         if self._deregister is not None:
             yield from self._deregister()
-        yield from self._handler.finish_connections(1.0)
+        yield from self._handler.shutdown(1.0)
         self._server.close()
         yield from self._server.wait_closed()
-        try:
-            cleanup = self._app.cleanup
-        except AttributeError:
-            # For aiohttp < 0.21.0
-            warnings.warn("aiohttp 0.21 is deprecated.", DeprecationWarning)
-            cleanup = self._app.finish
-
-        yield from cleanup()
+        yield from self._app.cleanup()
 
 
 Socket = namedtuple("Socket", "addr port")

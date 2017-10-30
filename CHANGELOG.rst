@@ -10,23 +10,17 @@ The third digit is only for regressions.
 17.5.0 (UNRELEASED)
 -------------------
 
-
 Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*none*
-
-
-Deprecations:
-^^^^^^^^^^^^^
-
-*none*
+- ``prometheus_async.aio.web`` now requires ``aiohttp`` 2.0 or later.
 
 
 Changes:
 ^^^^^^^^
 
 - The thread created by ``prometheus_async.aio.start_http_server_in_thread()`` has a human-readable name now.
+- Fixed compatibility with ``aiohttp`` 2.3.
 
 
 ----
