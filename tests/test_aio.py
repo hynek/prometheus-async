@@ -382,7 +382,6 @@ class TestWeb:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("addr,url", [
         ("127.0.0.1", "127.0.0.1:"),
-        ("::1", "[::1]:")
     ]
     )
     async def test_url(self, addr, url, event_loop):

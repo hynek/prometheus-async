@@ -22,23 +22,17 @@ matrix:
     - python: "3.5"
       env: TOXENV=py35-aiohttp
     - python: "3.5"
-      env: TOXENV=py35-consul
-    - python: "3.5"
       env: TOXENV=py35
     - python: "3.6"
       env: TOXENV=py36-twisted
     - python: "3.6"
       env: TOXENV=py36-aiohttp
     - python: "3.6"
-      env: TOXENV=py36-consul
-    - python: "3.6"
       env: TOXENV=py36
     - python: "pypy3"
       env: TOXENV=pypy3-twisted
     - python: "pypy3"
       env: TOXENV=pypy3-aiohttp
-    - python: "pypy3"
-      env: TOXENV=pypy3-consul
     - python: "pypy3"
       env: TOXENV=pypy3
 
