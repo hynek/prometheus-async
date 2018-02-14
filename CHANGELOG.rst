@@ -15,6 +15,7 @@ Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - Python 3.4 is no longer supported.
+- ``aiohttp`` 3.0 or later is required now for asyncio support.
 
 
 Deprecations:
@@ -26,7 +27,8 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- ``python-consul`` is no longer required for asyncio Consul service discovery.
+  A plain ``aiohttp`` is enough now.
 
 
 ----

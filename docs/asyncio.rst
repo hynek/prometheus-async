@@ -83,8 +83,7 @@ Service Discovery
 
 Web exposure is much more useful if it comes with an easy way to integrate it with service discovery.
 
-Currently ``prometheus_async`` only ships integration with a local Consul agent using `python-consul <https://github.com/cablehead/python-consul>`_ library.
-Install using ``pip install prometheus_async[consul]`` to get it automatically pulled in.
+Currently ``prometheus_async`` only ships integration with a local Consul agent using ``aiohttp``.
 
 .. autoclass:: ConsulAgent
 

@@ -15,27 +15,21 @@
 import asyncio
 import http.client
 import inspect
+import uuid
 
 import pytest
 
 from prometheus_client import Counter
 
 from prometheus_async import aio
+from prometheus_async.aio.sd import ConsulAgent, _LocalConsulAgentClient
 
 
 try:
     import aiohttp
+    import yarl
 except ImportError:
     aiohttp = None
-
-try:
-    import consul
-except ImportError:
-    consul = None
-else:
-    import uuid
-
-    from prometheus_async.aio.sd import ConsulAgent
 
 
 async def coro():
@@ -422,10 +416,9 @@ class TestNeedsAioHTTP:
         assert "'coro' requires aiohttp." == str(e.value)
 
 
-@pytest.mark.skipif(consul is None, reason="Needs python-consul.")
+@pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
 @pytest.mark.parametrize("deregister", [True, False])
 @pytest.mark.asyncio
-@pytest.mark.xfail
 async def test_consul_agent(event_loop, deregister):
     """
     Integration test with a real consul agent.  Start a service, register it,
@@ -434,7 +427,7 @@ async def test_consul_agent(event_loop, deregister):
     tags = ("foo", "bar")
     service_id = str(uuid.uuid4())  # allow for parallel tests
 
-    con = consul.aio.Consul()
+    con = _LocalConsulAgentClient(token=None)
     ca = ConsulAgent(
         name="test-metrics",
         service_id=service_id,
@@ -449,9 +442,7 @@ async def test_consul_agent(event_loop, deregister):
     except aiohttp.ClientOSError:
         pytest.skip("Missing consul agent.")
 
-    assert service_id in await con.agent.services()
-
-    svc = (await con.agent.services())[service_id]
+    svc = (await con.get_services())[service_id]
 
     assert "test-metrics" == svc["Service"]
     assert sorted(tags) == sorted(svc["Tags"])
@@ -459,12 +450,15 @@ async def test_consul_agent(event_loop, deregister):
     assert server.socket.port == svc["Port"]
 
     await server.close()
-    # Eventual consistency...
-    await asyncio.sleep(1.5)
 
-    services = await con.agent.services()
+    services = await con.get_services()
 
-    # Assert service is gone iff we are supposed to deregister.
-    assert (service_id in services) is not deregister
+    if deregister:
+        # Assert service is gone iff we are supposed to deregister.
+        assert service_id not in services
+    else:
+        assert service_id in services
 
-    con.close()
+        # Clean up behind ourselves.
+        resp = await con.deregister_service(service_id)
+        assert 200 == resp.status
