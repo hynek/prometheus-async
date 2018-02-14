@@ -20,7 +20,7 @@ import wrapt
 
 from twisted.internet.defer import Deferred
 
-from .._util import get_time
+from .._utils import get_time
 
 
 def time(metric, deferred=None):

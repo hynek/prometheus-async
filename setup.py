@@ -19,7 +19,8 @@ import sys
 
 import setuptools
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
+
 
 ###############################################################################
 
@@ -34,28 +35,50 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 2",
     "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.4",
     "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+PYTHON_REQUIRES = ">=2.7, !=3.0, !=3.1, !=3.2, !=3.3, !=3.4"
 INSTALL_REQUIRES = [
+    "monotonic; python_version <= '3.5'",
     "prometheus_client",
     "six",
     "wrapt",
 ]
 EXTRAS_REQUIRE = {
+    "aiohttp": ["aiohttp>=3"],
     "consul": ["python-consul", "aiohttp"],
     "twisted": ["twisted"],
+    "tests": [
+        "coverage",
+        "pytest",
+        "pytest-asyncio; python_version >= '3.5'",
+    ],
+    "docs": [
+        "aiohttp",
+        "sphinx",
+        "sphinxcontrib-asyncio",
+        "twisted",
+    ]
 }
+EXTRAS_REQUIRE["dev"] = (
+    EXTRAS_REQUIRE["aiohttp"] +
+    EXTRAS_REQUIRE["consul"] +
+    EXTRAS_REQUIRE["twisted"] +
+    EXTRAS_REQUIRE["docs"] +
+    EXTRAS_REQUIRE["tests"] + [
+        "pytest-twisted",
+    ]
+)
 
 if int(setuptools.__version__.split(".", 1)[0]) < 18:
     assert "bdist_wheel" not in sys.argv, "setuptools 18 required for wheels."
     # For legacy setuptools + sdist.
-    if sys.version_info[0:2] < (3, 4):
+    if sys.version_info[0:2] < (3, 5):
         INSTALL_REQUIRES.append("monotonic")
-else:
-    EXTRAS_REQUIRE[":python_version<'3.4'"] = ["monotonic"]
 
 ###############################################################################
 
@@ -128,6 +151,7 @@ if __name__ == "__main__":
         package_dir={"": "src"},
         include_package_data=True,
         classifiers=CLASSIFIERS,
+        python_requires=PYTHON_REQUIRES,
         install_requires=INSTALL_REQUIRES,
         extras_require=EXTRAS_REQUIRE,
         zip_safe=False,

@@ -22,14 +22,15 @@ import threading
 
 from collections import namedtuple
 
+from prometheus_client.exposition import (
+    CONTENT_TYPE_LATEST, core, generate_latest
+)
+
+
 try:
     from aiohttp import web
 except ImportError:
     web = None
-
-from prometheus_client.exposition import (
-    generate_latest, CONTENT_TYPE_LATEST, core,
-)
 
 
 def _needs_aiohttp(obj):
@@ -49,8 +50,7 @@ def _needs_aiohttp(obj):
 
 
 @_needs_aiohttp
-@asyncio.coroutine
-def server_stats(request):
+async def server_stats(request):
     """
     Return a web response with the plain text version of the metrics.
 
@@ -67,8 +67,7 @@ def server_stats(request):
 _REF = '<html><body><a href="/metrics">Metrics</a></body></html>'
 
 
-@asyncio.coroutine
-def _cheap(request):
+async def _cheap(request):
     """
     A view that links to metrics.
 
@@ -77,10 +76,10 @@ def _cheap(request):
     return web.Response(text=_REF, content_type="text/html")
 
 
-@asyncio.coroutine
 @_needs_aiohttp
-def start_http_server(*, addr="", port=0, ssl_ctx=None, service_discovery=None,
-                      loop=None):
+async def start_http_server(
+        *,
+        addr="", port=0, ssl_ctx=None, service_discovery=None, loop=None):
     """
     Start an HTTP(S) server on *addr*:*port* using *loop*.
 
@@ -95,15 +94,12 @@ def start_http_server(*, addr="", port=0, ssl_ctx=None, service_discovery=None,
 
     :rtype: MetricsHTTPServer
     """
-    if loop is None:  # pragma: nocover
-        loop = asyncio.get_event_loop()
-
     app = web.Application()
     app.router.add_route("GET", "/", _cheap)
     app.router.add_route("GET", "/metrics", server_stats)
     handler = app.make_handler(access_log=None, loop=loop)
 
-    srv = yield from loop.create_server(
+    srv = await loop.create_server(
         handler,
         addr, port, ssl=ssl_ctx,
     )
@@ -115,7 +111,7 @@ def start_http_server(*, addr="", port=0, ssl_ctx=None, service_discovery=None,
         loop=loop,
     )
     if service_discovery is not None:
-        ms._deregister = yield from service_discovery.register(ms, loop)
+        ms._deregister = await service_discovery.register(ms, loop)
     return ms
 
 
@@ -173,17 +169,16 @@ class MetricsHTTPServer:
             port=self.socket.port,
         )
 
-    @asyncio.coroutine
-    def close(self):
+    async def close(self):
         """
         Stop the server and clean up.
         """
         if self._deregister is not None:
-            yield from self._deregister()
-        yield from self._handler.shutdown(1.0)
+            await self._deregister()
+        await self._handler.shutdown(1.0)
         self._server.close()
-        yield from self._server.wait_closed()
-        yield from self._app.cleanup()
+        await self._server.wait_closed()
+        await self._app.cleanup()
 
 
 Socket = namedtuple("Socket", "addr port")

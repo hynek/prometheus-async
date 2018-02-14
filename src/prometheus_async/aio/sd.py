@@ -16,8 +16,6 @@
 Service discovery for web exposure.
 """
 
-import asyncio
-
 try:
     from consul import Check
     from consul.aio import Consul as _Consul  # prevent accidental usage
@@ -54,14 +52,13 @@ class ConsulAgent:
         self.token = token
         self.deregister = deregister
 
-    @asyncio.coroutine
-    def register(self, metrics_server, loop):
+    async def register(self, metrics_server, loop):
         """
         :return: A coroutine callable to deregister or ``None``.
         """
         consul = _Consul(token=self.token, loop=loop)
 
-        if not (yield from consul.agent.service.register(
+        if not await consul.agent.service.register(
             name=self.name,
             service_id=self.service_id,
             address=metrics_server.socket.addr,
@@ -70,14 +67,13 @@ class ConsulAgent:
             check=Check.http(
                 metrics_server.url, "10s",
             )
-        )):  # pragma: nocover
+        ):  # pragma: nocover
             return None
 
-        @asyncio.coroutine
-        def deregister():
+        async def deregister():
             try:
                 if self.deregister is True:
-                    yield from consul.agent.service.deregister(self.service_id)
+                    await consul.agent.service.deregister(self.service_id)
             finally:
                 consul.close()
 

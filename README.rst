@@ -22,7 +22,7 @@ prometheus_async
 
 ``prometheus_async`` adds support for asynchronous frameworks to the official `Python client`_ for the Prometheus_ metrics and monitoring system.
 
-Currently asyncio_ (Python 3.4, 3.5, 3.6) and Twisted_ (Python 2.7, 3.4, 3.5, 3.6, PyPy) are supported.
+Currently asyncio_ (Python 3.5+, PyPy3) and Twisted_ (Python 2.7, 3.5+, PyPy) are supported.
 
 
 It works by wrapping the metrics from the official client:

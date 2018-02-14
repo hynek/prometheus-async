@@ -1,3 +1,6 @@
+dist: trusty
+group: travis_latest
+
 sudo: false
 cache:
   directories:
@@ -7,15 +10,13 @@ language: python
 
 
 matrix:
+  fast_finish: true
+
   include:
+    - python: "pypy"
+      env: TOXENV=pypy-twisted
     - python: "2.7"
-      env: TOXENV=py27
-    - python: "3.4"
-      env: TOXENV=py34-twisted
-    - python: "3.4"
-      env: TOXENV=py34-aiohttp
-    - python: "3.4"
-      env: TOXENV=py34
+      env: TOXENV=py27-twisted
     - python: "3.5"
       env: TOXENV=py35-twisted
     - python: "3.5"
@@ -29,13 +30,20 @@ matrix:
     - python: "3.6"
       env: TOXENV=py36-aiohttp
     - python: "3.6"
-      env: TOXENV=py36-legacy_aiohttp
-    - python: "3.6"
       env: TOXENV=py36-consul
     - python: "3.6"
       env: TOXENV=py36
     - python: "pypy"
-      env: TOXENV=pypy
+      env: TOXENV=pypy3-twisted
+    - python: "pypy"
+      env: TOXENV=pypy3-aiohttp
+    - python: "pypy"
+      env: TOXENV=pypy3-consul
+    - python: "pypy"
+      env: TOXENV=pypy3
+
+    - python: "3.7-dev"
+      env: TOXENV=py37
 
     # Meta
     - python: "3.6"
@@ -49,7 +57,7 @@ matrix:
 
 
 install:
-  - pip install tox
+  - pip install -U tox
 
 
 script:

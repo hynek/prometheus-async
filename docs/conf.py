@@ -135,8 +135,10 @@ highlight_language = 'python3'
 
 html_theme = "alabaster"
 html_theme_options = {
-    "font_family": "Palatino, Georgia, serif",
+    "font_family": '"Avenir Next", Calibri, "PT Sans", sans-serif',
+    "head_font_family": '"Avenir Next", Calibri, "PT Sans", sans-serif',
     "font_size": "18px",
+    "page_width": "980px",
 }
 
 # Theme options are theme-specific and customize the look and feel of a theme

@@ -19,9 +19,18 @@ import sys
 import pytest
 
 
+try:
+    import twisted
+except ImportError:
+    twisted = None
+
+
 collect_ignore = []
 if sys.version_info[0] == 2:
     collect_ignore.append("tests/test_aio.py")
+
+if twisted is None:
+    collect_ignore.append("tests/test_tx.py")
 
 
 def mk_monotonic_timer():

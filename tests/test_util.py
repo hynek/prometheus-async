@@ -14,17 +14,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-try:
-    import asyncio
-except ImportError:
-    asyncio = None
-
 import time
 
 import pytest
 import six
 
-from prometheus_async import _util
+from prometheus_async import _utils
 
 
 py2_only = pytest.mark.skipif(six.PY3, reason="Needs Python 2.")
@@ -36,8 +31,8 @@ class TestMkTime(object):
         """
         Timer is a function and monotonic.
         """
-        t1 = _util.get_time()
-        t2 = _util.get_time()
+        t1 = _utils.get_time()
+        t2 = _utils.get_time()
 
         assert t1 < t2
 
@@ -48,9 +43,9 @@ class TestMkTime(object):
         """
         import monotonic
         assert (
-            _util.get_time is
+            _utils.get_time is
             monotonic.monotonic is
-            _util.mk_get_time()
+            _utils.mk_get_time()
         )
 
     @py3_only
@@ -59,7 +54,7 @@ class TestMkTime(object):
         Use time.perf_counter on Python 3
         """
         assert (
-            _util.get_time is
+            _utils.get_time is
             time.perf_counter is
-            _util.mk_get_time()
+            _utils.mk_get_time()
         )
