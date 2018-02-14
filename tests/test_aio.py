@@ -27,7 +27,6 @@ from prometheus_async.aio.sd import ConsulAgent, _LocalConsulAgentClient
 
 try:
     import aiohttp
-    import yarl
 except ImportError:
     aiohttp = None
 
