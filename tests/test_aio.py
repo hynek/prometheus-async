@@ -470,16 +470,24 @@ class TestConsulAgent:
         """
         If register fails, return None.
         """
-        async def fake_register(**kw):
-            return None
+        class FakeMetricsServer:
+            socket = mock.Mock(addr="127.0.0.1", port=12345)
+            url = "http://127.0.0.1:12345/metrics"
+
+        class FakeSession:
+            async def __aexit__(self, exc_type, exc_value, traceback):
+                pass
+
+            async def __aenter__(self):
+                class FakeConnection:
+                    async def put(self, *args, **kw):
+                        return mock.Mock(status=400)
+                return FakeConnection()
 
         ca = ConsulAgent()
-        ca.consul = mock.Mock(
-            spec_set=_LocalConsulAgentClient,
-            register_service=fake_register,
-        )
+        ca.consul.session_factory = FakeSession
 
-        assert None is (await ca.register(None))
+        assert None is (await ca.register(FakeMetricsServer()))
 
 
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")

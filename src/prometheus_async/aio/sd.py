@@ -93,7 +93,8 @@ class _LocalConsulAgentClient:
             self.headers = {}
 
         self.session_factory = partial(
-            aiohttp.ClientSession, headers=self.headers,
+            aiohttp.ClientSession,
+            headers=self.headers
         )
 
     async def get_services(self):
