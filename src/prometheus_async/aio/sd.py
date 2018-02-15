@@ -16,6 +16,9 @@
 Service discovery for web exposure.
 """
 
+from functools import partial
+
+
 try:
     import aiohttp
     import yarl
@@ -53,7 +56,7 @@ class ConsulAgent:
         self.deregister = deregister
         self.consul = _LocalConsulAgentClient(token=token)
 
-    async def register(self, metrics_server, loop):
+    async def register(self, metrics_server, loop=None):
         """
         :return: A coroutine callable to deregister or ``None``.
         """
@@ -74,6 +77,9 @@ class ConsulAgent:
 
 
 class _LocalConsulAgentClient:
+    """
+    Minimal client to speak to a Consul agent on localhost:8500.
+    """
     def __init__(self, token):
         self.agent_url = yarl.URL.build(
             scheme="http", host="127.0.0.1", port="8500", path="/v1/agent",
@@ -81,20 +87,24 @@ class _LocalConsulAgentClient:
 
         if token:
             self.headers = {
-                "X-Consul-Token": self.token,
+                "X-Consul-Token": token,
             }
         else:
             self.headers = {}
 
+        self.session_factory = partial(
+            aiohttp.ClientSession, headers=self.headers,
+        )
+
     async def get_services(self):
-        async with aiohttp.ClientSession(headers=self.headers) as session:
+        async with self.session_factory() as session:
             resp = await session.get(
                 self.agent_url / "services"
             )
             return await resp.json()
 
     async def register_service(self, name, service_id, tags, metrics_server):
-        async with aiohttp.ClientSession() as session:
+        async with self.session_factory() as session:
             resp = await session.put(
                 self.agent_url / "service/register",
                 json={
@@ -108,13 +118,12 @@ class _LocalConsulAgentClient:
                         "Interval": "10s",
                     }
                 },
-                headers=self.headers,
             )
         if resp.status == 200:
             return resp
 
     async def deregister_service(self, service_id):
-        async with aiohttp.ClientSession() as session:
+        async with self.session_factory() as session:
             resp = await session.put(
                 yarl.URL("http://127.0.0.1:8500/v1/agent/service/deregister") /
                 service_id

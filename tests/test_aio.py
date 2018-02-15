@@ -17,6 +17,8 @@ import http.client
 import inspect
 import uuid
 
+from unittest import mock
+
 import pytest
 
 from prometheus_client import Counter
@@ -416,48 +418,76 @@ class TestNeedsAioHTTP:
 
 
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
-@pytest.mark.parametrize("deregister", [True, False])
-@pytest.mark.asyncio
-async def test_consul_agent(event_loop, deregister):
-    """
-    Integration test with a real consul agent.  Start a service, register it,
-    close it, verify it's deregistered.
-    """
-    tags = ("foo", "bar")
-    service_id = str(uuid.uuid4())  # allow for parallel tests
+class TestConsulAgent:
+    @pytest.mark.parametrize("deregister", [True, False])
+    @pytest.mark.asyncio
+    async def test_integration(self, event_loop, deregister):
+        """
+        Integration test with a real consul agent. Start a service, register
+        it, close it, verify it's deregistered.
+        """
+        tags = ("foo", "bar")
+        service_id = str(uuid.uuid4())  # allow for parallel tests
 
-    con = _LocalConsulAgentClient(token=None)
-    ca = ConsulAgent(
-        name="test-metrics",
-        service_id=service_id,
-        tags=tags,
-        deregister=deregister,
-    )
-
-    try:
-        server = await aio.web.start_http_server(
-            addr="127.0.0.1", loop=event_loop, service_discovery=ca,
+        con = _LocalConsulAgentClient(token=None)
+        ca = ConsulAgent(
+            name="test-metrics",
+            service_id=service_id,
+            tags=tags,
+            deregister=deregister,
         )
-    except aiohttp.ClientOSError:
-        pytest.skip("Missing consul agent.")
 
-    svc = (await con.get_services())[service_id]
+        try:
+            server = await aio.web.start_http_server(
+                addr="127.0.0.1", loop=event_loop, service_discovery=ca,
+            )
+        except aiohttp.ClientOSError:
+            pytest.skip("Missing consul agent.")
 
-    assert "test-metrics" == svc["Service"]
-    assert sorted(tags) == sorted(svc["Tags"])
-    assert server.socket.addr == svc["Address"]
-    assert server.socket.port == svc["Port"]
+        svc = (await con.get_services())[service_id]
 
-    await server.close()
+        assert "test-metrics" == svc["Service"]
+        assert sorted(tags) == sorted(svc["Tags"])
+        assert server.socket.addr == svc["Address"]
+        assert server.socket.port == svc["Port"]
 
-    services = await con.get_services()
+        await server.close()
 
-    if deregister:
-        # Assert service is gone iff we are supposed to deregister.
-        assert service_id not in services
-    else:
-        assert service_id in services
+        services = await con.get_services()
 
-        # Clean up behind ourselves.
-        resp = await con.deregister_service(service_id)
-        assert 200 == resp.status
+        if deregister:
+            # Assert service is gone iff we are supposed to deregister.
+            assert service_id not in services
+        else:
+            assert service_id in services
+
+            # Clean up behind ourselves.
+            resp = await con.deregister_service(service_id)
+            assert 200 == resp.status
+
+    @pytest.mark.asyncio
+    async def test_none_if_register_fails(self, event_loop):
+        """
+        If register fails, return None.
+        """
+        async def fake_register(**kw):
+            return None
+
+        ca = ConsulAgent()
+        ca.consul = mock.Mock(
+            spec_set=_LocalConsulAgentClient,
+            register_service=fake_register,
+        )
+
+        assert None is (await ca.register(None))
+
+
+@pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
+class TestLocalConsulAgentClient:
+    def test_sets_headers(self):
+        """
+        If a token is passed, "X-Consul-Token" header is set.
+        """
+        con = _LocalConsulAgentClient(token="token42")
+
+        assert "token42" == con.headers["X-Consul-Token"]
