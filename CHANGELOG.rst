@@ -15,7 +15,7 @@ Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - Python 3.4 is no longer supported.
-- ``aiohttp`` 3.0 or later is required now for asyncio support.
+- ``aiohttp`` 3.0 or later is now required for aio metrics exposure.
 
 
 Deprecations:
