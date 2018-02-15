@@ -94,6 +94,8 @@ async def start_http_server(
 
     :rtype: MetricsHTTPServer
     """
+    if loop is None:
+        loop = asyncio.get_event_loop()
     app = web.Application()
     app.router.add_route("GET", "/", _cheap)
     app.router.add_route("GET", "/metrics", server_stats)

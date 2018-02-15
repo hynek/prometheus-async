@@ -304,16 +304,23 @@ class TestWeb:
         assert "text/html" == rv.content_type
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize("pass_loop", [True, False])
     @pytest.mark.parametrize("sd", [
         None,
         FakeSD(),
     ])
-    async def test_start_http_server(self, event_loop, sd):
+    async def test_start_http_server(self, event_loop, pass_loop, sd):
         """
         Integration test: server gets started, is registered, and serves stats.
         """
+        if pass_loop:
+            loop = event_loop
+        else:
+            loop = None
         server = await aio.web.start_http_server(
-            addr="127.0.0.1", loop=event_loop, service_discovery=sd,
+            addr="127.0.0.1",
+            loop=loop,
+            service_discovery=sd,
         )
 
         assert isinstance(server, aio.web.MetricsHTTPServer)
