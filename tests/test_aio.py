@@ -13,74 +13,68 @@
 # limitations under the License.
 
 import asyncio
-import inspect
 import http.client
+import inspect
+import uuid
+
+from unittest import mock
 
 import pytest
+
+from prometheus_client import Counter
+
+from prometheus_async import aio
+from prometheus_async.aio.sd import ConsulAgent, _LocalConsulAgentClient
+
 
 try:
     import aiohttp
 except ImportError:
     aiohttp = None
 
-try:
-    import consul
-except ImportError:
-    consul = None
-else:
-    import uuid
 
-    from prometheus_async.aio.sd import ConsulAgent
-
-
-from prometheus_client import Counter
-
-from prometheus_async import aio
-
-
-@asyncio.coroutine
-def coro():
-    yield from asyncio.sleep(0)
+async def coro():
+    await asyncio.sleep(0)
 
 
 class TestTime:
-    def test_still_coroutine_function(self, fo):
+    @pytest.mark.asyncio
+    async def test_still_coroutine_function(self, fo):
         """
         It's ensured that a decorated function still passes as a coroutine
         function.  Otherwise PYTHONASYNCIODEBUG=1 breaks.
-
-        iscoroutine[function] sadly only works with async def.
         """
         func = aio.time(fo)(coro)
+        new_coro = func()
 
-        assert inspect.isgenerator(func())
-        assert inspect.isgeneratorfunction(func)
+        assert inspect.iscoroutine(new_coro)
+        assert inspect.iscoroutinefunction(func)
+
+        await new_coro
 
     @pytest.mark.asyncio
-    def test_decorator_sync(self, fo, patch_timer):
+    async def test_decorator_sync(self, fo, patch_timer):
         """
         time works with sync results functions.
         """
         @aio.time(fo)
-        @asyncio.coroutine
-        def func():
+        async def func():
             if True:
                 return 42
             else:
-                yield from asyncio.sleep(0)
+                await asyncio.sleep(0)
 
-        assert 42 == (yield from func())
+        assert 42 == await func()
         assert [1] == fo._observed
 
     @pytest.mark.asyncio
-    def test_decorator(self, fo, patch_timer):
+    async def test_decorator(self, fo, patch_timer):
         """
         time works with asyncio results functions.
         """
         @aio.time(fo)
-        @asyncio.coroutine
-        def func():
-            yield from asyncio.sleep(0)
+        async def func():
+            await asyncio.sleep(0)
             return 42
 
         rv = func()
@@ -88,31 +82,31 @@ class TestTime:
         assert asyncio.iscoroutine(rv)
         assert [] == fo._observed
 
-        rv = yield from rv
+        rv = await rv
+
         assert [1] == fo._observed
         assert 42 == rv
 
     @pytest.mark.asyncio
-    def test_decorator_exc(self, fo, patch_timer):
+    async def test_decorator_exc(self, fo, patch_timer):
         """
         Does not swallow exceptions.
         """
         v = ValueError("foo")
 
         @aio.time(fo)
-        @asyncio.coroutine
-        def func():
-            yield from asyncio.sleep(0)
+        async def func():
+            await asyncio.sleep(0)
             raise v
 
         with pytest.raises(ValueError) as e:
-            yield from func()
+            await func()
 
         assert v is e.value
         assert [1] == fo._observed
 
     @pytest.mark.asyncio
-    def test_future(self, fo, patch_timer, event_loop):
+    async def test_future(self, fo, patch_timer, event_loop):
         """
         time works with a asyncio.Future.
         """
@@ -123,11 +117,11 @@ class TestTime:
 
         fut.set_result(42)
 
-        assert 42 == (yield from coro)
+        assert 42 == await coro
         assert [1] == fo._observed
 
     @pytest.mark.asyncio
-    def test_future_exc(self, fo, patch_timer, event_loop):
+    async def test_future_exc(self, fo, patch_timer, event_loop):
         """
         Does not swallow exceptions.
         """
@@ -140,7 +134,7 @@ class TestTime:
         fut.set_exception(v)
 
         with pytest.raises(ValueError) as e:
-            yield from coro
+            await coro
 
         assert [1] == fo._observed
         assert v is e.value
@@ -148,50 +142,50 @@ class TestTime:
 
 class TestCountExceptions:
     @pytest.mark.asyncio
-    def test_decorator_no_exc(self, fc, event_loop):
+    async def test_decorator_no_exc(self, fc, event_loop):
         """
         If no exception is raised, the counter does not change.
         """
         @aio.count_exceptions(fc)
-        def func():
-            yield from asyncio.sleep(0.0)
+        async def func():
+            await asyncio.sleep(0.0)
             return 42
 
-        assert 42 == (yield from func())
+        assert 42 == await func()
         assert 0 == fc._val
 
     @pytest.mark.asyncio
-    def test_decorator_wrong_exc(self, fc, event_loop):
+    async def test_decorator_wrong_exc(self, fc, event_loop):
         """
         If a wrong exception is raised, the counter does not change.
         """
         @aio.count_exceptions(fc, exc=ValueError)
-        def func():
-            yield from asyncio.sleep(0.0)
+        async def func():
+            await asyncio.sleep(0.0)
             raise Exception()
 
         with pytest.raises(Exception):
-            yield from func()
+            await func()
 
         assert 0 == fc._val
 
     @pytest.mark.asyncio
-    def test_decorator_exc(self, fc, event_loop):
+    async def test_decorator_exc(self, fc, event_loop):
         """
         If the correct exception is raised, count it.
         """
         @aio.count_exceptions(fc, exc=ValueError)
-        def func():
-            yield from asyncio.sleep(0.0)
+        async def func():
+            await asyncio.sleep(0.0)
             raise ValueError()
 
         with pytest.raises(ValueError):
-            yield from func()
+            await func()
 
         assert 1 == fc._val
 
     @pytest.mark.asyncio
-    def test_future_no_exc(self, fc, event_loop):
+    async def test_future_no_exc(self, fc, event_loop):
         """
         If no exception is raised, the counter does not change.
         """
@@ -200,11 +194,11 @@ class TestCountExceptions:
 
         fut.set_result(42)
 
-        assert 42 == (yield from coro)
+        assert 42 == await coro
         assert 0 == fc._val
 
     @pytest.mark.asyncio
-    def test_future_wrong_exc(self, fc, event_loop):
+    async def test_future_wrong_exc(self, fc, event_loop):
         """
         If a wrong exception is raised, the counter does not change.
         """
@@ -215,11 +209,11 @@ class TestCountExceptions:
         fut.set_exception(exc)
 
         with pytest.raises(Exception):
-            assert 42 == (yield from coro)
+            assert 42 == await coro
         assert 0 == fc._val
 
     @pytest.mark.asyncio
-    def test_future_exc(self, fc, event_loop):
+    async def test_future_exc(self, fc, event_loop):
         """
         If the correct exception is raised, count it.
         """
@@ -230,25 +224,25 @@ class TestCountExceptions:
         fut.set_exception(exc)
 
         with pytest.raises(Exception):
-            assert 42 == (yield from coro)
+            assert 42 == await coro
         assert 1 == fc._val
 
 
 class TestTrackInprogress:
     @pytest.mark.asyncio
-    def test_coroutine(self, fg):
+    async def test_coroutine(self, fg):
         """
         Incs and decs.
         """
         f = aio.track_inprogress(fg)(coro)
 
-        yield from f()
+        await f()
 
         assert 0 == fg._val
         assert 2 == fg._calls
 
     @pytest.mark.asyncio
-    def test_future(self, fg, event_loop):
+    async def test_future(self, fg, event_loop):
         """
         Incs and decs.
         """
@@ -260,7 +254,7 @@ class TestTrackInprogress:
 
         fut.set_result(42)
 
-        yield from wrapped
+        await wrapped
 
         assert 0 == fg._val
 
@@ -271,12 +265,10 @@ class FakeSD:
     """
     registered_ms = None
 
-    @asyncio.coroutine
-    def register(self, metrics_server, loop):
+    async def register(self, metrics_server, loop):
         self.registered_ms = metrics_server
 
-        @asyncio.coroutine
-        def deregister():
+        async def deregister():
             return True
 
         return deregister
@@ -285,12 +277,12 @@ class FakeSD:
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
 class TestWeb:
     @pytest.mark.asyncio
-    def test_server_stats(self):
+    async def test_server_stats(self):
         """
         Returns a response with the current stats.
         """
         Counter("test_server_stats", "cnt").inc()
-        rv = yield from aio.web.server_stats(None)
+        rv = await aio.web.server_stats(None)
 
         assert (
             b'# HELP test_server_stats cnt\n# TYPE test_server_stats counter\n'
@@ -299,11 +291,11 @@ class TestWeb:
         )
 
     @pytest.mark.asyncio
-    def test_cheap(self):
+    async def test_cheap(self):
         """
         Returns a simple string.
         """
-        rv = yield from aio.web._cheap(None)
+        rv = await aio.web._cheap(None)
 
         assert (
             b'<html><body><a href="/metrics">Metrics</a></body></html>' ==
@@ -312,16 +304,23 @@ class TestWeb:
         assert "text/html" == rv.content_type
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize("pass_loop", [True, False])
     @pytest.mark.parametrize("sd", [
         None,
         FakeSD(),
     ])
-    def test_start_http_server(self, event_loop, sd):
+    async def test_start_http_server(self, event_loop, pass_loop, sd):
         """
         Integration test: server gets started, is registered, and serves stats.
         """
-        server = yield from aio.web.start_http_server(
-            addr="127.0.0.1", loop=event_loop, service_discovery=sd,
+        if pass_loop:
+            loop = event_loop
+        else:
+            loop = None
+        server = await aio.web.start_http_server(
+            addr="127.0.0.1",
+            loop=loop,
+            service_discovery=sd,
         )
 
         assert isinstance(server, aio.web.MetricsHTTPServer)
@@ -332,20 +331,20 @@ class TestWeb:
         addr, port = server.socket
         Counter("test_start_http_server", "cnt").inc()
 
-        with aiohttp.ClientSession() as s:
-            rv = yield from s.request(
+        async with aiohttp.ClientSession() as s:
+            rv = await s.request(
                 "GET",
                 "http://{addr}:{port}/metrics"
                 .format(addr=addr, port=port)
             )
-            body = yield from rv.text()
+            body = await rv.text()
 
         assert (
             '# HELP test_start_http_server cnt\n# TYPE test_start_http_server'
             ' counter\ntest_start_http_server 1.0\n'
             in body
         )
-        yield from server.close()
+        await server.close()
 
     @pytest.mark.parametrize("sd", [
         None,
@@ -385,14 +384,13 @@ class TestWeb:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("addr,url", [
         ("127.0.0.1", "127.0.0.1:"),
-        ("::1", "[::1]:")
     ]
     )
-    def test_url(self, addr, url, event_loop):
+    async def test_url(self, addr, url, event_loop):
         """
         The URL of a MetricsHTTPServer is correctly computed.
         """
-        server = yield from aio.web.start_http_server(
+        server = await aio.web.start_http_server(
             addr=addr, loop=event_loop
         )
         sock = server.socket
@@ -403,19 +401,7 @@ class TestWeb:
         server.https = True
         assert "https://" + part == server.url
 
-        yield from server.close()
-
-    @pytest.mark.asyncio
-    @pytest.mark.skipif(aiohttp is not None and aiohttp.__version__[0] != "0",
-                        reason="Needs an old aiohttp.")
-    def test_deprecation_warning(self):
-        """
-        aiohttp older than 0.21 will raise a DeprecationWarning.
-        """
-        server = yield from aio.web.start_http_server()
-
-        with pytest.warns(DeprecationWarning):
-            yield from server.close()
+        await server.close()
 
 
 class TestNeedsAioHTTP:
@@ -438,45 +424,85 @@ class TestNeedsAioHTTP:
         assert "'coro' requires aiohttp." == str(e.value)
 
 
-@pytest.mark.skipif(consul is None, reason="Needs python-consul.")
-@pytest.mark.parametrize("deregister", [True, False])
-@pytest.mark.asyncio
-def test_consul_agent(event_loop, deregister):
-    """
-    Integration test with a real consul agent.  Start a service, register it,
-    close it, verify it's deregistered.
-    """
-    tags = ("foo", "bar")
-    service_id = str(uuid.uuid4())  # allow for parallel tests
+@pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
+class TestConsulAgent:
+    @pytest.mark.parametrize("deregister", [True, False])
+    @pytest.mark.asyncio
+    async def test_integration(self, event_loop, deregister):
+        """
+        Integration test with a real consul agent. Start a service, register
+        it, close it, verify it's deregistered.
+        """
+        tags = ("foo", "bar")
+        service_id = str(uuid.uuid4())  # allow for parallel tests
 
-    con = consul.aio.Consul()
-    ca = ConsulAgent(
-        name="test-metrics",
-        service_id=service_id,
-        tags=tags,
-        deregister=deregister,
-    )
-
-    try:
-        server = yield from aio.web.start_http_server(
-            addr="127.0.0.1", loop=event_loop, service_discovery=ca,
+        con = _LocalConsulAgentClient(token=None)
+        ca = ConsulAgent(
+            name="test-metrics",
+            service_id=service_id,
+            tags=tags,
+            deregister=deregister,
         )
-    except aiohttp.ClientOSError:
-        pytest.skip("Missing consul agent.")
 
-    assert service_id in (yield from con.agent.services())
+        try:
+            server = await aio.web.start_http_server(
+                addr="127.0.0.1", loop=event_loop, service_discovery=ca,
+            )
+        except aiohttp.ClientOSError:
+            pytest.skip("Missing consul agent.")
 
-    svc = (yield from con.agent.services())[service_id]
+        svc = (await con.get_services())[service_id]
 
-    assert "test-metrics" == svc["Service"]
-    assert sorted(tags) == sorted(svc["Tags"])
-    assert server.socket.addr == svc["Address"]
-    assert server.socket.port == svc["Port"]
+        assert "test-metrics" == svc["Service"]
+        assert sorted(tags) == sorted(svc["Tags"])
+        assert server.socket.addr == svc["Address"]
+        assert server.socket.port == svc["Port"]
 
-    yield from server.close()
+        await server.close()
 
-    services = yield from con.agent.services()
-    # Assert service is gone iff we are supposed to deregister.
-    assert (service_id in services) is not deregister
+        services = await con.get_services()
 
-    con.close()
+        if deregister:
+            # Assert service is gone iff we are supposed to deregister.
+            assert service_id not in services
+        else:
+            assert service_id in services
+
+            # Clean up behind ourselves.
+            resp = await con.deregister_service(service_id)
+            assert 200 == resp.status
+
+    @pytest.mark.asyncio
+    async def test_none_if_register_fails(self, event_loop):
+        """
+        If register fails, return None.
+        """
+        class FakeMetricsServer:
+            socket = mock.Mock(addr="127.0.0.1", port=12345)
+            url = "http://127.0.0.1:12345/metrics"
+
+        class FakeSession:
+            async def __aexit__(self, exc_type, exc_value, traceback):
+                pass
+
+            async def __aenter__(self):
+                class FakeConnection:
+                    async def put(self, *args, **kw):
+                        return mock.Mock(status=400)
+                return FakeConnection()
+
+        ca = ConsulAgent()
+        ca.consul.session_factory = FakeSession
+
+        assert None is (await ca.register(FakeMetricsServer()))
+
+
+@pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
+class TestLocalConsulAgentClient:
+    def test_sets_headers(self):
+        """
+        If a token is passed, "X-Consul-Token" header is set.
+        """
+        con = _LocalConsulAgentClient(token="token42")
+
+        assert "token42" == con.headers["X-Consul-Token"]

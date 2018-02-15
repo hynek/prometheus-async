@@ -1,5 +1,5 @@
-prometheus_async
-================
+``prometheus_async``
+====================
 
 Release v\ |release| (:doc:`What's new? <changelog>`).
 
@@ -14,6 +14,7 @@ User's Guide
 .. toctree::
    :maxdepth: 1
 
+   installation
    asyncio
    twisted
 

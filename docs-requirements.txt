@@ -1,5 +1,0 @@
--e .
-aiohttp
-sphinx
-sphinxcontrib-asyncio
-twisted

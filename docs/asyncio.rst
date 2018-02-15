@@ -51,8 +51,9 @@ Metric Exposure
 
    Please note that if you want to use `uWSGI <http://uwsgi-docs.readthedocs.io/>`_ together with ``start_http_server_in_thread()``, you have to tell uWSGI to enable threads using its `configuration option <http://uwsgi-docs.readthedocs.io/en/latest/Options.html#enable-threads>`_ or by passing it ``--enable-threads``.
 
-   If you want to run uWSGI with ``--master`` (as it is recommended by its authors) and stop the metrics server using :mod:`atexit` handlers (as is recommended by me), you also have to enable uWSGI's lazy applications `using configuration <http://uwsgi-docs.readthedocs.io/en/latest/Options.html#lazy-apps>`_ or by passing it ``--lazy-apps``.  Otherwise your :mod:`atexit` handler will hang until the uWSGI master process kills it.
+   Currently the recommended mode to run uWSGI with ``--master`` `is broken <https://github.com/unbit/uwsgi/issues/1609>`_ if you want to clean up using :mod:`atexit` handlers.
 
+   Therefore the usage of ``prometheus_sync.aio.web`` together with ``uWSGI`` is **strongly discouraged**.
 
 .. autofunction:: server_stats
 
@@ -82,8 +83,7 @@ Service Discovery
 
 Web exposure is much more useful if it comes with an easy way to integrate it with service discovery.
 
-Currently ``prometheus_async`` only ships integration with a local Consul agent using `python-consul <https://github.com/cablehead/python-consul>`_ library.
-Install using ``pip install prometheus_async[consul]`` to get it automatically pulled in.
+Currently ``prometheus_async`` only ships integration with a local Consul agent using ``aiohttp``.
 
 .. autoclass:: ConsulAgent
 

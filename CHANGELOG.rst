@@ -7,14 +7,15 @@ Versions are year-based with a strict backward compatibility policy.
 The third digit is only for regressions.
 
 
-17.6.0 (UNRELEASED)
+18.1.0 (UNRELEASED)
 -------------------
 
 
 Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*none*
+- Python 3.4 is no longer supported.
+- ``aiohttp`` 3.0 or later is required now for asyncio support.
 
 
 Deprecations:
@@ -26,7 +27,8 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- ``python-consul`` is no longer required for asyncio Consul service discovery.
+  A plain ``aiohttp`` is enough now.
 
 
 ----

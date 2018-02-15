@@ -16,11 +16,9 @@
 Decorators for asyncio.
 """
 
-import asyncio
-
 import wrapt
 
-from .._util import get_time
+from .._utils import get_time
 
 
 def time(metric, future=None):
@@ -33,25 +31,23 @@ def time(metric, future=None):
     """
     if future is None:
         @wrapt.decorator
-        @asyncio.coroutine
-        def decorator(wrapped, _, args, kw):
+        async def decorator(wrapped, _, args, kw):
             def observe():
                 metric.observe(get_time() - start_time)
             start_time = get_time()
             try:
-                rv = yield from wrapped(*args, **kw)
+                rv = await wrapped(*args, **kw)
                 return rv
             finally:
                 observe()
 
         return decorator
     else:
-        @asyncio.coroutine
-        def measure():
+        async def measure():
             def observe():
                 metric.observe(get_time() - start_time)
             try:
-                rv = yield from future
+                rv = await future
                 return rv
             finally:
                 observe()
@@ -69,11 +65,10 @@ def count_exceptions(metric, future=None, exc=BaseException):
     :returns: coroutine function (if decorator) or coroutine.
     """
     if future is None:
-        @asyncio.coroutine
         @wrapt.decorator
-        def count(wrapped, _, args, kw):
+        async def count(wrapped, _, args, kw):
             try:
-                rv = yield from wrapped(*args, **kw)
+                rv = await wrapped(*args, **kw)
             except exc:
                 metric.inc()
                 raise
@@ -81,10 +76,9 @@ def count_exceptions(metric, future=None, exc=BaseException):
 
         return count
     else:
-        @asyncio.coroutine
-        def count():
+        async def count():
             try:
-                rv = yield from future
+                rv = await future
             except exc:
                 metric.inc()
                 raise
@@ -101,12 +95,11 @@ def track_inprogress(metric, future=None):
     :returns: coroutine function (if decorator) or coroutine.
     """
     if future is None:
-        @asyncio.coroutine
         @wrapt.decorator
-        def track(wrapped, _, args, kw):
+        async def track(wrapped, _, args, kw):
             metric.inc()
             try:
-                rv = yield from wrapped(*args, **kw)
+                rv = await wrapped(*args, **kw)
             finally:
                 metric.dec()
 
@@ -116,10 +109,9 @@ def track_inprogress(metric, future=None):
     else:
         metric.inc()
 
-        @asyncio.coroutine
-        def track():
+        async def track():
             try:
-                rv = yield from future
+                rv = await future
             finally:
                 metric.dec()
             return rv

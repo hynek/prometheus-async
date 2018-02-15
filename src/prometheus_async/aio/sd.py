@@ -16,13 +16,14 @@
 Service discovery for web exposure.
 """
 
-import asyncio
+from functools import partial
+
 
 try:
-    from consul import Check
-    from consul.aio import Consul as _Consul  # prevent accidental usage
+    import aiohttp
+    import yarl
 except ImportError:
-    Check = Consul = None
+    pass
 
 
 __all__ = [
@@ -53,32 +54,79 @@ class ConsulAgent:
         self.tags = tags
         self.token = token
         self.deregister = deregister
+        self.consul = _LocalConsulAgentClient(token=token)
 
-    @asyncio.coroutine
-    def register(self, metrics_server, loop):
+    async def register(self, metrics_server, loop=None):
         """
         :return: A coroutine callable to deregister or ``None``.
         """
-        consul = _Consul(token=self.token, loop=loop)
-
-        if not (yield from consul.agent.service.register(
+        resp = await self.consul.register_service(
             name=self.name,
             service_id=self.service_id,
-            address=metrics_server.socket.addr,
-            port=metrics_server.socket.port,
-            tags=self.tags,
-            check=Check.http(
-                metrics_server.url, "10s",
-            )
-        )):  # pragma: nocover
+            tags=list(self.tags) or None,
+            metrics_server=metrics_server,
+        )
+        if resp is None:
             return None
 
-        @asyncio.coroutine
-        def deregister():
-            try:
-                if self.deregister is True:
-                    yield from consul.agent.service.deregister(self.service_id)
-            finally:
-                consul.close()
+        async def deregister():
+            if self.deregister is True:
+                await self.consul.deregister_service(self.service_id)
 
         return deregister
+
+
+class _LocalConsulAgentClient:
+    """
+    Minimal client to speak to a Consul agent on localhost:8500.
+    """
+    def __init__(self, token):
+        self.agent_url = yarl.URL.build(
+            scheme="http", host="127.0.0.1", port="8500", path="/v1/agent",
+        )
+
+        if token:
+            self.headers = {
+                "X-Consul-Token": token,
+            }
+        else:
+            self.headers = {}
+
+        self.session_factory = partial(
+            aiohttp.ClientSession,
+            headers=self.headers
+        )
+
+    async def get_services(self):
+        async with self.session_factory() as session:
+            resp = await session.get(
+                self.agent_url / "services"
+            )
+            return await resp.json()
+
+    async def register_service(self, name, service_id, tags, metrics_server):
+        async with self.session_factory() as session:
+            resp = await session.put(
+                self.agent_url / "service/register",
+                json={
+                    "Name": name,
+                    "ID": service_id,
+                    "Tags": tags,
+                    "Address": metrics_server.socket.addr,
+                    "Port": metrics_server.socket.port,
+                    "Check": {
+                        "HTTP": metrics_server.url,
+                        "Interval": "10s",
+                    }
+                },
+            )
+        if resp.status == 200:
+            return resp
+
+    async def deregister_service(self, service_id):
+        async with self.session_factory() as session:
+            resp = await session.put(
+                yarl.URL("http://127.0.0.1:8500/v1/agent/service/deregister") /
+                service_id
+            )
+            return resp
