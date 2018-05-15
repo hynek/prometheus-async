@@ -89,7 +89,7 @@ async def start_http_server(
         interfaces.
     :param int port: Port to listen on.
     :param ssl.SSLContext ssl_ctx: TLS settings
-    :param asyncio.BaseEventLoop loop: Event loop to use.
+    :param asyncio.AbstractEventLoop loop: Event loop to use.
     :param service_discovery: see :ref:`sd`
 
     :rtype: MetricsHTTPServer
@@ -127,7 +127,7 @@ class MetricsHTTPServer:
         either (:class:`ipaddress.IPv4Address`, port) or
         (:class:`ipaddress.IPv6Address`, port).
     :ivar bool https: Whether the server uses SSL/TLS.
-    :ivar loop: The :class:`event loop <asyncio.BaseEventLoop>` the server
+    :ivar loop: The :class:`event loop <asyncio.AbstractEventLoop>` the server
         uses.
     :ivar str url: A valid URL to the metrics endpoint.
     :ivar bool is_registered: Is the web endpoint registered with a
@@ -196,8 +196,6 @@ class ThreadedMetricsHTTPServer:
     :ivar socket: Socket the server is listening on.  namedtuple of
         ``Socket(addr, port)``.
     :ivar bool https: Whether the server uses SSL/TLS.
-    :ivar loop: The :class:`event loop <asyncio.BaseEventLoop>` the server
-        uses.
     :ivar str url: A valid URL to the metrics endpoint.
     :ivar bool is_registered: Is the web endpoint registered with a
         service discovery system?
