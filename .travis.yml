@@ -31,8 +31,8 @@ matrix:
       env: TOXENV=py36
     - python: "pypy3"
       env: TOXENV=pypy3-twisted
-    - python: "pypy3"
-      env: TOXENV=pypy3-aiohttp
+    # - python: "pypy3"
+    #   env: TOXENV=pypy3-aiohttp
     - python: "pypy3"
       env: TOXENV=pypy3
 
