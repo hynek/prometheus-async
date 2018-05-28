@@ -23,7 +23,8 @@ from .._utils import get_time
 
 def time(metric, future=None):
     """
-    Call ``metric.observe(time)`` with the runtime in seconds.
+    Call ``metric.observe(time)`` or ``metric.set(time)`` with
+    the runtime in seconds.
 
     Works as a decorator as well as on :class:`asyncio.Future`\ s.
 
@@ -33,7 +34,11 @@ def time(metric, future=None):
         @wrapt.decorator
         async def decorator(wrapped, _, args, kw):
             def observe():
-                metric.observe(get_time() - start_time)
+                time_delta = get_time() - start_time
+                try:
+                    metric.observe(time_delta)
+                except AttributeError as exc:
+                    metric.set(time_delta)
             start_time = get_time()
             try:
                 rv = await wrapped(*args, **kw)
@@ -45,7 +50,11 @@ def time(metric, future=None):
     else:
         async def measure():
             def observe():
-                metric.observe(get_time() - start_time)
+                time_delta = get_time() - start_time
+                try:
+                    metric.observe(time_delta)
+                except AttributeError as exc:
+                    metric.set(time_delta)
             try:
                 rv = await future
                 return rv
