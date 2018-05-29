@@ -56,7 +56,7 @@ class ConsulAgent:
         self.deregister = deregister
         self.consul = _LocalConsulAgentClient(token=token)
 
-    async def register(self, metrics_server, loop=None):
+    async def register(self, metrics_server):
         """
         :return: A coroutine callable to deregister or ``None``.
         """
@@ -126,7 +126,6 @@ class _LocalConsulAgentClient:
     async def deregister_service(self, service_id):
         async with self.session_factory() as session:
             resp = await session.put(
-                yarl.URL("http://127.0.0.1:8500/v1/agent/service/deregister") /
-                service_id
+                self.agent_url / "service/deregister" / service_id
             )
             return resp

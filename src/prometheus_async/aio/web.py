@@ -19,6 +19,7 @@ aiohttp-based metrics exposure.
 import asyncio
 import queue
 import threading
+import warnings
 
 from collections import namedtuple
 
@@ -81,7 +82,7 @@ async def start_http_server(
         *,
         addr="", port=0, ssl_ctx=None, service_discovery=None, loop=None):
     """
-    Start an HTTP(S) server on *addr*:*port* using *loop*.
+    Start an HTTP(S) server on *addr*:*port*.
 
     If *ssl_ctx* is set, use TLS.
 
@@ -89,31 +90,33 @@ async def start_http_server(
         interfaces.
     :param int port: Port to listen on.
     :param ssl.SSLContext ssl_ctx: TLS settings
-    :param asyncio.AbstractEventLoop loop: Event loop to use.
     :param service_discovery: see :ref:`sd`
 
     :rtype: MetricsHTTPServer
-    """
-    if loop is None:
-        loop = asyncio.get_event_loop()
-    app = web.Application()
-    app.router.add_route("GET", "/", _cheap)
-    app.router.add_route("GET", "/metrics", server_stats)
-    handler = app.make_handler(access_log=None, loop=loop)
 
-    srv = await loop.create_server(
-        handler,
-        addr, port, ssl=ssl_ctx,
-    )
+    .. deprecated:: 18.2.0
+
+       The *loop* argument is a no-op now and will be removed in one year by
+       the earliest.
+    """
+    if loop is not None:
+        warnings.warn("The loop argument is a no-op.", DeprecationWarning)
+    app = web.Application()
+    app.router.add_get("/", _cheap)
+    app.router.add_get("/metrics", server_stats)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, addr, port, ssl_context=ssl_ctx)
+    await site.start()
+
     ms = MetricsHTTPServer.from_server(
-        server=srv,
+        runner=runner,
         app=app,
-        handler=handler,
         https=ssl_ctx is not None,
-        loop=loop,
     )
     if service_discovery is not None:
-        ms._deregister = await service_discovery.register(ms, loop)
+        ms._deregister = await service_discovery.register(ms)
     return ms
 
 
@@ -127,32 +130,27 @@ class MetricsHTTPServer:
         either (:class:`ipaddress.IPv4Address`, port) or
         (:class:`ipaddress.IPv6Address`, port).
     :ivar bool https: Whether the server uses SSL/TLS.
-    :ivar loop: The :class:`event loop <asyncio.AbstractEventLoop>` the server
-        uses.
     :ivar str url: A valid URL to the metrics endpoint.
     :ivar bool is_registered: Is the web endpoint registered with a
         service discovery system?
     """
-    def __init__(self, socket, server, app, handler, https, loop):
+    def __init__(self, socket, runner, app, https):
         self._app = app
-        self._handler = handler
-        self._server = server
+        self._runner = runner
         self._deregister = None
 
         self.socket = socket
         self.https = https
-        self.loop = loop
 
     @classmethod
-    def from_server(cls, server, app, handler, https, loop):
-        sock = server.sockets[0].getsockname()
+    def from_server(cls, runner, app, https):
+        # XXX: see https://github.com/aio-libs/aiohttp/issues/3036
+        sock = tuple(runner.sites)[0]._server.sockets[0].getsockname()
         return cls(
             socket=Socket(*sock[:2]),
-            server=server,
+            runner=runner,
             app=app,
-            handler=handler,
             https=https,
-            loop=loop,
         )
 
     @property
@@ -177,10 +175,7 @@ class MetricsHTTPServer:
         """
         if self._deregister is not None:
             await self._deregister()
-        await self._handler.shutdown(1.0)
-        self._server.close()
-        await self._server.wait_closed()
-        await self._app.cleanup()
+        await self._runner.cleanup()
 
 
 Socket = namedtuple("Socket", "addr port")
@@ -200,20 +195,19 @@ class ThreadedMetricsHTTPServer:
     :ivar bool is_registered: Is the web endpoint registered with a
         service discovery system?
     """
-    def __init__(self, http_server, thread):
+    def __init__(self, http_server, thread, loop):
         self._http_server = http_server
         self._thread = thread
+        self._loop = loop
 
     def close(self):
         """
         Stop the server, close the event loop, and join the thread.
         """
-        loop = self._http_server.loop
-
-        loop.call_soon_threadsafe(loop.stop)
+        self._loop.call_soon_threadsafe(self._loop.stop)
 
         self._thread.join()
-        loop.close()
+        self._loop.close()
 
     @property
     def https(self):
@@ -252,7 +246,7 @@ def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None,
         http = loop.run_until_complete(
             start_http_server(
                 port=port, addr=addr, ssl_ctx=ssl_ctx,
-                service_discovery=service_discovery, loop=loop
+                service_discovery=service_discovery
             )
         )
         q.put(http)
@@ -266,4 +260,4 @@ def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None,
     )
     t.start()
 
-    return ThreadedMetricsHTTPServer(q.get(), t)
+    return ThreadedMetricsHTTPServer(q.get(), t, loop)

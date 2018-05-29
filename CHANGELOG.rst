@@ -20,13 +20,14 @@ Backward-incompatible changes:
 Deprecations:
 ^^^^^^^^^^^^^
 
-*none*
+- Passing a *loop* argument to ``prometheus_async.aio.start_http_server()`` is a no-op and raises a ``DeprecationWarning`` now.
 
 
 Changes:
 ^^^^^^^^
 
-*none*
+- Port to ``aiohttp``'s application runner APIs to avoid those pesky deprecation warnings.
+  As a consequence, the *loop* argument has been removed from internal APIs and became a no-op in public APIs.
 
 
 ----

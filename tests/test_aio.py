@@ -106,11 +106,11 @@ class TestTime:
         assert [1] == fo._observed
 
     @pytest.mark.asyncio
-    async def test_future(self, fo, patch_timer, event_loop):
+    async def test_future(self, fo, patch_timer):
         """
         time works with a asyncio.Future.
         """
-        fut = asyncio.Future(loop=event_loop)
+        fut = asyncio.Future()
         coro = aio.time(fo, fut)
 
         assert [] == fo._observed
@@ -121,11 +121,11 @@ class TestTime:
         assert [1] == fo._observed
 
     @pytest.mark.asyncio
-    async def test_future_exc(self, fo, patch_timer, event_loop):
+    async def test_future_exc(self, fo, patch_timer):
         """
         Does not swallow exceptions.
         """
-        fut = asyncio.Future(loop=event_loop)
+        fut = asyncio.Future()
         coro = aio.time(fo, fut)
         v = ValueError("foo")
 
@@ -142,7 +142,7 @@ class TestTime:
 
 class TestCountExceptions:
     @pytest.mark.asyncio
-    async def test_decorator_no_exc(self, fc, event_loop):
+    async def test_decorator_no_exc(self, fc):
         """
         If no exception is raised, the counter does not change.
         """
@@ -155,7 +155,7 @@ class TestCountExceptions:
         assert 0 == fc._val
 
     @pytest.mark.asyncio
-    async def test_decorator_wrong_exc(self, fc, event_loop):
+    async def test_decorator_wrong_exc(self, fc):
         """
         If a wrong exception is raised, the counter does not change.
         """
@@ -170,7 +170,7 @@ class TestCountExceptions:
         assert 0 == fc._val
 
     @pytest.mark.asyncio
-    async def test_decorator_exc(self, fc, event_loop):
+    async def test_decorator_exc(self, fc):
         """
         If the correct exception is raised, count it.
         """
@@ -185,11 +185,11 @@ class TestCountExceptions:
         assert 1 == fc._val
 
     @pytest.mark.asyncio
-    async def test_future_no_exc(self, fc, event_loop):
+    async def test_future_no_exc(self, fc):
         """
         If no exception is raised, the counter does not change.
         """
-        fut = asyncio.Future(loop=event_loop)
+        fut = asyncio.Future()
         coro = aio.count_exceptions(fc, future=fut)
 
         fut.set_result(42)
@@ -198,11 +198,11 @@ class TestCountExceptions:
         assert 0 == fc._val
 
     @pytest.mark.asyncio
-    async def test_future_wrong_exc(self, fc, event_loop):
+    async def test_future_wrong_exc(self, fc):
         """
         If a wrong exception is raised, the counter does not change.
         """
-        fut = asyncio.Future(loop=event_loop)
+        fut = asyncio.Future()
         coro = aio.count_exceptions(fc, exc=ValueError, future=fut)
         exc = Exception()
 
@@ -213,11 +213,11 @@ class TestCountExceptions:
         assert 0 == fc._val
 
     @pytest.mark.asyncio
-    async def test_future_exc(self, fc, event_loop):
+    async def test_future_exc(self, fc):
         """
         If the correct exception is raised, count it.
         """
-        fut = asyncio.Future(loop=event_loop)
+        fut = asyncio.Future()
         coro = aio.count_exceptions(fc, exc=ValueError, future=fut)
         exc = ValueError()
 
@@ -242,11 +242,11 @@ class TestTrackInprogress:
         assert 2 == fg._calls
 
     @pytest.mark.asyncio
-    async def test_future(self, fg, event_loop):
+    async def test_future(self, fg):
         """
         Incs and decs.
         """
-        fut = asyncio.Future(loop=event_loop)
+        fut = asyncio.Future()
 
         wrapped = aio.track_inprogress(fg, fut)
 
@@ -265,7 +265,7 @@ class FakeSD:
     """
     registered_ms = None
 
-    async def register(self, metrics_server, loop):
+    async def register(self, metrics_server):
         self.registered_ms = metrics_server
 
         async def deregister():
@@ -304,22 +304,16 @@ class TestWeb:
         assert "text/html" == rv.content_type
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("pass_loop", [True, False])
     @pytest.mark.parametrize("sd", [
         None,
         FakeSD(),
     ])
-    async def test_start_http_server(self, event_loop, pass_loop, sd):
+    async def test_start_http_server(self, sd):
         """
         Integration test: server gets started, is registered, and serves stats.
         """
-        if pass_loop:
-            loop = event_loop
-        else:
-            loop = None
         server = await aio.web.start_http_server(
             addr="127.0.0.1",
-            loop=loop,
             service_discovery=sd,
         )
 
@@ -386,13 +380,11 @@ class TestWeb:
         ("127.0.0.1", "127.0.0.1:"),
     ]
     )
-    async def test_url(self, addr, url, event_loop):
+    async def test_url(self, addr, url):
         """
         The URL of a MetricsHTTPServer is correctly computed.
         """
-        server = await aio.web.start_http_server(
-            addr=addr, loop=event_loop
-        )
+        server = await aio.web.start_http_server(addr=addr)
         sock = server.socket
 
         part = url + str(sock.port) + "/"
@@ -428,7 +420,7 @@ class TestNeedsAioHTTP:
 class TestConsulAgent:
     @pytest.mark.parametrize("deregister", [True, False])
     @pytest.mark.asyncio
-    async def test_integration(self, event_loop, deregister):
+    async def test_integration(self, deregister):
         """
         Integration test with a real consul agent. Start a service, register
         it, close it, verify it's deregistered.
@@ -446,7 +438,7 @@ class TestConsulAgent:
 
         try:
             server = await aio.web.start_http_server(
-                addr="127.0.0.1", loop=event_loop, service_discovery=ca,
+                addr="127.0.0.1", service_discovery=ca,
             )
         except aiohttp.ClientOSError:
             pytest.skip("Missing consul agent.")
@@ -473,7 +465,17 @@ class TestConsulAgent:
             assert 200 == resp.status
 
     @pytest.mark.asyncio
-    async def test_none_if_register_fails(self, event_loop):
+    async def test_loop_warns(self, event_loop):
+        """
+        If a loop is passed, raise a DeprecationWarning.
+        """
+        with pytest.deprecated_call():
+            server = await aio.web.start_http_server(loop=event_loop)
+
+        await server.close()
+
+    @pytest.mark.asyncio
+    async def test_none_if_register_fails(self):
         """
         If register fails, return None.
         """

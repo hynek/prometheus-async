@@ -63,7 +63,7 @@ Metric Exposure
          from prometheus_async import aio
 
          app = web.Application()
-         app.router.add_route("GET", "/metrics", aio.web.server_stats)
+         app.router.add_get("/metrics", aio.web.server_stats)
          # your other routes go here.
 
 .. autoclass:: MetricsHTTPServer
@@ -71,7 +71,6 @@ Metric Exposure
 
 .. autoclass:: ThreadedMetricsHTTPServer
    :members: close
-
 
 
 .. _sd:
