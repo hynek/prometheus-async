@@ -24,7 +24,9 @@ import warnings
 from collections import namedtuple
 
 from prometheus_client.exposition import (
-    CONTENT_TYPE_LATEST, core, generate_latest
+    CONTENT_TYPE_LATEST,
+    core,
+    generate_latest,
 )
 
 
@@ -40,11 +42,13 @@ def _needs_aiohttp(obj):
     raises a RuntimeError.
     """
     if web is None:
+
         def raiser(*a, **kw):
             """
             Notifies about missing aiohttp dependency.
             """
             raise RuntimeError("'{}' requires aiohttp.".format(obj.__name__))
+
         return raiser
     else:
         return obj
@@ -79,8 +83,8 @@ async def _cheap(request):
 
 @_needs_aiohttp
 async def start_http_server(
-        *,
-        addr="", port=0, ssl_ctx=None, service_discovery=None, loop=None):
+    *, addr="", port=0, ssl_ctx=None, service_discovery=None, loop=None
+):
     """
     Start an HTTP(S) server on *addr*:*port*.
 
@@ -111,9 +115,7 @@ async def start_http_server(
     await site.start()
 
     ms = MetricsHTTPServer.from_server(
-        runner=runner,
-        app=app,
-        https=ssl_ctx is not None,
+        runner=runner, app=app, https=ssl_ctx is not None
     )
     if service_discovery is not None:
         ms._deregister = await service_discovery.register(ms)
@@ -134,6 +136,7 @@ class MetricsHTTPServer:
     :ivar bool is_registered: Is the web endpoint registered with a
         service discovery system?
     """
+
     def __init__(self, socket, runner, app, https):
         self._app = app
         self._runner = runner
@@ -147,10 +150,7 @@ class MetricsHTTPServer:
         # XXX: see https://github.com/aio-libs/aiohttp/issues/3036
         sock = tuple(runner.sites)[0]._server.sockets[0].getsockname()
         return cls(
-            socket=Socket(*sock[:2]),
-            runner=runner,
-            app=app,
-            https=https,
+            socket=Socket(*sock[:2]), runner=runner, app=app, https=https
         )
 
     @property
@@ -195,6 +195,7 @@ class ThreadedMetricsHTTPServer:
     :ivar bool is_registered: Is the web endpoint registered with a
         service discovery system?
     """
+
     def __init__(self, http_server, thread, loop):
         self._http_server = http_server
         self._thread = thread
@@ -227,8 +228,9 @@ class ThreadedMetricsHTTPServer:
 
 
 @_needs_aiohttp
-def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None,
-                                service_discovery=None):
+def start_http_server_in_thread(
+    *, port=0, addr="", ssl_ctx=None, service_discovery=None
+):
     """
     Start an asyncio HTTP(S) server in a new thread with an own event loop.
 
@@ -245,8 +247,10 @@ def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None,
         asyncio.set_event_loop(loop)
         http = loop.run_until_complete(
             start_http_server(
-                port=port, addr=addr, ssl_ctx=ssl_ctx,
-                service_discovery=service_discovery
+                port=port,
+                addr=addr,
+                ssl_ctx=ssl_ctx,
+                service_discovery=service_discovery,
             )
         )
         q.put(http)
@@ -254,9 +258,7 @@ def start_http_server_in_thread(*, port=0, addr="", ssl_ctx=None,
         loop.run_until_complete(http.close())
 
     t = threading.Thread(
-        target=server,
-        name="PrometheusAsyncWebEndpoint",
-        daemon=True
+        target=server, name="PrometheusAsyncWebEndpoint", daemon=True
     )
     t.start()
 

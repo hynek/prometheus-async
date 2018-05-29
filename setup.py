@@ -53,26 +53,16 @@ EXTRAS_REQUIRE = {
     "aiohttp": ["aiohttp>=3"],
     "consul": ["aiohttp>=3"],
     "twisted": ["twisted"],
-    "tests": [
-        "coverage",
-        "pytest",
-        "pytest-asyncio; python_version >= '3.5'",
-    ],
-    "docs": [
-        "aiohttp",
-        "sphinx",
-        "sphinxcontrib-asyncio",
-        "twisted",
-    ]
+    "tests": ["coverage", "pytest", "pytest-asyncio; python_version >= '3.5'"],
+    "docs": ["aiohttp", "sphinx", "sphinxcontrib-asyncio", "twisted"],
 }
 EXTRAS_REQUIRE["dev"] = (
-    EXTRAS_REQUIRE["aiohttp"] +
-    EXTRAS_REQUIRE["consul"] +
-    EXTRAS_REQUIRE["twisted"] +
-    EXTRAS_REQUIRE["docs"] +
-    EXTRAS_REQUIRE["tests"] + [
-        "pytest-twisted",
-    ]
+    EXTRAS_REQUIRE["aiohttp"]
+    + EXTRAS_REQUIRE["consul"]
+    + EXTRAS_REQUIRE["twisted"]
+    + EXTRAS_REQUIRE["docs"]
+    + EXTRAS_REQUIRE["tests"]
+    + ["pytest-twisted"]
 )
 
 if int(setuptools.__version__.split(".", 1)[0]) < 18:
@@ -113,8 +103,7 @@ def find_meta(meta):
     Extract __*meta*__ from META_FILE.
     """
     meta_match = re.search(
-        r"^__{meta}__ = ['\"]([^'\"]*)['\"]".format(meta=meta),
-        META_FILE, re.M
+        r"^__{meta}__ = ['\"]([^'\"]*)['\"]".format(meta=meta), META_FILE, re.M
     )
     if meta_match:
         return meta_match.group(1)
@@ -124,14 +113,18 @@ def find_meta(meta):
 VERSION = find_meta("version")
 URI = find_meta("uri")
 LONG = (
-    read("README.rst") + "\n\n" +
-    "Release Information\n" +
-    "===================\n\n" +
-    re.search(r"(\d+.\d.\d \(.*?\)\n.*?)\n\n\n----\n\n\n",
-              read("CHANGELOG.rst"), re.S).group(1) +
-    "\n\n`Full changelog " +
-    "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URI) +
-    read("AUTHORS.rst")
+    read("README.rst")
+    + "\n\n"
+    + "Release Information\n"
+    + "===================\n\n"
+    + re.search(
+        r"(\d+.\d.\d \(.*?\)\n.*?)\n\n\n----\n\n\n",
+        read("CHANGELOG.rst"),
+        re.S,
+    ).group(1)
+    + "\n\n`Full changelog "
+    + "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URI)
+    + read("AUTHORS.rst")
 )
 
 

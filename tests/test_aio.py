@@ -57,6 +57,7 @@ class TestTime:
         """
         time works with sync results functions.
         """
+
         @aio.time(fo)
         async def func():
             if True:
@@ -72,6 +73,7 @@ class TestTime:
         """
         time works with asyncio results functions.
         """
+
         @aio.time(fo)
         async def func():
             await asyncio.sleep(0)
@@ -146,6 +148,7 @@ class TestCountExceptions:
         """
         If no exception is raised, the counter does not change.
         """
+
         @aio.count_exceptions(fc)
         async def func():
             await asyncio.sleep(0.0)
@@ -159,6 +162,7 @@ class TestCountExceptions:
         """
         If a wrong exception is raised, the counter does not change.
         """
+
         @aio.count_exceptions(fc, exc=ValueError)
         async def func():
             await asyncio.sleep(0.0)
@@ -174,6 +178,7 @@ class TestCountExceptions:
         """
         If the correct exception is raised, count it.
         """
+
         @aio.count_exceptions(fc, exc=ValueError)
         async def func():
             await asyncio.sleep(0.0)
@@ -263,6 +268,7 @@ class FakeSD:
     """
     Fake Service Discovery.
     """
+
     registered_ms = None
 
     async def register(self, metrics_server):
@@ -285,9 +291,8 @@ class TestWeb:
         rv = await aio.web.server_stats(None)
 
         assert (
-            b'# HELP test_server_stats cnt\n# TYPE test_server_stats counter\n'
-            b'test_server_stats 1.0\n'
-            in rv.body
+            b"# HELP test_server_stats cnt\n# TYPE test_server_stats counter\n"
+            b"test_server_stats 1.0\n" in rv.body
         )
 
     @pytest.mark.asyncio
@@ -298,23 +303,19 @@ class TestWeb:
         rv = await aio.web._cheap(None)
 
         assert (
-            b'<html><body><a href="/metrics">Metrics</a></body></html>' ==
-            rv.body
+            b'<html><body><a href="/metrics">Metrics</a></body></html>'
+            == rv.body
         )
         assert "text/html" == rv.content_type
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("sd", [
-        None,
-        FakeSD(),
-    ])
+    @pytest.mark.parametrize("sd", [None, FakeSD()])
     async def test_start_http_server(self, sd):
         """
         Integration test: server gets started, is registered, and serves stats.
         """
         server = await aio.web.start_http_server(
-            addr="127.0.0.1",
-            service_discovery=sd,
+            addr="127.0.0.1", service_discovery=sd
         )
 
         assert isinstance(server, aio.web.MetricsHTTPServer)
@@ -328,30 +329,26 @@ class TestWeb:
         async with aiohttp.ClientSession() as s:
             rv = await s.request(
                 "GET",
-                "http://{addr}:{port}/metrics"
-                .format(addr=addr, port=port)
+                "http://{addr}:{port}/metrics".format(addr=addr, port=port),
             )
             body = await rv.text()
 
         assert (
-            '# HELP test_start_http_server cnt\n# TYPE test_start_http_server'
-            ' counter\ntest_start_http_server 1.0\n'
-            in body
+            "# HELP test_start_http_server cnt\n# TYPE test_start_http_server"
+            " counter\ntest_start_http_server 1.0\n" in body
         )
         await server.close()
 
-    @pytest.mark.parametrize("sd", [
-        None,
-        FakeSD(),
-    ])
+    @pytest.mark.parametrize("sd", [None, FakeSD()])
     def test_start_in_thread(self, sd):
         """
         Threaded version starts and exits properly, passes on service
         discovery.
         """
         Counter("test_start_http_server_in_thread", "cnt").inc()
-        t = aio.web.start_http_server_in_thread(addr="127.0.0.1",
-                                                service_discovery=sd)
+        t = aio.web.start_http_server_in_thread(
+            addr="127.0.0.1", service_discovery=sd
+        )
 
         assert isinstance(t, aio.web.ThreadedMetricsHTTPServer)
         assert "PrometheusAsyncWebEndpoint" == t._thread.name
@@ -376,10 +373,7 @@ class TestWeb:
         assert False is t._thread.is_alive()
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("addr,url", [
-        ("127.0.0.1", "127.0.0.1:"),
-    ]
-    )
+    @pytest.mark.parametrize("addr,url", [("127.0.0.1", "127.0.0.1:")])
     async def test_url(self, addr, url):
         """
         The URL of a MetricsHTTPServer is correctly computed.
@@ -438,7 +432,7 @@ class TestConsulAgent:
 
         try:
             server = await aio.web.start_http_server(
-                addr="127.0.0.1", service_discovery=ca,
+                addr="127.0.0.1", service_discovery=ca
             )
         except aiohttp.ClientOSError:
             pytest.skip("Missing consul agent.")
@@ -479,6 +473,7 @@ class TestConsulAgent:
         """
         If register fails, return None.
         """
+
         class FakeMetricsServer:
             socket = mock.Mock(addr="127.0.0.1", port=12345)
             url = "http://127.0.0.1:12345/metrics"
@@ -491,6 +486,7 @@ class TestConsulAgent:
                 class FakeConnection:
                     async def put(self, *args, **kw):
                         return mock.Mock(status=400)
+
                 return FakeConnection()
 
         ca = ConsulAgent()

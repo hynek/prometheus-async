@@ -42,19 +42,12 @@ class TestMkTime(object):
         Use monotonic.time on Python 2
         """
         import monotonic
-        assert (
-            _utils.get_time is
-            monotonic.monotonic is
-            _utils.mk_get_time()
-        )
+
+        assert _utils.get_time is monotonic.monotonic is _utils.mk_get_time()
 
     @py3_only
     def test_py3(self):
         """
         Use time.perf_counter on Python 3
         """
-        assert (
-            _utils.get_time is
-            time.perf_counter is
-            _utils.mk_get_time()
-        )
+        assert _utils.get_time is time.perf_counter is _utils.mk_get_time()

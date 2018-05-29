@@ -18,6 +18,10 @@ prometheus_async
    :target: https://codecov.io/github/hynek/prometheus_async
    :alt: Test Coverage
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/ambv/black
+   :alt: Code style: black
+
 .. teaser-begin
 
 ``prometheus_async`` adds support for asynchronous frameworks to the official `Python client`_ for the Prometheus_ metrics and monitoring system.

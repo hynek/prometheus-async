@@ -37,6 +37,7 @@ def mk_monotonic_timer():
     """
     Create a function that always returns the next integer beginning at 0.
     """
+
     def timer():
         timer.i += 1
         return timer.i
@@ -50,6 +51,7 @@ class FakeObserver(object):
     """
     A fake metric observer that saves all observed values in a list.
     """
+
     def __init__(self):
         self._observed = []
 
@@ -61,6 +63,7 @@ class FakeCounter(object):
     """
     A fake counter metric.
     """
+
     def __init__(self):
         self._val = 0
 
@@ -72,6 +75,7 @@ class FakeGauge(object):
     """
     A fake Gauge.
     """
+
     def __init__(self):
         self._val = 0
         self._calls = 0
@@ -115,11 +119,13 @@ def fg():
 def patch_timer(monkeypatch):
     try:
         from prometheus_async.tx import _decorators
+
         monkeypatch.setattr(_decorators, "get_time", mk_monotonic_timer())
     except BaseException:
         pass
     try:
         from prometheus_async.aio import _decorators
+
         monkeypatch.setattr(_decorators, "get_time", mk_monotonic_timer())
     except BaseException:
         pass

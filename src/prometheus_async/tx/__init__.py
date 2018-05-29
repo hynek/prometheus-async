@@ -19,8 +19,4 @@ Twisted-related functionality.
 from ._decorators import count_exceptions, time, track_inprogress
 
 
-__all__ = [
-    "count_exceptions",
-    "time",
-    "track_inprogress",
-]
+__all__ = ["count_exceptions", "time", "track_inprogress"]

@@ -34,6 +34,7 @@ def time(metric, deferred=None):
     :returns: function or ``Deferred``.
     """
     if deferred is None:
+
         @wrapt.decorator
         def decorator(f, _, args, kw):
             def observe(value):
@@ -49,6 +50,7 @@ def time(metric, deferred=None):
 
         return decorator
     else:
+
         def observe(value):
             metric.observe(get_time() - start_time)
             return value
@@ -65,12 +67,14 @@ def count_exceptions(metric, deferred=None, exc=BaseException):
 
     :returns: function (if decorator) or ``Deferred``.
     """
+
     def inc(fail):
         fail.trap(exc)
         metric.inc()
         return fail
 
     if deferred is None:
+
         @wrapt.decorator
         def decorator(f, _, args, kw):
             try:
@@ -97,11 +101,13 @@ def track_inprogress(metric, deferred=None):
 
     :returns: function (if decorator) or ``Deferred``.
     """
+
     def dec(rv):
         metric.dec()
         return rv
 
     if deferred is None:
+
         @wrapt.decorator
         def decorator(f, _, args, kw):
             metric.inc()
@@ -113,6 +119,7 @@ def track_inprogress(metric, deferred=None):
                 else:
                     metric.dec()
                     return rv
+
         return decorator
     else:
         metric.inc()

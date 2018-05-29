@@ -29,6 +29,7 @@ def mk_get_time():
         return time.perf_counter
     except AttributeError:
         import monotonic
+
         return monotonic.monotonic
 
 

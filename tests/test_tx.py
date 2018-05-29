@@ -26,6 +26,7 @@ class TestTime(object):
         """
         time works with sync results functions.
         """
+
         @tx.time(fo)
         def func():
             return 42
@@ -38,6 +39,7 @@ class TestTime(object):
         """
         time works with functions returning Deferreds.
         """
+
         @tx.time(fo)
         def func():
             return succeed(42)
@@ -86,6 +88,7 @@ class TestCountExceptions(object):
         """
         If no exception is raised, the counter does not change.
         """
+
         @tx.count_exceptions(fc)
         def func():
             return succeed(42)
@@ -97,6 +100,7 @@ class TestCountExceptions(object):
         """
         If no exception is raised, the counter does not change.
         """
+
         @tx.count_exceptions(fc)
         def func():
             return 42
@@ -109,6 +113,7 @@ class TestCountExceptions(object):
         """
         If a wrong exception is raised, the counter does not change.
         """
+
         @tx.count_exceptions(fc, exc=ValueError)
         def func():
             return fail(TypeError())
@@ -123,6 +128,7 @@ class TestCountExceptions(object):
         """
         If the correct exception is raised, count it.
         """
+
         @tx.count_exceptions(fc, exc=TypeError)
         def func():
             return fail(TypeError())
@@ -136,6 +142,7 @@ class TestCountExceptions(object):
         """
         If the correct synchronous exception is raised, count it.
         """
+
         @tx.count_exceptions(fc)
         def func():
             if True:
@@ -199,6 +206,7 @@ class TestTrackInprogress(object):
         """
         Incs and decs if the decorated function returns a value.
         """
+
         @tx.track_inprogress(fg)
         def func():
             return 42

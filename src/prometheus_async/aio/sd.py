@@ -26,9 +26,7 @@ except ImportError:
     pass
 
 
-__all__ = [
-    "ConsulAgent",
-]
+__all__ = ["ConsulAgent"]
 
 
 class ConsulAgent:
@@ -47,8 +45,16 @@ class ConsulAgent:
     :param bool deregister: Whether to deregister when the HTTP server is
         closed.
     """
-    def __init__(self, *, name="app-metrics", service_id=None, tags=(),
-                 token=None, deregister=True):
+
+    def __init__(
+        self,
+        *,
+        name="app-metrics",
+        service_id=None,
+        tags=(),
+        token=None,
+        deregister=True
+    ):
         self.name = name
         self.service_id = service_id or name
         self.tags = tags
@@ -80,28 +86,24 @@ class _LocalConsulAgentClient:
     """
     Minimal client to speak to a Consul agent on localhost:8500.
     """
+
     def __init__(self, token):
         self.agent_url = yarl.URL.build(
-            scheme="http", host="127.0.0.1", port="8500", path="/v1/agent",
+            scheme="http", host="127.0.0.1", port="8500", path="/v1/agent"
         )
 
         if token:
-            self.headers = {
-                "X-Consul-Token": token,
-            }
+            self.headers = {"X-Consul-Token": token}
         else:
             self.headers = {}
 
         self.session_factory = partial(
-            aiohttp.ClientSession,
-            headers=self.headers
+            aiohttp.ClientSession, headers=self.headers
         )
 
     async def get_services(self):
         async with self.session_factory() as session:
-            resp = await session.get(
-                self.agent_url / "services"
-            )
+            resp = await session.get(self.agent_url / "services")
             return await resp.json()
 
     async def register_service(self, name, service_id, tags, metrics_server):
@@ -114,10 +116,7 @@ class _LocalConsulAgentClient:
                     "Tags": tags,
                     "Address": metrics_server.socket.addr,
                     "Port": metrics_server.socket.port,
-                    "Check": {
-                        "HTTP": metrics_server.url,
-                        "Interval": "10s",
-                    }
+                    "Check": {"HTTP": metrics_server.url, "Interval": "10s"},
                 },
             )
         if resp.status == 200:

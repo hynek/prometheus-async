@@ -30,10 +30,12 @@ def time(metric, future=None):
     :returns: coroutine function (if decorator) or coroutine.
     """
     if future is None:
+
         @wrapt.decorator
         async def decorator(wrapped, _, args, kw):
             def observe():
                 metric.observe(get_time() - start_time)
+
             start_time = get_time()
             try:
                 rv = await wrapped(*args, **kw)
@@ -43,9 +45,11 @@ def time(metric, future=None):
 
         return decorator
     else:
+
         async def measure():
             def observe():
                 metric.observe(get_time() - start_time)
+
             try:
                 rv = await future
                 return rv
@@ -65,6 +69,7 @@ def count_exceptions(metric, future=None, exc=BaseException):
     :returns: coroutine function (if decorator) or coroutine.
     """
     if future is None:
+
         @wrapt.decorator
         async def count(wrapped, _, args, kw):
             try:
@@ -76,6 +81,7 @@ def count_exceptions(metric, future=None, exc=BaseException):
 
         return count
     else:
+
         async def count():
             try:
                 rv = await future
@@ -83,6 +89,7 @@ def count_exceptions(metric, future=None, exc=BaseException):
                 metric.inc()
                 raise
             return rv
+
         return count()
 
 
@@ -95,6 +102,7 @@ def track_inprogress(metric, future=None):
     :returns: coroutine function (if decorator) or coroutine.
     """
     if future is None:
+
         @wrapt.decorator
         async def track(wrapped, _, args, kw):
             metric.inc()
@@ -115,4 +123,5 @@ def track_inprogress(metric, future=None):
             finally:
                 metric.dec()
             return rv
+
         return track()
