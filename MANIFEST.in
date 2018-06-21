@@ -1,5 +1,5 @@
-include .coveragerc tox.ini LICENSE NOTICE *.rst .readthedocs.yml
-exclude conftest.py docs-requirements.txt
+include .coveragerc tox.ini LICENSE NOTICE *.rst .readthedocs.yml pyproject.toml
+exclude conftest.py docs-requirements.txt codecov.yml
 prune tests
 recursive-include docs *.py
 recursive-include docs *.rst
