@@ -109,7 +109,7 @@ async def start_http_server(
     app.router.add_get("/", _cheap)
     app.router.add_get("/metrics", server_stats)
 
-    runner = web.AppRunner(app)
+    runner = web.AppRunner(app, access_log=None)
     await runner.setup()
     site = web.TCPSite(runner, addr, port, ssl_context=ssl_ctx)
     await site.start()

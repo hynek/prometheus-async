@@ -26,7 +26,8 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- The HTTP access log when using ``prometheus_async.start_http_server()`` is disabled now.
+  It was activated accidentally when moving to ``aiohttp``'s application runner APIs.
 
 
 ----
