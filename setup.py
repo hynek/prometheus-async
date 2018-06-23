@@ -26,6 +26,12 @@ from setuptools import find_packages, setup
 
 NAME = "prometheus_async"
 KEYWORDS = ["metrics", "prometheus", "twisted", "asyncio"]
+PROJECT_URLS = {
+    "Documentation": "https://prometheus-async.readthedocs.io/",
+    "Bug Tracker": "https://github.com/hynek/prometheus-async/issues",
+    "Source Code": "https://github.com/hynek/prometheus-async",
+}
+
 CLASSIFIERS = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -111,7 +117,7 @@ def find_meta(meta):
 
 
 VERSION = find_meta("version")
-URI = find_meta("uri")
+URL = find_meta("uri")
 LONG = (
     read("README.rst")
     + "\n\n"
@@ -123,7 +129,7 @@ LONG = (
         re.S,
     ).group(1)
     + "\n\n`Full changelog "
-    + "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URI)
+    + "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URL)
     + read("AUTHORS.rst")
 )
 
@@ -133,7 +139,8 @@ if __name__ == "__main__":
         name=NAME,
         description=find_meta("description"),
         license=find_meta("license"),
-        url=URI,
+        url=URL,
+        project_urls=PROJECT_URLS,
         version=VERSION,
         author=find_meta("author"),
         author_email=find_meta("email"),
