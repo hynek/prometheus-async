@@ -6,8 +6,8 @@ prometheus_async
    :target: https://pypi.org/project/prometheus_async/
    :alt: PyPI
 
-.. image:: https://readthedocs.org/projects/attrs/badge/?version=stable
-   :target: http://attrs.readthedocs.io/en/stable/?badge=stable
+.. image:: https://readthedocs.org/projects/prometheus-async/badge/?version=stable
+   :target: https://prometheus-async.readthedocs.io/en/stable/?badge=stable
    :alt: Documentation Status
 
 .. image:: https://travis-ci.org/hynek/prometheus_async.svg?branch=master
