@@ -40,7 +40,7 @@ Metric Exposure
 
 .. currentmodule:: prometheus_async.aio.web
 
-``prometheus_async`` offers methods to expose your metrics using `aiohttp <http://aiohttp.readthedocs.io/>`_ under ``prometheus_async.aio.web``:
+``prometheus_async`` offers methods to expose your metrics using `aiohttp <https://aiohttp.readthedocs.io/>`_ under ``prometheus_async.aio.web``:
 
 
 .. autocofunction:: start_http_server
@@ -49,7 +49,7 @@ Metric Exposure
 
 .. warning::
 
-   Please note that if you want to use `uWSGI <http://uwsgi-docs.readthedocs.io/>`_ together with ``start_http_server_in_thread()``, you have to tell uWSGI to enable threads using its `configuration option <http://uwsgi-docs.readthedocs.io/en/latest/Options.html#enable-threads>`_ or by passing it ``--enable-threads``.
+   Please note that if you want to use `uWSGI <https://uwsgi-docs.readthedocs.io/>`_ together with ``start_http_server_in_thread()``, you have to tell uWSGI to enable threads using its `configuration option <https://uwsgi-docs.readthedocs.io/en/latest/Options.html#enable-threads>`_ or by passing it ``--enable-threads``.
 
    Currently the recommended mode to run uWSGI with ``--master`` `is broken <https://github.com/unbit/uwsgi/issues/1609>`_ if you want to clean up using :mod:`atexit` handlers.
 

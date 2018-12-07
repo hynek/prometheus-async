@@ -68,7 +68,7 @@ EXTRAS_REQUIRE["dev"] = (
     + EXTRAS_REQUIRE["twisted"]
     + EXTRAS_REQUIRE["docs"]
     + EXTRAS_REQUIRE["tests"]
-    + ["pytest-twisted"]
+    + ["pytest-twisted", "pre-commit"]
 )
 
 if int(setuptools.__version__.split(".", 1)[0]) < 18:

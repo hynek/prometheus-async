@@ -16,8 +16,9 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
-from prometheus_async import tx
 from twisted.internet.defer import Deferred, fail, succeed
+
+from prometheus_async import tx
 
 
 class TestTime(object):

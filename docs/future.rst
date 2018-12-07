@@ -7,4 +7,4 @@ Apart from bug fixing, :doc:`contributions <contributing>` of the following feat
 - Tornado_?
 
 .. _twisted.web: https://twistedmatrix.com/documents/current/web/howto/web-in-60/index.html
-.. _Tornado: http://www.tornadoweb.org/
+.. _Tornado: https://www.tornadoweb.org/
