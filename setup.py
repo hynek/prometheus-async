@@ -51,7 +51,7 @@ PYTHON_REQUIRES = ">=2.7, !=3.0, !=3.1, !=3.2, !=3.3, !=3.4"
 INSTALL_REQUIRES = [
     "attrs",
     "monotonic; python_version <= '3.5'",
-    "prometheus_client",
+    "prometheus_client >= 0.0.18",
     "six",
     "wrapt",
 ]

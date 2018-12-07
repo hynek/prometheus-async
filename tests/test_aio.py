@@ -287,12 +287,13 @@ class TestWeb:
         """
         Returns a response with the current stats.
         """
-        Counter("test_server_stats", "cnt").inc()
+        Counter("test_server_stats_total", "cnt").inc()
         rv = await aio.web.server_stats(None)
 
         assert (
-            b"# HELP test_server_stats cnt\n# TYPE test_server_stats counter\n"
-            b"test_server_stats 1.0\n" in rv.body
+            b"# HELP test_server_stats_total cnt\n# TYPE "
+            b"test_server_stats_total counter\n"
+            b"test_server_stats_total 1.0\n" in rv.body
         )
 
     @pytest.mark.asyncio
@@ -324,7 +325,7 @@ class TestWeb:
             assert sd.registered_ms is server
 
         addr, port = server.socket
-        Counter("test_start_http_server", "cnt").inc()
+        Counter("test_start_http_server_total", "cnt").inc()
 
         async with aiohttp.ClientSession() as s:
             rv = await s.request(
@@ -334,8 +335,9 @@ class TestWeb:
             body = await rv.text()
 
         assert (
-            "# HELP test_start_http_server cnt\n# TYPE test_start_http_server"
-            " counter\ntest_start_http_server 1.0\n" in body
+            "# HELP test_start_http_server_total cnt\n# "
+            "TYPE test_start_http_server_total"
+            " counter\ntest_start_http_server_total 1.0\n" in body
         )
         await server.close()
 
@@ -345,7 +347,7 @@ class TestWeb:
         Threaded version starts and exits properly, passes on service
         discovery.
         """
-        Counter("test_start_http_server_in_thread", "cnt").inc()
+        Counter("test_start_http_server_in_thread_total", "cnt").inc()
         t = aio.web.start_http_server_in_thread(
             addr="127.0.0.1", service_discovery=sd
         )
@@ -366,7 +368,7 @@ class TestWeb:
         rsp.close()
         h.close()
 
-        assert "HELP test_start_http_server_in_thread cnt" in body
+        assert "HELP test_start_http_server_in_thread_total cnt" in body
 
         t.close()
 

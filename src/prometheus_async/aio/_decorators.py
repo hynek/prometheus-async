@@ -22,7 +22,7 @@ from .._utils import get_time
 
 
 def time(metric, future=None):
-    """
+    r"""
     Call ``metric.observe(time)`` with the runtime in seconds.
 
     Works as a decorator as well as on :class:`asyncio.Future`\ s.
@@ -61,7 +61,7 @@ def time(metric, future=None):
 
 
 def count_exceptions(metric, future=None, exc=BaseException):
-    """
+    r"""
     Call ``metric.inc()`` whenever *exc* is caught.
 
     Works as a decorator as well as on :class:`asyncio.Future`\ s.
@@ -94,7 +94,7 @@ def count_exceptions(metric, future=None, exc=BaseException):
 
 
 def track_inprogress(metric, future=None):
-    """
+    r"""
     Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
 
     Works as a decorator, as well on :class:`asyncio.Future`\ s.

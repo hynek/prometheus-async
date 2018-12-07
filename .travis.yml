@@ -1,4 +1,4 @@
-dist: trusty
+dist: xenial
 group: travis_latest
 
 sudo: false
@@ -13,7 +13,17 @@ matrix:
   fast_finish: true
 
   include:
+    # lint
+    - python: "3.7"
+      stage: lint
+      env: TOXENV=lint
+    - python: "3.7"
+      env: TOXENV=manifest
+
+    # test
     - python: "pypy"
+      stage: test
+      dist: trusty
       env: TOXENV=pypy-twisted
     - python: "2.7"
       env: TOXENV=py27-twisted
@@ -29,11 +39,20 @@ matrix:
       env: TOXENV=py36-aiohttp
     - python: "3.6"
       env: TOXENV=py36
+    - python: "3.7"
+      env: TOXENV=py37-twisted
+    - python: "3.7"
+      env: TOXENV=py37-aiohttp
+    - python: "3.7"
+      env: TOXENV=py37
     # - python: "pypy3"
+    #   dist: trusty
     #   env: TOXENV=pypy3-twisted
     # - python: "pypy3"
+    #   dist: trusty
     #   env: TOXENV=pypy3-aiohttp
     - python: "pypy3"
+      dist: trusty
       env: TOXENV=pypy3
 
     # Prevent breakage by a new releases
@@ -42,15 +61,12 @@ matrix:
     - python: "3.7-dev"
       env: TOXENV=py37
 
-    # Meta
-    - python: "3.6"
-      env: TOXENV=lint
-    - python: "3.6"
-      env: TOXENV=manifest
-    - python: "3.6"
+    # Docs
+    - python: "3.7"
+      stage: docs
       env: TOXENV=docs
-    - python: "3.6"
-      env: TOXENV=readme
+    - python: "3.7"
+      env: TOXENV=pypi-description
 
   allow_failures:
     - python: "3.6-dev"

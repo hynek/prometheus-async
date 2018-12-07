@@ -14,7 +14,7 @@ The third digit is only for regressions.
 Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*none*
+- ``prometheus_client`` 0.0.18 or newer is now required.
 
 
 Deprecations:
@@ -26,7 +26,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- Added support for ``prometheus_client`` 0.5's new package hierarchy.
 
 
 ----

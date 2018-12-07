@@ -23,11 +23,7 @@ import warnings
 
 from collections import namedtuple
 
-from prometheus_client.exposition import (
-    CONTENT_TYPE_LATEST,
-    core,
-    generate_latest,
-)
+from prometheus_client import CONTENT_TYPE_LATEST, REGISTRY, generate_latest
 
 
 try:
@@ -61,7 +57,7 @@ async def server_stats(request):
 
     :rtype: :class:`aiohttp.web.Response`
     """
-    rsp = web.Response(body=generate_latest(core.REGISTRY))
+    rsp = web.Response(body=generate_latest(REGISTRY))
     # This is set separately because aiohttp complains about `;` in
     # content_type thinking it means there's also a charset.
     # cf. https://github.com/aio-libs/aiohttp/issues/2197
