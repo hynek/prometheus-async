@@ -26,7 +26,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-- Added support for ``prometheus_client`` 0.5's new package hierarchy.
+- Restored compatibility with ``prometheus_client`` 0.5.
 
 
 ----
