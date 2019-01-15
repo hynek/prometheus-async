@@ -21,7 +21,7 @@ from __future__ import absolute_import, division, print_function
 from ._utils import PY2
 
 
-__version__ = "19.1.0.dev0"
+__version__ = "19.1.0"
 
 __title__ = "prometheus_async"
 __description__ = "Async helpers for prometheus_client."
