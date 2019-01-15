@@ -7,7 +7,7 @@ Versions are year-based with a strict backward compatibility policy.
 The third digit is only for regressions.
 
 
-18.5.0 (UNRELEASED)
+19.1.0 (UNRELEASED)
 -------------------
 
 
@@ -26,7 +26,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- Dropped most dependencies and switched to decorator.py to avoid a C dependencies that produces functions that can't be pickled.
 
 
 ----

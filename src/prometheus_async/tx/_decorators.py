@@ -16,8 +16,7 @@
 Decorators for Twisted.
 """
 
-import wrapt
-
+from decorator import decorator
 from twisted.internet.defer import Deferred
 
 from .._utils import get_time
@@ -35,8 +34,8 @@ def time(metric, deferred=None):
     """
     if deferred is None:
 
-        @wrapt.decorator
-        def decorator(f, _, args, kw):
+        @decorator
+        def time_decorator(f, *args, **kw):
             def observe(value):
                 metric.observe(get_time() - start_time)
                 return value
@@ -48,7 +47,7 @@ def time(metric, deferred=None):
             else:
                 return observe(rv)
 
-        return decorator
+        return time_decorator
     else:
 
         def observe(value):
@@ -75,8 +74,8 @@ def count_exceptions(metric, deferred=None, exc=BaseException):
 
     if deferred is None:
 
-        @wrapt.decorator
-        def decorator(f, _, args, kw):
+        @decorator
+        def count_exceptions_decorator(f, *args, **kw):
             try:
                 rv = f(*args, **kw)
             except exc:
@@ -88,7 +87,7 @@ def count_exceptions(metric, deferred=None, exc=BaseException):
             else:
                 return rv
 
-        return decorator
+        return count_exceptions_decorator
     else:
         return deferred.addErrback(inc)
 
@@ -108,8 +107,8 @@ def track_inprogress(metric, deferred=None):
 
     if deferred is None:
 
-        @wrapt.decorator
-        def decorator(f, _, args, kw):
+        @decorator
+        def track_inprogress_decorator(f, *args, **kw):
             metric.inc()
             try:
                 rv = f(*args, **kw)
@@ -120,7 +119,7 @@ def track_inprogress(metric, deferred=None):
                     metric.dec()
                     return rv
 
-        return decorator
+        return track_inprogress_decorator
     else:
         metric.inc()
         return deferred.addBoth(dec)

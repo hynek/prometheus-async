@@ -17,13 +17,12 @@ from __future__ import absolute_import, division, print_function
 import time
 
 import pytest
-import six
 
 from prometheus_async import _utils
 
 
-py2_only = pytest.mark.skipif(six.PY3, reason="Needs Python 2.")
-py3_only = pytest.mark.skipif(six.PY2, reason="Needs Python 3.")
+py2_only = pytest.mark.skipif(not _utils.PY2, reason="Needs Python 2.")
+py3_only = pytest.mark.skipif(_utils.PY2, reason="Needs Python 3.")
 
 
 class TestMkTime(object):

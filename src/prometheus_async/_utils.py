@@ -18,7 +18,11 @@ Generic helpers.
 
 from __future__ import absolute_import, division, print_function
 
+import sys
 import time
+
+
+PY2 = sys.version_info[:2] < (3, 0)
 
 
 def mk_get_time():

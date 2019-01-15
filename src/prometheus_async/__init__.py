@@ -18,10 +18,10 @@ Async helpers for prometheus_client.
 
 from __future__ import absolute_import, division, print_function
 
-import six
+from ._utils import PY2
 
 
-__version__ = "18.5.0.dev0"
+__version__ = "19.1.0.dev0"
 
 __title__ = "prometheus_async"
 __description__ = "Async helpers for prometheus_client."
@@ -43,7 +43,7 @@ except ImportError:
 else:
     __all__.append("tx")
 
-if not six.PY2:
+if not PY2:
     from . import aio  # noqa -- flake8 doesn't understand __all__.append
 
     __all__.append("aio")
