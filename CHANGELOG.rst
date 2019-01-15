@@ -26,7 +26,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-- Dropped most dependencies and switched to decorator.py to avoid a C dependencies that produces functions that can't be pickled.
+- Dropped most dependencies and switched to decorator.py to avoid a C dependency (wrapt) that produces functions that can't be pickled.
 
 
 ----
