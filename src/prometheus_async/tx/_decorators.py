@@ -16,8 +16,8 @@
 Decorators for Twisted.
 """
 
-from decorator import decorator
 from twisted.internet.defer import Deferred
+from wrapt import decorator
 
 from .._utils import get_time
 
@@ -35,7 +35,7 @@ def time(metric, deferred=None):
     if deferred is None:
 
         @decorator
-        def time_decorator(f, *args, **kw):
+        def time_decorator(f, _, args, kw):
             def observe(value):
                 metric.observe(get_time() - start_time)
                 return value
@@ -75,7 +75,7 @@ def count_exceptions(metric, deferred=None, exc=BaseException):
     if deferred is None:
 
         @decorator
-        def count_exceptions_decorator(f, *args, **kw):
+        def count_exceptions_decorator(f, _, args, kw):
             try:
                 rv = f(*args, **kw)
             except exc:
@@ -108,7 +108,7 @@ def track_inprogress(metric, deferred=None):
     if deferred is None:
 
         @decorator
-        def track_inprogress_decorator(f, *args, **kw):
+        def track_inprogress_decorator(f, _, args, kw):
             metric.inc()
             try:
                 rv = f(*args, **kw)

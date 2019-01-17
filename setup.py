@@ -49,9 +49,9 @@ CLASSIFIERS = [
 ]
 PYTHON_REQUIRES = ">=2.7, !=3.0, !=3.1, !=3.2, !=3.3, !=3.4"
 INSTALL_REQUIRES = [
-    "decorator",
     "monotonic; python_version <= '3.5'",
     "prometheus_client >= 0.0.18",
+    "wrapt",
 ]
 EXTRAS_REQUIRE = {
     "aiohttp": ["aiohttp>=3"],

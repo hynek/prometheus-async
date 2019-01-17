@@ -17,7 +17,7 @@ Decorators for asyncio.
 """
 
 
-from decorator import decorator
+from wrapt import decorator
 
 from .._utils import get_time
 
@@ -33,7 +33,7 @@ def time(metric, future=None):
     if future is None:
 
         @decorator
-        async def time_decorator(wrapped, *args, **kw):
+        async def time_decorator(wrapped, _, args, kw):
             def observe():
                 metric.observe(get_time() - start_time)
 
@@ -72,7 +72,7 @@ def count_exceptions(metric, future=None, exc=BaseException):
     if future is None:
 
         @decorator
-        async def count(wrapped, *args, **kw):
+        async def count(wrapped, _, args, kw):
             try:
                 rv = await wrapped(*args, **kw)
             except exc:
@@ -105,7 +105,7 @@ def track_inprogress(metric, future=None):
     if future is None:
 
         @decorator
-        async def track(wrapped, *args, **kw):
+        async def track(wrapped, _, args, kw):
             metric.inc()
             try:
                 rv = await wrapped(*args, **kw)

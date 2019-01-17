@@ -26,7 +26,10 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- Revert the switch to decorator.py since it turned out to be a very breaking change.
+  Please note that the now current release of wrapt 1.11.0 has a `memory leak <https://github.com/GrahamDumpleton/wrapt/issues/128>`_ so you should blacklist it in your lockfile.
+
+  Sorry for the inconvenience that has been caused!
 
 
 ----
