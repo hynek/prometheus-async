@@ -28,8 +28,8 @@ NAME = "prometheus_async"
 KEYWORDS = ["metrics", "prometheus", "twisted", "asyncio"]
 PROJECT_URLS = {
     "Documentation": "https://prometheus-async.readthedocs.io/",
-    "Bug Tracker": "https://github.com/hynek/prometheus-async/issues",
-    "Source Code": "https://github.com/hynek/prometheus-async",
+    "Bug Tracker": "https://github.com/hynek/prometheus_async/issues",
+    "Source Code": "https://github.com/hynek/prometheus_async",
 }
 
 CLASSIFIERS = [
