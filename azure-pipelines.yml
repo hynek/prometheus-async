@@ -64,10 +64,10 @@ jobs:
         inputs:
           versionSpec: '3.7'
           addToPath: false
-        name: utilPython
+        name: pyTools
 
-      - script: $(utilPython.pythonLocation)/bin/pip install --upgrade tox codecov
-        displayName: Install Python-based utilities.
+      - script: $(pyTools.pythonLocation)/bin/pip install --upgrade tox codecov
+        displayName: Install Python-based tools.
 
       - task: UsePythonVersion@0
         inputs:
@@ -75,14 +75,14 @@ jobs:
           architecture: 'x64'
         displayName: Get Python for tests.
 
-      - script: '$(utilPython.pythonLocation)/bin/tox -e $(tox.env)'
+      - script: '$(pyTools.pythonLocation)/bin/tox -e $(tox.env)'
         env:
           TOX_AP_TEST_EXTRAS: azure-pipelines
         displayName: run tox -e $(tox.env)
 
       - script: |
-          '$(utilPython.pythonLocation)/bin/coverage combine'
-          '$(utilPython.pythonLocation)/bin/codecov'
+          '$(pyTools.pythonLocation)/bin/coverage combine'
+          '$(pyTools.pythonLocation)/bin/codecov'
         env:
           CODECOV_TOKEN: $(codecov.token)
         displayName: Report Coverage
