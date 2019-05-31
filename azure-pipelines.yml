@@ -74,14 +74,14 @@ jobs:
           versionSpec: '$(python.version)'
           architecture: 'x64'
 
-      - script: tox -e $(tox.env)
+      - script: '$(utilPython.pythonLocation)/tox -e $(tox.env)'
         env:
           TOX_AP_TEST_EXTRAS: azure-pipelines
         displayName: run tox -e $(tox.env)
 
       - script: |
           coverage combine
-          codecov
+          '$(utilPython.pythonLocation)/codecov -e $(tox.env)'
         env:
           CODECOV_TOKEN: $(codecov.token)
         displayName: Report Coverage
