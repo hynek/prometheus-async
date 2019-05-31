@@ -42,7 +42,7 @@ jobs:
         py37:
           python.version: '3.7'
           tox.env: py37
-          
+
         # PyPy is currently broken on prometheus_client 0.6.0
         # pypy-twisted:
         #   python.version: pypy2
@@ -70,7 +70,7 @@ jobs:
       - script: tox -e $(tox.env)
         env:
           TOX_AP_TEST_EXTRAS: azure-pipelines
-        displayName: run tox
+        displayName: run tox -e $(tox.env)
 
       - script: |
           coverage combine
