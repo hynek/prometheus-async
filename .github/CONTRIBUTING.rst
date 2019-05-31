@@ -1,7 +1,7 @@
 How To Contribute
 =================
 
-First off, thank you for considering contributing to ``prometheus_async``!
+First off, thank you for considering contributing to ``prometheus-async``!
 It's people like *you* who make it is such a great tool for everyone.
 
 This document intends to make contribution more accessible by codifying tribal knowledge and expectations.
@@ -140,23 +140,23 @@ We highly recommend to develop using the latest Python 3 release because we try 
 First create a `virtual environment <https://virtualenv.pypa.io/>`_.
 It’s out of scope for this document to list all the ways to manage virtual environments in Python, but if you don’t already have a pet way, take some time to look at tools like `pew <https://github.com/berdario/pew>`_, `virtualfish <https://virtualfish.readthedocs.io/>`_, and `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io/>`_.
 
-Next, get an up to date checkout of the ``prometheus_async`` repository:
+Next, get an up to date checkout of the ``prometheus-async`` repository:
 
 .. code-block:: bash
 
-    $ git clone git@github.com:hynek/prometheus_async.git
+    $ git clone git@github.com:hynek/prometheus-async.git
 
 or if you want to use git via ``https``:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/hynek/prometheus_async.git
+    $ git clone https://github.com/hynek/prometheus-async.git
 
-Change into the newly created directory and **after activating your virtual environment** install an editable version of ``prometheus_async`` along with its tests and docs requirements:
+Change into the newly created directory and **after activating your virtual environment** install an editable version of ``prometheus-async`` along with its tests and docs requirements:
 
 .. code-block:: bash
 
-    $ cd prometheus_async
+    $ cd prometheus-async
     $ pip install -e '.[dev]'
 
 At this point,
@@ -198,21 +198,21 @@ Please note that this project is released with a Contributor `Code of Conduct`_.
 By participating in this project you agree to abide by its terms.
 Please report any harm to `Hynek Schlawack`_ in any way you find appropriate.
 
-Thank you for considering contributing to ``prometheus_async``!
+Thank you for considering contributing to ``prometheus-async``!
 
 
 .. _`Hynek Schlawack`: https://hynek.me/about/
 .. _`PEP 8`: https://www.python.org/dev/peps/pep-0008/
 .. _`PEP 257`: https://www.python.org/dev/peps/pep-0257/
 .. _`good test docstrings`: https://jml.io/pages/test-docstrings.html
-.. _`Code of Conduct`: https://github.com/hynek/prometheus_async/blob/master/.github/CODE_OF_CONDUCT.rst
-.. _changelog: https://github.com/hynek/prometheus_async/blob/master/CHANGELOG.rst
+.. _`Code of Conduct`: https://github.com/hynek/prometheus-async/blob/master/.github/CODE_OF_CONDUCT.rst
+.. _changelog: https://github.com/hynek/prometheus-async/blob/master/CHANGELOG.rst
 .. _`backward compatibility`: https://prometheus-async.readthedocs.io/en/latest/backward-compatibility.html
 .. _`tox`: https://tox.readthedocs.io/en/latest/
 .. _pyenv: https://github.com/pyenv/pyenv
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
 .. _semantic newlines: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
-.. _CI: https://travis-ci.org/hynek/prometheus_async/
+.. _CI: https://travis-ci.org/hynek/prometheus-async/
 .. _black: https://github.com/ambv/black
 .. _pre-commit: https://pre-commit.com/
 .. _isort: https://github.com/timothycrosley/isort

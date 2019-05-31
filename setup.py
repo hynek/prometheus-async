@@ -24,12 +24,12 @@ from setuptools import find_packages, setup
 
 ###############################################################################
 
-NAME = "prometheus_async"
+NAME = "prometheus-async"
 KEYWORDS = ["metrics", "prometheus", "twisted", "asyncio"]
 PROJECT_URLS = {
     "Documentation": "https://prometheus-async.readthedocs.io/",
-    "Bug Tracker": "https://github.com/hynek/prometheus_async/issues",
-    "Source Code": "https://github.com/hynek/prometheus_async",
+    "Bug Tracker": "https://github.com/hynek/prometheus-async/issues",
+    "Source Code": "https://github.com/hynek/prometheus-async",
 }
 
 CLASSIFIERS = [
@@ -101,7 +101,9 @@ except NameError:
 try:
     META_PATH
 except NameError:
-    META_PATH = os.path.join(HERE, "src", NAME, "__init__.py")
+    META_PATH = os.path.join(
+        HERE, "src", NAME.replace("-", "_"), "__init__.py"
+    )
 finally:
     META_FILE = read(META_PATH)
 
@@ -149,6 +151,7 @@ if __name__ == "__main__":
         maintainer=find_meta("author"),
         maintainer_email=find_meta("email"),
         long_description=LONG,
+        long_description_content_type="text/x-rst",
         keywords=KEYWORDS,
         packages=PACKAGES,
         package_dir={"": "src"},

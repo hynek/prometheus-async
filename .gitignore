@@ -1,8 +1,9 @@
+*.egg-info
+*.pyc
 .cache
 .coverage*
+.pytest_cache
 .tox
-prometheus_async.egg-info
-*.pyc
 dist
 docs/_build
-.pytest_cache
+pip-wheel-metadata
