@@ -3,16 +3,16 @@ prometheus_async
 ================
 
 .. image:: https://img.shields.io/pypi/v/prometheus_async.svg
-   :target: https://pypi.org/project/prometheus_async/
+   :target: https://pypi.org/project/prometheus-async/
    :alt: PyPI
 
 .. image:: https://readthedocs.org/projects/prometheus-async/badge/?version=stable
    :target: https://prometheus-async.readthedocs.io/en/stable/?badge=stable
    :alt: Documentation Status
 
-.. image:: https://travis-ci.org/hynek/prometheus_async.svg?branch=master
-   :target: https://travis-ci.org/hynek/prometheus_async
-   :alt: CI status
+.. image:: https://dev.azure.com/the-hynek/prometheus-async/_apis/build/status/hynek.prometheus-async?branchName=master
+   :target: https://dev.azure.com/the-hynek/prometheus-async/_build?definitionId=1
+   :alt: CI Status
 
 .. image:: https://codecov.io/github/hynek/prometheus_async/branch/master/graph/badge.svg
    :target: https://codecov.io/github/hynek/prometheus_async

@@ -1,0 +1,81 @@
+---
+trigger:
+  - master
+
+jobs:
+  - job: 'Test'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      matrix:
+        Lint:
+          python.version: '3.7'
+          tox.env: lint
+
+        py27-twisted:
+          python.version: '2.7'
+          tox.env: py27-twisted
+        py35-twisted:
+          python.version: '3.5'
+          tox.env: py35-twisted
+        py35-aiohttp:
+          python.version: '3.5'
+          tox.env: py35-aiohttp
+        py35:
+          python.version: '3.5'
+          tox.env: py35
+        py36-twisted:
+          python.version: '3.6'
+          tox.env: py36-twisted
+        py36-aiohttp:
+          python.version: '3.6'
+          tox.env: py36-aiohttp
+        py36:
+          python.version: '3.6'
+          tox.env: py36
+        py37-twisted:
+          python.version: '3.7'
+          tox.env: py37-twisted
+        py37-aiohttp:
+          python.version: '3.7'
+          tox.env: py37-aiohttp
+        py37:
+          python.version: '3.7'
+          tox.env: py37
+
+        # PyPy is currently broken on prometheus_client 0.6.0
+        # pypy-twisted:
+        #   python.version: pypy2
+        #   tox.env: pypy-twisted
+        # pypy3:
+        #   python.version: pypy3
+        #   tox.env: pypy3
+
+        Docs:
+          python.version: '3.7'
+          tox.env: docs
+        PyPI-Description:
+          python.version: '3.7'
+          tox.env: pypi-description
+
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '$(python.version)'
+          architecture: 'x64'
+
+      - script: python -m pip install --upgrade tox codecov
+        displayName: install tox & codecov
+
+      - script: tox -e $(tox.env)
+        env:
+          TOX_AP_TEST_EXTRAS: azure-pipelines
+        displayName: run tox -e $(tox.env)
+
+      - script: |
+          coverage combine
+          codecov
+        env:
+          CODECOV_TOKEN: $(codecov.token)
+        displayName: Report Coverage
+        condition: succeeded()
