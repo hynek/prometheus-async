@@ -13,9 +13,6 @@ jobs:
           python.version: '3.7'
           tox.env: lint
 
-        pypy-twisted:
-          python.version: pypy2
-          tox.env: pypy-twisted
         py27-twisted:
           python.version: '2.7'
           tox.env: py27-twisted
@@ -46,9 +43,14 @@ jobs:
         py37:
           python.version: '3.7'
           tox.env: py37
-        pypy3:
-          python.version: pypy3
-          tox.env: pypy3
+          
+        # PyPy is currently broken on prometheus_client 0.6.0
+        # pypy-twisted:
+        #   python.version: pypy2
+        #   tox.env: pypy-twisted
+        # pypy3:
+        #   python.version: pypy3
+        #   tox.env: pypy3
 
         Docs:
           python.version: '3.7'
