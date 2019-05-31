@@ -66,7 +66,7 @@ jobs:
           addToPath: false
         name: utilPython
 
-      - script: $(utilPython.pythonLocation)/python -m pip install --upgrade tox codecov
+      - script: $(utilPython.pythonLocation)/bin/pip install --upgrade tox codecov
         displayName: Install Python-based utilities.
 
       - task: UsePythonVersion@0
