@@ -72,6 +72,9 @@ EXTRAS_REQUIRE["dev"] = (
     + EXTRAS_REQUIRE["tests"]
     + ["pytest-twisted", "pre-commit"]
 )
+EXTRAS_REQUIRE["azure-pipelines"] = EXTRAS_REQUIRE["tests"] + [
+    "pytest-azurepipelines"
+]
 
 if int(setuptools.__version__.split(".", 1)[0]) < 18:
     assert "bdist_wheel" not in sys.argv, "setuptools 18 required for wheels."
