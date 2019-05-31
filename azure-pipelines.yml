@@ -76,14 +76,14 @@ jobs:
         inputs:
           versionSpec: '$(python.version)'
           architecture: 'x64'
-        condition: "python.version != '3.8'"
+        condition: ne(variables['python.version'], '3.8')
         displayName: Get Python for tests.
 
       - script: |
           sudo add-apt-repository ppa:deadsnakes
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends python3.8-dev python3.8-distutils
-        condition: python.version == '3.8'
+        condition: eq(variables['python.version'], '3.8')
         displayName: install python 3.8
 
       - script: '$(pyTools.pythonLocation)/bin/tox -e $(tox.env)'
