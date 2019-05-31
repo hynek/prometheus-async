@@ -9,9 +9,6 @@ jobs:
       vmImage: 'ubuntu-latest'
     strategy:
       matrix:
-        Typing:
-          python.version: '3.7'
-          tox.env: typing
         Lint:
           python.version: '3.7'
           tox.env: lint
