@@ -1,5 +1,5 @@
 ================
-prometheus_async
+prometheus-async
 ================
 
 .. image:: https://img.shields.io/pypi/v/prometheus_async.svg
@@ -24,7 +24,7 @@ prometheus_async
 
 .. teaser-begin
 
-``prometheus_async`` adds support for asynchronous frameworks to the official `Python client`_ for the Prometheus_ metrics and monitoring system.
+``prometheus-async`` adds support for asynchronous frameworks to the official `Python client`_ for the Prometheus_ metrics and monitoring system.
 
 Currently asyncio_ (Python 3.5+, PyPy3) and Twisted_ (Python 2.7, 3.5+, PyPy) are supported.
 
