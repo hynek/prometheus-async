@@ -64,7 +64,7 @@ jobs:
           versionSpec: '$(python.version)'
           architecture: 'x64'
 
-      - script: pip3 --user install --upgrade tox codecov
+      - script: pip3 install --user --upgrade tox codecov
         displayName: install tox & codecov
 
       - script: tox -e $(tox.env)
