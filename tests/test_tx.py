@@ -15,6 +15,7 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+import pytest_twisted
 
 from twisted.internet.defer import Deferred, fail, succeed
 
@@ -22,7 +23,7 @@ from prometheus_async import tx
 
 
 class TestTime(object):
-    @pytest.inlineCallbacks
+    @pytest_twisted.inlineCallbacks
     def test_decorator_sync(self, fo, patch_timer):
         """
         time works with sync results functions.
@@ -35,7 +36,7 @@ class TestTime(object):
         assert 42 == (yield func())
         assert [1] == fo._observed
 
-    @pytest.inlineCallbacks
+    @pytest_twisted.inlineCallbacks
     def test_decorator(self, fo, patch_timer):
         """
         time works with functions returning Deferreds.
@@ -52,7 +53,7 @@ class TestTime(object):
         assert 42 == (yield rv)
         assert [1] == fo._observed
 
-    @pytest.inlineCallbacks
+    @pytest_twisted.inlineCallbacks
     def test_decorator_exc(self, fo, patch_timer):
         """
         Does not swallow exceptions.
@@ -68,7 +69,7 @@ class TestTime(object):
 
         assert v is e.value
 
-    @pytest.inlineCallbacks
+    @pytest_twisted.inlineCallbacks
     def test_deferred(self, fo, patch_timer):
         """
         time works with Deferreds.
@@ -84,7 +85,7 @@ class TestTime(object):
 
 
 class TestCountExceptions(object):
-    @pytest.inlineCallbacks
+    @pytest_twisted.inlineCallbacks
     def test_decorator_no_exc(self, fc):
         """
         If no exception is raised, the counter does not change.
@@ -109,7 +110,7 @@ class TestCountExceptions(object):
         assert 42 == func()
         assert 0 == fc._val
 
-    @pytest.inlineCallbacks
+    @pytest_twisted.inlineCallbacks
     def test_decorator_wrong_exc(self, fc):
         """
         If a wrong exception is raised, the counter does not change.
@@ -124,7 +125,7 @@ class TestCountExceptions(object):
 
         assert 0 == fc._val
 
-    @pytest.inlineCallbacks
+    @pytest_twisted.inlineCallbacks
     def test_decorator_exc(self, fc):
         """
         If the correct exception is raised, count it.
@@ -155,7 +156,7 @@ class TestCountExceptions(object):
 
         assert 1 == fc._val
 
-    @pytest.inlineCallbacks
+    @pytest_twisted.inlineCallbacks
     def test_deferred_no_exc(self, fc):
         """
         If no exception is raised, the counter does not change.
@@ -167,7 +168,7 @@ class TestCountExceptions(object):
 
 
 class TestTrackInprogress(object):
-    @pytest.inlineCallbacks
+    @pytest_twisted.inlineCallbacks
     def test_deferred(self, fg):
         """
         Incs and decs if its passed a Deferred.
@@ -182,7 +183,7 @@ class TestTrackInprogress(object):
         assert 42 == rv
         assert 0 == fg._val
 
-    @pytest.inlineCallbacks
+    @pytest_twisted.inlineCallbacks
     def test_decorator_deferred(self, fg):
         """
         Incs and decs if the decorated function returns a Deferred.
