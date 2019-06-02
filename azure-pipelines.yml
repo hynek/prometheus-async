@@ -84,16 +84,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends python3.8-dev python3.8-distutils
         condition: eq(variables['python.version'], '3.8')
-        displayName: install python 3.8
-
+        displayName: Install Python 3.8 from the deadsnakes PPA.
       - script: '$(pyTools.pythonLocation)/bin/tox -e $(tox.env)'
         env:
           TOX_AP_TEST_EXTRAS: azure-pipelines
         displayName: run tox -e $(tox.env)
 
       - script: |
-          '$(pyTools.pythonLocation)/bin/coverage combine'
-          '$(pyTools.pythonLocation)/bin/codecov'
+          python -m pip install coverage
+          coverage combine
+          $(pyTools.pythonLocation)/bin/codecov
         env:
           CODECOV_TOKEN: $(codecov.token)
         displayName: Report Coverage
