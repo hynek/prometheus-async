@@ -2,7 +2,7 @@
 prometheus-async
 ================
 
-.. image:: https://img.shields.io/pypi/v/prometheus_async.svg
+.. image:: https://img.shields.io/pypi/v/prometheus-async.svg
    :target: https://pypi.org/project/prometheus-async/
    :alt: PyPI
 
@@ -14,8 +14,8 @@ prometheus-async
    :target: https://dev.azure.com/the-hynek/prometheus-async/_build?definitionId=1
    :alt: CI Status
 
-.. image:: https://codecov.io/github/hynek/prometheus_async/branch/master/graph/badge.svg
-   :target: https://codecov.io/github/hynek/prometheus_async
+.. image:: https://codecov.io/github/hynek/prometheus-async/branch/master/graph/badge.svg
+   :target: https://codecov.io/github/hynek/prometheus-async
    :alt: Test Coverage
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
