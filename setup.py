@@ -62,7 +62,7 @@ EXTRAS_REQUIRE = {
         "pytest<4.1",
         "pytest-asyncio; python_version >= '3.5'",
     ],
-    "docs": ["aiohttp", "sphinx", "sphinxcontrib-asyncio", "twisted"],
+    "docs": ["aiohttp", "sphinx<2.1", "sphinxcontrib-asyncio", "twisted"],
 }
 EXTRAS_REQUIRE["dev"] = (
     EXTRAS_REQUIRE["aiohttp"]
