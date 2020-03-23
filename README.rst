@@ -2,10 +2,6 @@
 prometheus-async
 ================
 
-.. image:: https://img.shields.io/pypi/v/prometheus-async.svg
-   :target: https://pypi.org/project/prometheus-async/
-   :alt: PyPI
-
 .. image:: https://readthedocs.org/projects/prometheus-async/badge/?version=stable
    :target: https://prometheus-async.readthedocs.io/en/stable/?badge=stable
    :alt: Documentation Status
