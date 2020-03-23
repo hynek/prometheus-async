@@ -74,7 +74,7 @@ Once it's installed, you can run it in development mode:
 
    $ consul agent -dev -advertise 127.0.0.1
 
-The lack of Consul on Azure Pipelines is the only reason why our coverage badge reports a coverage under 100%.
+The lack of Consul on GitHub Actions is the only reason why our coverage badge reports a coverage under 100%.
 
 Documentation
 -------------
@@ -212,8 +212,8 @@ Thank you for considering contributing to ``prometheus-async``!
 .. _pyenv: https://github.com/pyenv/pyenv
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
 .. _semantic newlines: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
-.. _CI: https://dev.azure.com/the-hynek/prometheus-async
-.. _black: https://github.com/ambv/black
+.. _CI: https://github.com/hynek/prometheus-async/actions?workflow=CI
+.. _black: https://github.com/psf/black
 .. _pre-commit: https://pre-commit.com/
 .. _isort: https://github.com/timothycrosley/isort
 .. _Consul: https://www.consul.io/

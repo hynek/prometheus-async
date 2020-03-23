@@ -10,8 +10,8 @@ prometheus-async
    :target: https://prometheus-async.readthedocs.io/en/stable/?badge=stable
    :alt: Documentation Status
 
-.. image:: https://dev.azure.com/the-hynek/prometheus-async/_apis/build/status/hynek.prometheus-async?branchName=master
-   :target: https://dev.azure.com/the-hynek/prometheus-async/_build?definitionId=1
+.. image:: https://github.com/hynek/prometheus-async/workflows/CI/badge.svg?branch=master
+   :target: https://github.com/hynek/prometheus-async/actions?workflow=CI
    :alt: CI Status
 
 .. image:: https://codecov.io/github/hynek/prometheus_async/branch/master/graph/badge.svg

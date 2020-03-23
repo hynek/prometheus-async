@@ -44,6 +44,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -57,7 +58,11 @@ EXTRAS_REQUIRE = {
     "aiohttp": ["aiohttp>=3"],
     "consul": ["aiohttp>=3"],
     "twisted": ["twisted"],
-    "tests": ["coverage", "pytest", "pytest-asyncio; python_version >= '3.5'"],
+    "tests": [
+        "coverage[toml]",
+        "pytest",
+        "pytest-asyncio; python_version >= '3.5'",
+    ],
     "docs": ["aiohttp", "sphinx<2.1", "sphinxcontrib-asyncio", "twisted"],
 }
 EXTRAS_REQUIRE["dev"] = (
@@ -68,9 +73,6 @@ EXTRAS_REQUIRE["dev"] = (
     + EXTRAS_REQUIRE["tests"]
     + ["pytest-twisted", "pre-commit"]
 )
-EXTRAS_REQUIRE["azure-pipelines"] = EXTRAS_REQUIRE["tests"] + [
-    "pytest-azurepipelines"
-]
 
 if int(setuptools.__version__.split(".", 1)[0]) < 18:
     assert "bdist_wheel" not in sys.argv, "setuptools 18 required for wheels."
@@ -160,4 +162,5 @@ if __name__ == "__main__":
         install_requires=INSTALL_REQUIRES,
         extras_require=EXTRAS_REQUIRE,
         zip_safe=False,
+        options={"bdist_wheel": {"universal": "1"}},
     )
