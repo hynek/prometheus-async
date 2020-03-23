@@ -57,11 +57,7 @@ EXTRAS_REQUIRE = {
     "aiohttp": ["aiohttp>=3"],
     "consul": ["aiohttp>=3"],
     "twisted": ["twisted"],
-    "tests": [
-        "coverage",
-        "pytest<4.1",
-        "pytest-asyncio; python_version >= '3.5'",
-    ],
+    "tests": ["coverage", "pytest", "pytest-asyncio; python_version >= '3.5'"],
     "docs": ["aiohttp", "sphinx<2.1", "sphinxcontrib-asyncio", "twisted"],
 }
 EXTRAS_REQUIRE["dev"] = (
