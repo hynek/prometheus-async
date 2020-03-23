@@ -38,7 +38,7 @@ jobs:
         run: |
           set -xe
           python -m coverage combine
-          python -m coverage xml
+          python -m coverage xml --ignore-errors
         if: "contains(env.USING_COVERAGE, matrix.python-version)"
 
       - name: "Upload coverage to Codecov"
