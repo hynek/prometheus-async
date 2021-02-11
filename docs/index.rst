@@ -1,5 +1,5 @@
-``prometheus_async``
-====================
+prometheus-async
+================
 
 Release v\ |release| (:doc:`What's new? <changelog>`).
 

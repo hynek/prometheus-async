@@ -30,6 +30,7 @@ PROJECT_URLS = {
     "Documentation": "https://prometheus-async.readthedocs.io/",
     "Bug Tracker": "https://github.com/hynek/prometheus-async/issues",
     "Source Code": "https://github.com/hynek/prometheus-async",
+    "Funding": "https://hynek.me/say-thanks/",
 }
 
 CLASSIFIERS = [
@@ -45,6 +46,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -63,7 +65,7 @@ EXTRAS_REQUIRE = {
         "pytest",
         "pytest-asyncio; python_version >= '3.5'",
     ],
-    "docs": ["aiohttp", "sphinx<2.1", "sphinxcontrib-asyncio", "twisted"],
+    "docs": ["aiohttp", "furo", "sphinx", "sphinxcontrib-asyncio", "twisted"],
 }
 EXTRAS_REQUIRE["dev"] = (
     EXTRAS_REQUIRE["aiohttp"]

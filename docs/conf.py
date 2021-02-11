@@ -13,7 +13,6 @@
 # serve to show the default.
 
 import codecs
-import datetime
 import os
 import re
 
@@ -78,18 +77,15 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"prometheus_async"
-year = datetime.date.today().year
-copyright = u"2016{0}, Hynek Schlawack".format(
-    u"-{0}".format(year) if year != 2016 else u""
-)
+project = u"prometheus-async"
+copyright = u"2016, Hynek Schlawack"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-release = find_version("..", "src", project, "__init__.py")
+release = find_version("..", "src", project.replace("-", "_"), "__init__.py")
 version = release.rsplit(u".", 1)[0]
 # The full version, including alpha/beta/rc tags.
 
@@ -123,7 +119,7 @@ exclude_patterns = ["_build"]
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
+# pygments_style = "sphinx"
 highlight_language = "python3"
 
 # A list of ignored prefixes for module index sorting.
@@ -135,14 +131,8 @@ highlight_language = "python3"
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = "alabaster"
-html_theme_options = {
-    "font_family": '"Avenir Next", Calibri, "PT Sans", sans-serif',
-    "head_font_family": '"Avenir Next", Calibri, "PT Sans", sans-serif',
-    "font_size": "18px",
-    "page_width": "980px",
-    "show_relbars": True,
-}
+html_theme = "furo"
+html_theme_options = {}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

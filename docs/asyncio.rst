@@ -40,7 +40,7 @@ Metric Exposure
 
 .. currentmodule:: prometheus_async.aio.web
 
-``prometheus_async`` offers methods to expose your metrics using `aiohttp <https://aiohttp.readthedocs.io/>`_ under ``prometheus_async.aio.web``:
+*prometheus-async* offers methods to expose your metrics using `aiohttp <https://aiohttp.readthedocs.io/>`_ under ``prometheus_async.aio.web``:
 
 
 .. autocofunction:: start_http_server
@@ -82,7 +82,7 @@ Service Discovery
 
 Web exposure is much more useful if it comes with an easy way to integrate it with service discovery.
 
-Currently ``prometheus_async`` only ships integration with a local Consul agent using ``aiohttp``.
+Currently *prometheus-async* only ships integration with a local Consul agent using ``aiohttp``.
 
 .. autoclass:: ConsulAgent
 
@@ -93,4 +93,4 @@ Custom Service Discovery
 Adding own service discovery methods is simple:
 all you need is to provide an instance with a coroutine ``register(self, metrics_server, loop)`` that registers the passed ``metrics_server`` with the service of your choicer and returns another coroutine that is called for de-registration when the metrics server is shut down.
 
-Have a look at `our implementations <https://github.com/hynek/prometheus_async/blob/master/src/prometheus_async/aio/sd.py>`_ if you need inspiration.
+Have a look at `our implementations <https://github.com/hynek/prometheus_async/blob/main/src/prometheus_async/aio/sd.py>`_ if you need inspiration.
