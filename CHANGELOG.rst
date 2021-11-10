@@ -15,6 +15,7 @@ Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - Support for Python 2.7 and 3.5 has been dropped.
+- The *loop* argument has been removed from ``prometheus_async.aio.start_http_server()``.
 
 
 Deprecations:

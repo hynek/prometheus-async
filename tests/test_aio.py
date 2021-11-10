@@ -461,16 +461,6 @@ class TestConsulAgent:
             assert 200 == resp.status
 
     @pytest.mark.asyncio
-    async def test_loop_warns(self, event_loop):
-        """
-        If a loop is passed, raise a DeprecationWarning.
-        """
-        with pytest.deprecated_call():
-            server = await aio.web.start_http_server(loop=event_loop)
-
-        await server.close()
-
-    @pytest.mark.asyncio
     async def test_none_if_register_fails(self):
         """
         If register fails, return None.

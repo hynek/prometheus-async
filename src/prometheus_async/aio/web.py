@@ -19,7 +19,6 @@ aiohttp-based metrics exposure.
 import asyncio
 import queue
 import threading
-import warnings
 
 from collections import namedtuple
 
@@ -79,7 +78,7 @@ async def _cheap(request):
 
 @_needs_aiohttp
 async def start_http_server(
-    *, addr="", port=0, ssl_ctx=None, service_discovery=None, loop=None
+    *, addr="", port=0, ssl_ctx=None, service_discovery=None
 ):
     """
     Start an HTTP(S) server on *addr*:*port*.
@@ -98,9 +97,8 @@ async def start_http_server(
 
        The *loop* argument is a no-op now and will be removed in one year by
        the earliest.
+    .. versionchanged:: 21.1.0 The *loop* argument has been removed.
     """
-    if loop is not None:
-        warnings.warn("The loop argument is a no-op.", DeprecationWarning)
     app = web.Application()
     app.router.add_get("/", _cheap)
     app.router.add_get("/metrics", server_stats)
