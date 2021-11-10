@@ -46,53 +46,53 @@ Decorator Wrappers
 Metric Exposure
 ---------------
 
-The underlying prometheus client library, `prometheus_client`_ exposes a :class:`twisted.web.resource.Resource` -- namely `prometheus_client.twisted.MetricsResource`_ -- that makes it extremely easy to expose your metrics.
+`prometheus_client`_, the underlying Prometheus client library, exposes a :class:`twisted.web.resource.Resource` -- namely `prometheus_client.twisted.MetricsResource`_ -- that makes it extremely easy to expose your metrics.
 
-     .. code-block:: python
+.. code-block:: python
 
-        from prometheus_client.twisted import MetricsResource
-        from twisted.web.server import Site
-        from twisted.web.resource import Resource
-        from twisted.internet import reactor
+   from prometheus_client.twisted import MetricsResource
+   from twisted.web.server import Site
+   from twisted.web.resource import Resource
+   from twisted.internet import reactor
 
-        root = Resource()
-        root.putChild(b'metrics', MetricsResource())
+   root = Resource()
+   root.putChild(b"metrics", MetricsResource())
 
-        factory = Site(root)
-        reactor.listenTCP(8000, factory)
-        reactor.run()
+   factory = Site(root)
+   reactor.listenTCP(8000, factory)
+   reactor.run()
 
 As a slightly more in-depth example, the following exposes the application's metrics under ``/metrics`` and sets up a `prometheus_client.Counter`_ for inbound HTTP requests.
 It also uses `Klein`_ to set up the routes instead of relying directly on `twisted.web`_ for routing.
 
-     .. code-block:: python
+.. code-block:: python
 
-        from prometheus_client.twisted import MetricsResource
-        from twisted.web.server import Site
-        from twisted.internet import reactor
+   from prometheus_client.twisted import MetricsResource
+   from twisted.web.server import Site
+   from twisted.internet import reactor
 
-        from klein import Klein
+   from klein import Klein
 
-        from prometheus_client import Counter
-
-
-        INBOUND_REQUESTS = Counter(
-           'inbound_requests_total',
-           'Counter (int) of inbound http requests',
-           ['endpoint', 'method']
-        )
-
-        app = Klein()
-
-        @app.route('/metrics')
-        def metrics(request):
-            INBOUND_REQUESTS.labels('/metrics', 'GET').inc()
-            return MetricsResource()
+   from prometheus_client import Counter
 
 
-        factory = Site(app.resource())
-        reactor.listenTCP(8000, factory)
-        reactor.run()
+   INBOUND_REQUESTS = Counter(
+      "inbound_requests_total",
+      "Counter (int) of inbound http requests",
+      ["endpoint", "method"]
+   )
+
+   app = Klein()
+
+   @app.route("/metrics")
+   def metrics(request):
+       INBOUND_REQUESTS.labels("/metrics", "GET").inc()
+       return MetricsResource()
+
+
+   factory = Site(app.resource())
+   reactor.listenTCP(8000, factory)
+   reactor.run()
 
 
 
