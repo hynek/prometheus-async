@@ -16,10 +16,6 @@
 Async helpers for prometheus_client.
 """
 
-from __future__ import absolute_import, division, print_function
-
-from ._utils import PY2
-
 
 __version__ = "21.1.0.dev0"
 
@@ -31,10 +27,13 @@ __author__ = "Hynek Schlawack"
 __email__ = "hs@ox.cx"
 
 __license__ = "Apache License, Version 2.0"
-__copyright__ = "Copyright (c) 2016 {0}".format(__author__)
+__copyright__ = f"Copyright (c) 2016 {__author__}"
 
 
-__all__ = []
+from . import aio
+
+
+__all__ = ["aio"]
 
 try:
     from . import tx  # noqa -- flake8 doesn't understand __all__.append
@@ -42,8 +41,3 @@ except ImportError:
     pass
 else:
     __all__.append("tx")
-
-if not PY2:
-    from . import aio  # noqa -- flake8 doesn't understand __all__.append
-
-    __all__.append("aio")

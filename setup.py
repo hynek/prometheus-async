@@ -17,8 +17,6 @@ import os
 import re
 import sys
 
-import setuptools
-
 from setuptools import find_packages, setup
 
 
@@ -31,6 +29,7 @@ PROJECT_URLS = {
     "Bug Tracker": "https://github.com/hynek/prometheus-async/issues",
     "Source Code": "https://github.com/hynek/prometheus-async",
     "Funding": "https://hynek.me/say-thanks/",
+    "Ko-fi": "https://ko-fi.com/the_hynek",
 }
 
 CLASSIFIERS = [
@@ -39,20 +38,17 @@ CLASSIFIERS = [
     "License :: OSI Approved :: Apache Software License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 2",
-    "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-PYTHON_REQUIRES = ">=2.7, !=3.0, !=3.1, !=3.2, !=3.3, !=3.4"
+PYTHON_REQUIRES = ">=3.6"
 INSTALL_REQUIRES = [
-    "monotonic; python_version <= '3.5'",
     "prometheus_client >= 0.0.18",
     "wrapt",
 ]
@@ -63,7 +59,7 @@ EXTRAS_REQUIRE = {
     "tests": [
         "coverage[toml]",
         "pytest",
-        "pytest-asyncio; python_version >= '3.5'",
+        "pytest-asyncio",
     ],
     "docs": ["aiohttp", "furo", "sphinx", "sphinxcontrib-asyncio", "twisted"],
 }
@@ -75,12 +71,6 @@ EXTRAS_REQUIRE["dev"] = (
     + EXTRAS_REQUIRE["tests"]
     + ["pytest-twisted", "pre-commit"]
 )
-
-if int(setuptools.__version__.split(".", 1)[0]) < 18:
-    assert "bdist_wheel" not in sys.argv, "setuptools 18 required for wheels."
-    # For legacy setuptools + sdist.
-    if sys.version_info[0:2] < (3, 5):
-        INSTALL_REQUIRES.append("monotonic")
 
 ###############################################################################
 
@@ -116,11 +106,11 @@ def find_meta(meta):
     Extract __*meta*__ from META_FILE.
     """
     meta_match = re.search(
-        r"^__{meta}__ = ['\"]([^'\"]*)['\"]".format(meta=meta), META_FILE, re.M
+        fr"^__{meta}__ = ['\"]([^'\"]*)['\"]", META_FILE, re.M
     )
     if meta_match:
         return meta_match.group(1)
-    raise RuntimeError("Unable to find __{meta}__ string.".format(meta=meta))
+    raise RuntimeError(f"Unable to find __{meta}__ string.")
 
 
 VERSION = find_meta("version")
@@ -136,7 +126,7 @@ LONG = (
         re.S,
     ).group(1)
     + "\n\n`Full changelog "
-    + "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URL)
+    + f"<{URL}en/stable/changelog.html>`_.\n\n"
     + read("AUTHORS.rst")
 )
 

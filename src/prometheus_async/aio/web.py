@@ -43,7 +43,7 @@ def _needs_aiohttp(obj):
             """
             Notifies about missing aiohttp dependency.
             """
-            raise RuntimeError("'{}' requires aiohttp.".format(obj.__name__))
+            raise RuntimeError(f"'{obj.__name__}' requires aiohttp.")
 
         return raiser
     else:
@@ -161,7 +161,7 @@ class MetricsHTTPServer:
         addr = self.socket.addr
         return "http{s}://{host}:{port}/".format(
             s="s" if self.https else "",
-            host=addr if ":" not in addr else "[{}]".format(addr),
+            host=addr if ":" not in addr else f"[{addr}]",
             port=self.socket.port,
         )
 

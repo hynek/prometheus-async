@@ -330,7 +330,7 @@ class TestWeb:
         async with aiohttp.ClientSession() as s:
             rv = await s.request(
                 "GET",
-                "http://{addr}:{port}/metrics".format(addr=addr, port=port),
+                f"http://{addr}:{port}/metrics",
             )
             body = await rv.text()
 

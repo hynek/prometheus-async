@@ -16,10 +16,9 @@
 Decorators for asyncio.
 """
 
+from time import perf_counter
 
 from wrapt import decorator
-
-from .._utils import get_time
 
 
 def time(metric, future=None):
@@ -35,9 +34,9 @@ def time(metric, future=None):
         @decorator
         async def time_decorator(wrapped, _, args, kw):
             def observe():
-                metric.observe(get_time() - start_time)
+                metric.observe(perf_counter() - start_time)
 
-            start_time = get_time()
+            start_time = perf_counter()
             try:
                 rv = await wrapped(*args, **kw)
                 return rv
@@ -49,7 +48,7 @@ def time(metric, future=None):
 
         async def measure():
             def observe():
-                metric.observe(get_time() - start_time)
+                metric.observe(perf_counter() - start_time)
 
             try:
                 rv = await future
@@ -57,7 +56,7 @@ def time(metric, future=None):
             finally:
                 observe()
 
-        start_time = get_time()
+        start_time = perf_counter()
         return measure()
 
 

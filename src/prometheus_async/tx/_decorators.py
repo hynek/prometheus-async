@@ -16,10 +16,10 @@
 Decorators for Twisted.
 """
 
+from time import perf_counter
+
 from twisted.internet.defer import Deferred
 from wrapt import decorator
-
-from .._utils import get_time
 
 
 def time(metric, deferred=None):
@@ -37,10 +37,10 @@ def time(metric, deferred=None):
         @decorator
         def time_decorator(f, _, args, kw):
             def observe(value):
-                metric.observe(get_time() - start_time)
+                metric.observe(perf_counter() - start_time)
                 return value
 
-            start_time = get_time()
+            start_time = perf_counter()
             rv = f(*args, **kw)
             if isinstance(rv, Deferred):
                 return rv.addBoth(observe)
@@ -51,10 +51,10 @@ def time(metric, deferred=None):
     else:
 
         def observe(value):
-            metric.observe(get_time() - start_time)
+            metric.observe(perf_counter() - start_time)
             return value
 
-        start_time = get_time()
+        start_time = perf_counter()
         return deferred.addBoth(observe)
 
 

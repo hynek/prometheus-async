@@ -60,7 +60,7 @@ Tests
 
 - To run the test suite, all you need is a recent tox_.
   It will ensure the test suite runs with all dependencies against all Python versions just as it will in our CI.
-  If you lack some Python versions, you can can always limit the environments like ``tox -e py27,py35`` (in that case you may want to look into pyenv_, which makes it very easy to install many different Python versions in parallel).
+  If you lack some Python versions, you can can always limit the environments like ``tox -e py36,py37`` (in that case you may want to look into asdf_ or pyenv_, which make it very easy to install many different Python versions in parallel).
 - Write `good test docstrings`_.
 
 
@@ -210,6 +210,7 @@ Thank you for considering contributing to *prometheus-async*!
 .. _`backward compatibility`: https://prometheus-async.readthedocs.io/en/latest/backward-compatibility.html
 .. _`tox`: https://tox.readthedocs.io/en/latest/
 .. _pyenv: https://github.com/pyenv/pyenv
+.. _asdf: https://asdf-vm.com
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
 .. _semantic newlines: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
 .. _CI: https://github.com/hynek/prometheus-async/actions?workflow=CI

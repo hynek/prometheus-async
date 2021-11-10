@@ -2,28 +2,27 @@
 prometheus-async
 ================
 
-.. image:: https://readthedocs.org/projects/prometheus-async/badge/?version=stable
-   :target: https://prometheus-async.readthedocs.io/en/stable/?badge=stable
-   :alt: Documentation Status
+.. image:: https://img.shields.io/badge/Docs-Read%20The%20Docs-black
+   :target: https://prometheus-async.readthedocs.io/en/stable/
+   :alt: Documentation
 
-.. image:: https://github.com/hynek/prometheus-async/workflows/CI/badge.svg?branch=master
-   :target: https://github.com/hynek/prometheus-async/actions?workflow=CI
-   :alt: CI Status
+.. image:: https://img.shields.io/badge/license-Apache--2.0-C06524
+   :target: https://github.com/hynek/prometheus-async/blob/main/LICENSE
+   :alt: License: Apache 2.0
 
-.. image:: https://codecov.io/github/hynek/prometheus-async/branch/master/graph/badge.svg
-   :target: https://codecov.io/github/hynek/prometheus-async
-   :alt: Test Coverage
+.. image:: https://img.shields.io/pypi/v/prometheus-async
+   :target: https://pypi.org/project/prometheus-async/
+   :alt: PyPI version
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/ambv/black
-   :alt: Code style: black
+.. image:: https://static.pepy.tech/personalized-badge/prometheus-async?period=month&units=international_system&left_color=grey&right_color=blue&left_text=Downloads%20/%20Month
+   :target: https://pepy.tech/project/prometheus-async
+   :alt: Downloads / Month
 
 .. teaser-begin
 
 *prometheus-async* adds support for asynchronous frameworks to the official `Python client`_ for the Prometheus_ metrics and monitoring system.
 
-Currently asyncio_ (Python 3.5+, PyPy3) and Twisted_ (Python 2.7, 3.5+, PyPy) are supported.
-
+Currently asyncio_ and Twisted_ on Python 3.6 and later are supported.
 
 It works by wrapping the metrics from the official client:
 

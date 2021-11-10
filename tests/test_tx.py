@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, division, print_function
 
 import pytest
 import pytest_twisted
@@ -22,7 +21,7 @@ from twisted.internet.defer import Deferred, fail, succeed
 from prometheus_async import tx
 
 
-class TestTime(object):
+class TestTime:
     @pytest_twisted.inlineCallbacks
     def test_decorator_sync(self, fo, patch_timer):
         """
@@ -84,7 +83,7 @@ class TestTime(object):
         assert [1] == fo._observed
 
 
-class TestCountExceptions(object):
+class TestCountExceptions:
     @pytest_twisted.inlineCallbacks
     def test_decorator_no_exc(self, fc):
         """
@@ -167,7 +166,7 @@ class TestCountExceptions(object):
         assert 0 == fc._val
 
 
-class TestTrackInprogress(object):
+class TestTrackInprogress:
     @pytest_twisted.inlineCallbacks
     def test_deferred(self, fg):
         """

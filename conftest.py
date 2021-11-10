@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, division, print_function
-
-import sys
 
 import pytest
 
@@ -23,14 +20,7 @@ try:
     import twisted
 except ImportError:
     twisted = None
-
-
-collect_ignore = []
-if sys.version_info[0] == 2:
-    collect_ignore.append("tests/test_aio.py")
-
-if twisted is None:
-    collect_ignore.append("tests/test_tx.py")
+    collect_ignore = ["tests/test_tx.py"]
 
 
 def mk_monotonic_timer():
@@ -47,7 +37,7 @@ def mk_monotonic_timer():
     return timer
 
 
-class FakeObserver(object):
+class FakeObserver:
     """
     A fake metric observer that saves all observed values in a list.
     """
@@ -59,7 +49,7 @@ class FakeObserver(object):
         self._observed.append(value)
 
 
-class FakeCounter(object):
+class FakeCounter:
     """
     A fake counter metric.
     """
@@ -71,7 +61,7 @@ class FakeCounter(object):
         self._val += 1
 
 
-class FakeGauge(object):
+class FakeGauge:
     """
     A fake Gauge.
     """
@@ -120,12 +110,12 @@ def patch_timer(monkeypatch):
     try:
         from prometheus_async.tx import _decorators
 
-        monkeypatch.setattr(_decorators, "get_time", mk_monotonic_timer())
+        monkeypatch.setattr(_decorators, "perf_counter", mk_monotonic_timer())
     except BaseException:
         pass
     try:
         from prometheus_async.aio import _decorators
 
-        monkeypatch.setattr(_decorators, "get_time", mk_monotonic_timer())
+        monkeypatch.setattr(_decorators, "perf_counter", mk_monotonic_timer())
     except BaseException:
         pass
