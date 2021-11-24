@@ -82,7 +82,7 @@ class ConsulAgent:
         return deregister
 
 
-class _LocalConsulAgentClient:
+class _LocalConsulAgentClient:  # pragma: no cover -- needs local consul client
     """
     Minimal client to speak to a Consul agent on localhost:8500.
     """
