@@ -56,8 +56,7 @@ jobs:
         with:
           python-version: "3.10"  # Use latest, so it understands all syntax.
 
-      - name: "Install Coverage.py"
-        run: "python -m pip install --upgrade coverage[toml]"
+      - run: "python -m pip install --upgrade coverage[toml]"
 
       - name: "Download coverage data"
         uses: actions/download-artifact@v2
@@ -86,14 +85,11 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: "Install build, check-wheel-contents, and twine"
-        run: "python -m pip install build twine check-wheel-contents"
-      - name: "Build package"
-        run: "python -m build --sdist --wheel ."
+      - run: "python -m pip install build twine check-wheel-contents"
+      - run: "python -m build --sdist --wheel ."
       - name: "List result"
         run: "ls -l dist"
-      - name: "Check wheel contents"
-        run: "check-wheel-contents dist/*.whl"
+      - run: "check-wheel-contents dist/*.whl"
       - name: "Check long_description"
         run: "python -m twine check dist/*"
 
