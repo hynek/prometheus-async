@@ -15,6 +15,7 @@
 import asyncio
 import http.client
 import inspect
+import sys
 import uuid
 
 from unittest import mock
@@ -53,7 +54,8 @@ class TestTime:
         await new_coro
 
     @pytest.mark.asyncio
-    async def test_decorator_sync(self, fo, patch_timer):
+    @pytest.mark.usefixtures("patch_timer")
+    async def test_decorator_sync(self, fo):
         """
         time works with sync results functions.
         """
@@ -69,7 +71,8 @@ class TestTime:
         assert [1] == fo._observed
 
     @pytest.mark.asyncio
-    async def test_decorator(self, fo, patch_timer):
+    @pytest.mark.usefixtures("patch_timer")
+    async def test_decorator(self, fo):
         """
         time works with asyncio results functions.
         """
@@ -90,7 +93,8 @@ class TestTime:
         assert 42 == rv
 
     @pytest.mark.asyncio
-    async def test_decorator_exc(self, fo, patch_timer):
+    @pytest.mark.usefixtures("patch_timer")
+    async def test_decorator_exc(self, fo):
         """
         Does not swallow exceptions.
         """
@@ -108,7 +112,8 @@ class TestTime:
         assert [1] == fo._observed
 
     @pytest.mark.asyncio
-    async def test_future(self, fo, patch_timer):
+    @pytest.mark.usefixtures("patch_timer")
+    async def test_future(self, fo):
         """
         time works with a asyncio.Future.
         """
@@ -123,7 +128,8 @@ class TestTime:
         assert [1] == fo._observed
 
     @pytest.mark.asyncio
-    async def test_future_exc(self, fo, patch_timer):
+    @pytest.mark.usefixtures("patch_timer")
+    async def test_future_exc(self, fo):
         """
         Does not swallow exceptions.
         """
@@ -459,6 +465,49 @@ class TestConsulAgent:
             # Clean up behind ourselves.
             resp = await con.deregister_service(service_id)
             assert 200 == resp.status
+
+    @pytest.mark.parametrize("deregister", [True, False])
+    @pytest.mark.asyncio
+    @pytest.mark.skipif(sys.version_info < (3, 8), reason="AsyncMock is 3.8+")
+    async def test_mocked(self, deregister):
+        """
+        Same as test_integration, but using mocks instead of a real consul
+        agent.
+        """
+        tags = ("foo", "bar")
+        service_id = str(uuid.uuid4())  # allow for parallel tests
+
+        con = mock.AsyncMock(auto_spec=_LocalConsulAgentClient)
+        ca = ConsulAgent(
+            name="test-metrics",
+            service_id=service_id,
+            tags=tags,
+            deregister=deregister,
+        )
+        ca.consul = con
+
+        server = await aio.web.start_http_server(
+            addr="127.0.0.1", service_discovery=ca
+        )
+
+        con.register_service.assert_awaited_once()
+        reg = con.register_service.await_args.kwargs
+
+        assert service_id == reg["service_id"]
+        assert "test-metrics" == reg["name"]
+        assert sorted(tags) == sorted(reg["tags"])
+        assert (
+            f"http://{server.socket.addr}:{server.socket.port}/"
+            == reg["metrics_server"].url
+        )
+
+        await server.close()
+
+        if deregister:
+            # Assert service is gone iff we are supposed to deregister.
+            con.deregister_service.assert_awaited_once_with(service_id)
+        else:
+            con.deregister_service.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_none_if_register_fails(self):
