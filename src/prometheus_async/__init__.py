@@ -22,7 +22,8 @@ Async helpers for prometheus_client.
 __version__ = "21.1.0.dev0"
 
 __title__ = "prometheus_async"
-__description__ = "Async helpers for prometheus_client."
+# __doc__ is None in when running with -OO / PYTHONOPTIMIZE=2.
+__description__ = (__doc__ or "").strip()
 __uri__ = "https://prometheus-async.readthedocs.io/"
 
 __author__ = "Hynek Schlawack"
