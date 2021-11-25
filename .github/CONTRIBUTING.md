@@ -1,6 +1,6 @@
 # How To Contribute
 
-First off, thank you for considering contributing to `prometheus-async`!
+First off, thank you for considering contributing to *prometheus-async*!
 It's people like *you* who make it such a great tool for everyone.
 
 This document intends to make contribution more accessible by codifying tribal knowledge and expectations.
