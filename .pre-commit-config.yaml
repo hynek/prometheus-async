@@ -13,6 +13,12 @@ repos:
         additional_dependencies: [toml]
         language_version: python3.10
 
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.29.1
+    hooks:
+      - id: pyupgrade
+        args: [--py36-plus]
+
   - repo: https://gitlab.com/pycqa/flake8
     rev: 3.9.2
     hooks:
