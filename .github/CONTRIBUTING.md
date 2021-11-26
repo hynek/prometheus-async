@@ -99,7 +99,8 @@ If your change is noteworthy, there needs to be a changelog entry in `CHANGELOG.
 
 - As with other docs, please use [semantic newlines] in the changelog.
 - Wrap symbols like modules, functions, or classes into double backticks so they are rendered in a `monospace font`.
-- Wrap arguments into asterisks like in docstrings: `*these*` or `*attributes*`.
+- Wrap arguments into asterisks like in docstrings:
+  `Added new argument *an_argument*.`
 - If you mention functions or other callables, add parentheses at the end of their names: `prometheus_async.func()` or `prometheus_async.Class.method()`.
   This makes the changelog a lot more readable.
 - Prefer simple past tense or constructions with "now".
