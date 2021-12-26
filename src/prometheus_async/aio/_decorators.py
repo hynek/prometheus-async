@@ -15,10 +15,18 @@
 """
 Decorators for asyncio.
 """
-
 from time import perf_counter
+from typing import Callable, TypeVar, overload
 
 from wrapt import decorator
+
+
+C = TypeVar("C", bound=Callable)
+
+
+@overload
+def time(metric) -> Callable[[C], C]:
+    ...
 
 
 def time(metric, future=None):
@@ -60,6 +68,11 @@ def time(metric, future=None):
         return measure()
 
 
+@overload
+def count_exceptions(metric, exc=BaseException) -> Callable[[C], C]:
+    ...
+
+
 def count_exceptions(metric, future=None, exc=BaseException):
     r"""
     Call ``metric.inc()`` whenever *exc* is caught.
@@ -91,6 +104,11 @@ def count_exceptions(metric, future=None, exc=BaseException):
             return rv
 
         return count()
+
+
+@overload
+def track_inprogress(metric) -> Callable[[C], C]:
+    ...
 
 
 def track_inprogress(metric, future=None):
