@@ -37,35 +37,33 @@ def time(metric, future=None):
 
     :returns: coroutine function (if decorator) or coroutine.
     """
+
+    def observe(start_time: float):
+        metric.observe(perf_counter() - start_time)
+
     if future is None:
 
         @decorator
         async def time_decorator(wrapped, _, args, kw):
-            def observe():
-                metric.observe(perf_counter() - start_time)
-
             start_time = perf_counter()
             try:
                 rv = await wrapped(*args, **kw)
                 return rv
             finally:
-                observe()
+                observe(start_time)
 
         return time_decorator
     else:
 
-        async def measure():
-            def observe():
-                metric.observe(perf_counter() - start_time)
-
+        async def measure(start_time):
             try:
                 rv = await future
                 return rv
             finally:
-                observe()
+                observe(start_time)
 
         start_time = perf_counter()
-        return measure()
+        return measure(start_time)
 
 
 @overload
