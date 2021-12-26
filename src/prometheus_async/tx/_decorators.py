@@ -19,9 +19,18 @@ Decorators for Twisted.
 """
 
 from time import perf_counter
+from typing import Callable, TypeVar, overload
 
 from twisted.internet.defer import Deferred
 from wrapt import decorator
+
+
+C = TypeVar("C", bound=Callable)
+
+
+@overload
+def time(metric) -> Callable[[C], C]:
+    ...
 
 
 def time(metric, deferred=None):
@@ -60,6 +69,11 @@ def time(metric, deferred=None):
         return deferred.addBoth(observe)
 
 
+@overload
+def count_exceptions(metric, exc=BaseException) -> Callable[[C], C]:
+    ...
+
+
 def count_exceptions(metric, deferred=None, exc=BaseException):
     """
     Call ``metric.inc()`` whenever *exc* is caught.
@@ -92,6 +106,11 @@ def count_exceptions(metric, deferred=None, exc=BaseException):
         return count_exceptions_decorator
     else:
         return deferred.addErrback(inc)
+
+
+@overload
+def track_inprogress(metric) -> Callable[[C], C]:
+    ...
 
 
 def track_inprogress(metric, deferred=None):
