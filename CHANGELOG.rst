@@ -27,7 +27,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- Add support for static typing when using ``time``, ``count_exceptions`` and ``track_inprogress`` as decorators.
 
 
 ----
