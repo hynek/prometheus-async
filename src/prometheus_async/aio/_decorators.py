@@ -16,16 +16,20 @@
 Decorators for asyncio.
 """
 from time import perf_counter
-from typing import Callable, TypeVar, overload
+from typing import Awaitable, Callable, TypeVar, overload
 
+from typing_extensions import ParamSpec
 from wrapt import decorator
 
 
-C = TypeVar("C", bound=Callable)
+P = ParamSpec("P")
+R = TypeVar("R", bound=Awaitable)
 
 
 @overload
-def time(metric) -> Callable[[C], C]:
+def time(
+    metric,
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     ...
 
 
@@ -67,7 +71,9 @@ def time(metric, future=None):
 
 
 @overload
-def count_exceptions(metric, exc=BaseException) -> Callable[[C], C]:
+def count_exceptions(
+    metric, exc: BaseException = BaseException
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     ...
 
 
@@ -105,7 +111,7 @@ def count_exceptions(metric, future=None, exc=BaseException):
 
 
 @overload
-def track_inprogress(metric) -> Callable[[C], C]:
+def track_inprogress(metric) -> Callable[[Callable[P, R]], Callable[P, R]]:
     ...
 
 
