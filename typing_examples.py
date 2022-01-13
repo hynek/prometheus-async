@@ -14,8 +14,9 @@ async def func(i: int) -> str:
     return str(i)
 
 
-# The type of `func` is correct: "def (i: builtins.int) -> typing.Coroutine*[Any, Any, builtins.str]"
-reveal_type(func)
+# The type of `func` is correct:
+# "def (i: builtins.int) -> typing.Coroutine*[Any, Any, builtins.str]"
+# reveal_type(func)
 
 
 @time(REQ_DURATION)
@@ -23,10 +24,12 @@ def future_func(i: int) -> Future[str]:
     return Future()
 
 
-# The type of `future_func` is correct: "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
-reveal_type(future_func)
+# The type of `future_func` is correct:
+# "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
+# reveal_type(future_func)
 
-# The following is a type error since the function cannot be awaited:  Value of type variable "R" of function cannot be "str"
+# The following is a type error since the function cannot be awaited:
+# "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
 @time(REQ_DURATION)
 def should_be_async_func(i: int) -> str:
     return str(i)
