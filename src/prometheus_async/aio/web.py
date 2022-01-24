@@ -23,8 +23,10 @@ import queue
 import threading
 
 from collections import namedtuple
+from typing import Callable, Optional, Tuple
 
 from prometheus_client import CONTENT_TYPE_LATEST, REGISTRY, generate_latest
+from prometheus_client.openmetrics import exposition as openmetrics
 
 
 try:
@@ -51,6 +53,23 @@ def _needs_aiohttp(obj):
         return obj
 
 
+def _choose_generator(accept_header: Optional[str]) -> Tuple[Callable, str]:
+    """
+    Return the correct generate function according to *accept_header*.
+
+    Default to the old style.
+    """
+    accept_header = accept_header or ""
+    for accepted in accept_header.split(","):
+        if accepted.split(";")[0].strip() == "application/openmetrics-text":
+            return (
+                openmetrics.generate_latest,
+                openmetrics.CONTENT_TYPE_LATEST,
+            )
+
+    return generate_latest, CONTENT_TYPE_LATEST
+
+
 @_needs_aiohttp
 async def server_stats(request):
     """
@@ -58,11 +77,14 @@ async def server_stats(request):
 
     :rtype: :class:`aiohttp.web.Response`
     """
-    rsp = web.Response(body=generate_latest(REGISTRY))
+    generate, content_type = _choose_generator(request.headers.get("Accept"))
+
+    rsp = web.Response(body=generate(REGISTRY))
     # This is set separately because aiohttp complains about `;` in
     # content_type thinking it means there's also a charset.
     # cf. https://github.com/aio-libs/aiohttp/issues/2197
-    rsp.content_type = CONTENT_TYPE_LATEST
+    rsp.content_type = content_type
+
     return rsp
 
 

@@ -7,7 +7,7 @@ Versions are year-based with a strict backward compatibility policy.
 The third digit is only for regressions.
 
 
-21.1.0 (UNRELEASED)
+22.1.0 (UNRELEASED)
 -------------------
 
 
@@ -27,7 +27,9 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- Added support for `OpenMetrics <https://openmetrics.io>`_ exposition in ``prometheus_async.aio.web.server_stats()`` and thus ``prometheus_async.aio.web.start_http_server_in_thread()``.
+  `#23 <https://github.com/hynek/prometheus-async/issues/23>`_
+
 
 
 ----
