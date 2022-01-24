@@ -111,7 +111,9 @@ filterwarnings = [
     "once::Warning",
     "ignore:::aiohttp[.*]",
     "ignore:::importlib[.*]",
+    "ignore::DeprecationWarning:twisted.python.threadable",
 ]
+asyncio_mode = "auto"
 
 
 [tool.coverage.run]
