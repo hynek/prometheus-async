@@ -14,7 +14,7 @@ The third digit is only for regressions.
 Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Support for Python 2.7 and 3.5 has been dropped.
+- Support for Python 2.7, 3.5, and 3.6 has been dropped.
 - The *loop* argument has been removed from ``prometheus_async.aio.start_http_server()``.
 
 
