@@ -25,7 +25,6 @@ Project Information
 .. toctree::
    :maxdepth: 1
 
-   future
    backward-compatibility
    changelog
    license
