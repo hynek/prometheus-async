@@ -1,11 +1,16 @@
-.. :changelog:
-
 Changelog
 =========
 
-Versions are year-based with a strict backward compatibility policy.
-The third digit is only for regressions.
+Versions follow `Calendar Versioning <https://calver.org>`_ with a strict backwards-compatibility policy.
 
+The **first number** of the version is the year.
+The **second number** is incremented with each release, starting at 1 for each year.
+The **third number** is when we need to start branches for older releases (only for emergencies).
+
+You shouldn't ever be afraid to upgrade *prometheus-async* if you're using its public APIs and pay attention to ``DeprecationWarning``\ s.
+Whenever there is a need to break compatibility, it is announced here in the changelog and raises a ``DeprecationWarning`` for a year (if possible) before it's finally really broken.
+
+.. changelog
 
 22.1.0 (UNRELEASED)
 -------------------
