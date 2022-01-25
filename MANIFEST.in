@@ -1,7 +1,0 @@
-include .coveragerc tox.ini LICENSE NOTICE *.rst pyproject.toml conftest.py *.yml .pre-commit-config.yaml
-graft .github
-recursive-include tests *.py
-recursive-exclude tests *.pyc
-recursive-include docs *.py
-recursive-include docs *.rst
-recursive-include docs Makefile
