@@ -9,8 +9,9 @@ build-backend = "flit_core.buildapi"
 name = "prometheus-async"
 authors = [{name = "Hynek Schlawack", email = "hs@ox.cx"}]
 dynamic = ["version", "description"]
-requires-python = ">=3.6"
-dependencies = ["prometheus_client >= 0.0.18", "wrapt", "typing_extensions"]
+requires-python = ">=3.7"
+# Keep in-sync with testenv:oldest!
+dependencies = ["prometheus_client >= 0.8.0", "wrapt", "typing_extensions"]
 license = { file = "LICENSE" }
 readme = { content-type = "text/x-rst", file = "README.rst"}
 keywords = ["metrics", "prometheus", "twisted", "asyncio", "async"]
@@ -21,7 +22,6 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -111,7 +111,9 @@ filterwarnings = [
     "once::Warning",
     "ignore:::aiohttp[.*]",
     "ignore:::importlib[.*]",
+    "ignore::DeprecationWarning:twisted.python.threadable",
 ]
+asyncio_mode = "auto"
 
 
 [tool.coverage.run]

@@ -20,11 +20,13 @@ import inspect
 import sys
 import uuid
 
+from types import SimpleNamespace
 from unittest import mock
 
 import pytest
 
-from prometheus_client import Counter
+from prometheus_client import CONTENT_TYPE_LATEST, Counter
+from prometheus_client.openmetrics import exposition as openmetrics
 
 from prometheus_async import aio
 from prometheus_async.aio.sd import ConsulAgent, _LocalConsulAgentClient
@@ -32,8 +34,11 @@ from prometheus_async.aio.sd import ConsulAgent, _LocalConsulAgentClient
 
 try:
     import aiohttp
+
+    from multidict import CIMultiDict
 except ImportError:
     aiohttp = None
+    CIMultiDict = dict
 
 
 async def coro():
@@ -289,22 +294,54 @@ class FakeSD:
 
 
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
+@pytest.mark.asyncio
 class TestWeb:
-    @pytest.mark.asyncio
-    async def test_server_stats(self):
+    async def test_server_stats_old(self):
         """
-        Returns a response with the current stats.
+        Returns a response with the current stats in the old format.
         """
         Counter("test_server_stats_total", "cnt").inc()
-        rv = await aio.web.server_stats(None)
+        rv = await aio.web.server_stats(SimpleNamespace(headers=CIMultiDict()))
 
-        assert (
-            b"# HELP test_server_stats_total cnt\n# TYPE "
-            b"test_server_stats_total counter\n"
-            b"test_server_stats_total 1.0\n" in rv.body
+        body = rv.body.decode()
+
+        assert CONTENT_TYPE_LATEST == rv.headers["Content-Type"]
+        assert body.startswith(
+            """\
+# HELP test_server_stats_total cnt
+# TYPE test_server_stats_total counter
+test_server_stats_total 1.0
+# HELP test_server_stats_created cnt
+# TYPE test_server_stats_created gauge
+test_server_stats_created """
         )
 
-    @pytest.mark.asyncio
+    async def test_server_stats_openmetrics(self):
+        """
+        Returns a response with the current stats in the open metrics format.
+        """
+        Counter("test_server_stats_total", "cnt").inc()
+        rv = await aio.web.server_stats(
+            SimpleNamespace(
+                headers=CIMultiDict(
+                    Accept="application/openmetrics-text; version=0.0.1,"
+                    "text/plain;version=0.0.4;q=0.5,*/*;q=0.1"
+                )
+            )
+        )
+
+        body = rv.body.decode()
+
+        assert openmetrics.CONTENT_TYPE_LATEST == rv.headers["Content-Type"]
+        assert body.startswith(
+            """\
+# HELP test_server_stats cnt
+# TYPE test_server_stats counter
+test_server_stats_total 1.0
+test_server_stats_created """
+        )
+        assert body.endswith("EOF\n")
+
     async def test_cheap(self):
         """
         Returns a simple string.
@@ -317,7 +354,6 @@ class TestWeb:
         )
         assert "text/html" == rv.content_type
 
-    @pytest.mark.asyncio
     @pytest.mark.parametrize("sd", [None, FakeSD()])
     async def test_start_http_server(self, sd):
         """
@@ -382,7 +418,6 @@ class TestWeb:
 
         assert False is t._thread.is_alive()
 
-    @pytest.mark.asyncio
     @pytest.mark.parametrize("addr,url", [("127.0.0.1", "127.0.0.1:")])
     async def test_url(self, addr, url):
         """

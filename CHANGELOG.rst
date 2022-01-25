@@ -7,14 +7,14 @@ Versions are year-based with a strict backward compatibility policy.
 The third digit is only for regressions.
 
 
-21.1.0 (UNRELEASED)
+22.1.0 (UNRELEASED)
 -------------------
 
 
 Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Support for Python 2.7 and 3.5 has been dropped.
+- Support for Python 2.7, 3.5, and 3.6 has been dropped.
 - The *loop* argument has been removed from ``prometheus_async.aio.start_http_server()``.
 
 
@@ -27,7 +27,10 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
+
 - Add support for static typing when using ``time``, ``count_exceptions`` and ``track_inprogress`` as decorators.
+- Added support for `OpenMetrics <https://openmetrics.io>`_ exposition in ``prometheus_async.aio.web.server_stats()`` and thus ``prometheus_async.aio.web.start_http_server_in_thread()``.
+  `#23 <https://github.com/hynek/prometheus-async/issues/23>`_
 
 
 ----
