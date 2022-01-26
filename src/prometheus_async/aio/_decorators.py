@@ -15,6 +15,7 @@
 """
 Decorators for asyncio.
 """
+
 from time import perf_counter
 from typing import Awaitable, Callable, TypeVar, overload
 
