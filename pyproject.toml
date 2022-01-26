@@ -11,7 +11,7 @@ authors = [{name = "Hynek Schlawack", email = "hs@ox.cx"}]
 dynamic = ["version", "description"]
 requires-python = ">=3.7"
 # Keep in-sync with testenv:oldest!
-dependencies = ["prometheus_client >= 0.8.0", "wrapt", "typing_extensions"]
+dependencies = ["prometheus_client >= 0.8.0", "wrapt", "typing_extensions >= 3.10.0"]
 license = { file = "LICENSE" }
 readme = { content-type = "text/x-rst", file = "README.rst"}
 keywords = ["metrics", "prometheus", "twisted", "asyncio", "async"]
