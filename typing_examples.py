@@ -27,12 +27,21 @@ def future_func(i: int) -> Future[str]:
     return Future()
 
 
+# `time` can also be applied to futures directly.
+future = Future[str]()
+time(REQ_DURATION, future)
+
+# `time` cannot be applied to non-futures.
+time(REQ_DURATION, int)  # type: ignore
+
 # The type of `future_func` is correct:
 # "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
 # reveal_type(future_func)
 
 # The following is a type error since the function cannot be awaited:
 # "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
+
+
 @time(REQ_DURATION)  # type: ignore
 def should_be_async_func(i: int) -> str:
     return str(i)
