@@ -33,6 +33,6 @@ def future_func(i: int) -> Future[str]:
 
 # The following is a type error since the function cannot be awaited:
 # "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
-@time(REQ_DURATION)
+@time(REQ_DURATION)  # type: ignore
 def should_be_async_func(i: int) -> str:
     return str(i)

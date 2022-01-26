@@ -145,3 +145,7 @@ line-length = 79
 
 [tool.isort]
 profile = "attrs"
+
+
+[tool.mypy]
+warn_unused_ignores = true
