@@ -1,4 +1,7 @@
-"""Some examples of prometheus-async typing integration."""
+"""
+Some examples of prometheus-async typing integration.
+"""
+
 from asyncio import Future
 
 from prometheus_client.metrics import Summary  # type: ignore
