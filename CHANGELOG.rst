@@ -12,7 +12,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 .. changelog
 
-22.1.0 (UNRELEASED)
+XX.Y.Z (UNRELEASED)
 -------------------
 
 
