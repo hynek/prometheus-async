@@ -25,32 +25,9 @@ import threading
 from collections import namedtuple
 from typing import Callable, Optional, Tuple
 
+from aiohttp import web
 from prometheus_client import CONTENT_TYPE_LATEST, REGISTRY, generate_latest
 from prometheus_client.openmetrics import exposition as openmetrics
-
-
-try:
-    from aiohttp import web
-except ImportError:
-    web = None
-
-
-def _needs_aiohttp(obj):
-    """
-    Decorator that returns *obj* if aiohttp is available else a callable that
-    raises a RuntimeError.
-    """
-    if web is None:
-
-        def raiser(*a, **kw):
-            """
-            Notifies about missing aiohttp dependency.
-            """
-            raise RuntimeError(f"'{obj.__name__}' requires aiohttp.")
-
-        return raiser
-    else:
-        return obj
 
 
 def _choose_generator(accept_header: Optional[str]) -> Tuple[Callable, str]:
@@ -70,7 +47,6 @@ def _choose_generator(accept_header: Optional[str]) -> Tuple[Callable, str]:
     return generate_latest, CONTENT_TYPE_LATEST
 
 
-@_needs_aiohttp
 async def server_stats(request):
     """
     Return a web response with the plain text version of the metrics.
@@ -100,7 +76,6 @@ async def _cheap(request):
     return web.Response(text=_REF, content_type="text/html")
 
 
-@_needs_aiohttp
 async def start_http_server(
     *, addr="", port=0, ssl_ctx=None, service_discovery=None
 ):
@@ -245,7 +220,6 @@ class ThreadedMetricsHTTPServer:
         return self._http_server.is_registered
 
 
-@_needs_aiohttp
 def start_http_server_in_thread(
     *, port=0, addr="", ssl_ctx=None, service_discovery=None
 ):

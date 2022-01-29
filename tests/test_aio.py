@@ -435,26 +435,6 @@ test_server_stats_created """
         await server.close()
 
 
-class TestNeedsAioHTTP:
-    @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
-    def test_present(self):
-        """
-        If aiohttp is present, the original object is returned.
-        """
-        o = object()
-        assert o is aio.web._needs_aiohttp(o)
-
-    @pytest.mark.skipif(aiohttp is not None, reason="Needs missing aiohttp.")
-    def test_missing(self):
-        """
-        If aiohttp is missing, raise RuntimeError if called.
-        """
-        with pytest.raises(RuntimeError) as e:
-            aio.web._needs_aiohttp(coro)()
-
-        assert "'coro' requires aiohttp." == str(e.value)
-
-
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
 class TestConsulAgent:
     @pytest.mark.parametrize("deregister", [True, False])
