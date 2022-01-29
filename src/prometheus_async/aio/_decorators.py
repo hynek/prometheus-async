@@ -37,7 +37,7 @@ def time(
 
 
 @overload
-def time(metric, future: Future[T]) -> Awaitable[T]:
+def time(metric, future: Awaitable[T]) -> Awaitable[T]:
     ...
 
 
@@ -87,7 +87,7 @@ def count_exceptions(
 
 @overload
 def count_exceptions(
-    metric, future: Future[T], exc: Type[BaseException] = BaseException
+    metric, future: Awaitable[T], exc: Type[BaseException] = BaseException
 ) -> Awaitable[T]:
     ...
 
@@ -131,7 +131,7 @@ def track_inprogress(metric) -> Callable[[Callable[P, R]], Callable[P, R]]:
 
 
 @overload
-def track_inprogress(metric, future: Future[T]) -> Awaitable[T]:
+def track_inprogress(metric, future: Awaitable[T]) -> Awaitable[T]:
     ...
 
 

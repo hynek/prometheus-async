@@ -31,8 +31,15 @@ def future_func(i: int) -> Future[str]:
 future = Future[str]()
 time(REQ_DURATION, future)
 
-# `time` cannot be applied to non-futures.
-time(REQ_DURATION, int)  # type: ignore
+
+async def coro():
+    pass
+
+
+time(REQ_DURATION, coro())  # `time` can also be applied to coroutines
+
+time(REQ_DURATION, coro)  # type: ignore  # `time` errors on coroutine fns
+time(REQ_DURATION, int)  # type: ignore # `time` errors on non-futures
 
 # The type of `future_func` is correct:
 # "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
