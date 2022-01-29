@@ -16,7 +16,6 @@
 Decorators for asyncio.
 """
 
-from asyncio import Future
 from time import perf_counter
 from typing import Awaitable, Callable, Type, TypeVar, overload
 
