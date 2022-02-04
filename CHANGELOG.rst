@@ -32,7 +32,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-- Add support for static typing when using ``prometheus_async.aio.time()``, ``prometheus_async.aio.count_exceptions()`` and ``prometheus_async.aio.track_inprogress()`` as decorators.
+- Added type hints for all APIs.
   `#21 <https://github.com/hynek/prometheus-async/pull/21>`_
 - Added support for `OpenMetrics <https://openmetrics.io>`_ exposition in ``prometheus_async.aio.web.server_stats()`` and thus ``prometheus_async.aio.web.start_http_server_in_thread()``.
   `#23 <https://github.com/hynek/prometheus-async/issues/23>`_
