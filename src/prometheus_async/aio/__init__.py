@@ -26,5 +26,7 @@ __all__ = ["count_exceptions", "sd", "time", "track_inprogress"]
 
 try:
     from . import web  # noqa
-except ImportError:
+
     __all__.append("web")
+except ImportError:
+    pass
