@@ -140,7 +140,7 @@ exclude_lines = [
     "^ +\\.\\.\\.$",
     "-> ['\"]?NoReturn['\"]?:",
 ]
-exclude_files = [
+omit = [
     "src/prometheus_async/types.py"
 ]
 
