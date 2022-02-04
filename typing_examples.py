@@ -4,7 +4,7 @@ Some examples of prometheus-async typing integration.
 
 from asyncio import Future
 
-from prometheus_client.metrics import Summary  # type: ignore
+from prometheus_client.metrics import Summary
 
 from prometheus_async.aio import time
 
@@ -32,7 +32,7 @@ future = Future[str]()
 time(REQ_DURATION, future)
 
 
-async def coro():
+async def coro() -> None:
     pass
 
 
