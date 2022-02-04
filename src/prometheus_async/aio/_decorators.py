@@ -19,8 +19,9 @@ Decorators for asyncio.
 from time import perf_counter
 from typing import Awaitable, Callable, Type, TypeVar, overload
 
-from typing_extensions import ParamSpec
 from wrapt import decorator
+
+from ..types import ParamSpec
 
 
 P = ParamSpec("P")

@@ -17,29 +17,44 @@
 """
 Decorators for Twisted.
 """
+from __future__ import annotations
 
 from time import perf_counter
-from typing import Callable, Type, TypeVar, overload
+from typing import TYPE_CHECKING, Callable, TypeVar, overload
 
 from twisted.internet.defer import Deferred
 from wrapt import decorator
 
+from prometheus_async.types import IncDecrementer
 
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from twisted.python.failure import Failure
+
+    from ..types import Observer, ParamSpec
+
+
+T = TypeVar("T")
+P = ParamSpec("P")
 C = TypeVar("C", bound=Callable)
+
 D = TypeVar("D", bound=Deferred)
+F = TypeVar("F", bound=Failure)
 
 
 @overload
-def time(metric) -> Callable[[C], C]:
+def time(metric: Observer) -> Callable[P, C]:
     ...
 
 
 @overload
-def time(metric, deferred: D) -> D:
+def time(metric: Observer, deferred: D) -> D:
     ...
 
 
-def time(metric, deferred=None):
+def time(metric: Observer, deferred: D | None = None) -> D | C:
     r"""
     Call ``metric.observe(time)`` with runtime in seconds.
 
@@ -52,44 +67,50 @@ def time(metric, deferred=None):
     if deferred is None:
 
         @decorator
-        def time_decorator(f, _, args, kw):
-            def observe(value):
+        def time_decorator(f: C, _: Any, args: Any, kw: Any) -> C | D:
+            def observe(value: T) -> T:
                 metric.observe(perf_counter() - start_time)
                 return value
 
             start_time = perf_counter()
             rv = f(*args, **kw)
             if isinstance(rv, Deferred):
-                return rv.addBoth(observe)
+                return rv.addBoth(observe)  # type: ignore
             else:
                 return observe(rv)
 
         return time_decorator
     else:
 
-        def observe(value):
+        def observe(value: T) -> T:
             metric.observe(perf_counter() - start_time)
             return value
 
         start_time = perf_counter()
-        return deferred.addBoth(observe)
+        return deferred.addBoth(observe)  # type: ignore
 
 
 @overload
 def count_exceptions(
-    metric, exc: Type[BaseException] = BaseException
-) -> Callable[[C], C]:
+    metric: IncDecrementer, exc: type[BaseException] = ...
+) -> Callable[P, C]:
     ...
 
 
 @overload
 def count_exceptions(
-    metric, deferred: D, exc: Type[BaseException] = BaseException
+    metric: IncDecrementer,
+    deferred: D,
+    exc: type[BaseException] = ...,
 ) -> D:
     ...
 
 
-def count_exceptions(metric, deferred=None, exc=BaseException):
+def count_exceptions(
+    metric: IncDecrementer,
+    deferred: D | None = None,
+    exc: type[BaseException] = BaseException,
+) -> D | Callable[P, C]:
     """
     Call ``metric.inc()`` whenever *exc* is caught.
 
@@ -98,15 +119,17 @@ def count_exceptions(metric, deferred=None, exc=BaseException):
     :returns: function (if decorator) or ``Deferred``.
     """
 
-    def inc(fail):
-        fail.trap(exc)
+    def inc(fail: F) -> F:
+        fail.trap(exc)  # type: ignore
         metric.inc()
         return fail
 
     if deferred is None:
 
         @decorator
-        def count_exceptions_decorator(f, _, args, kw):
+        def count_exceptions_decorator(
+            f: C, _: Any, args: Any, kw: Any
+        ) -> C | D:
             try:
                 rv = f(*args, **kw)
             except exc:
@@ -114,26 +137,28 @@ def count_exceptions(metric, deferred=None, exc=BaseException):
                 raise
 
             if isinstance(rv, Deferred):
-                return rv.addErrback(inc)
+                return rv.addErrback(inc)  # type: ignore
             else:
                 return rv
 
         return count_exceptions_decorator
     else:
-        return deferred.addErrback(inc)
+        return deferred.addErrback(inc)  # type: ignore
 
 
 @overload
-def track_inprogress(metric) -> Callable[[C], C]:
+def track_inprogress(metric: IncDecrementer) -> Callable[P, C]:
     ...
 
 
 @overload
-def track_inprogress(metric, deferred: D) -> D:
+def track_inprogress(metric: IncDecrementer, deferred: D) -> D:
     ...
 
 
-def track_inprogress(metric, deferred=None):
+def track_inprogress(
+    metric: IncDecrementer, deferred: D | None = None
+) -> D | Callable[P, C]:
     """
     Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
 
@@ -142,20 +167,22 @@ def track_inprogress(metric, deferred=None):
     :returns: function (if decorator) or ``Deferred``.
     """
 
-    def dec(rv):
+    def dec(rv: T) -> T:
         metric.dec()
         return rv
 
     if deferred is None:
 
         @decorator
-        def track_inprogress_decorator(f, _, args, kw):
+        def track_inprogress_decorator(
+            f: C, _: Any, args: Any, kw: Any
+        ) -> C | D:
             metric.inc()
             try:
                 rv = f(*args, **kw)
             finally:
                 if isinstance(rv, Deferred):
-                    return rv.addBoth(dec)
+                    return rv.addBoth(dec)  # type: ignore
                 else:
                     metric.dec()
                     return rv
@@ -163,4 +190,4 @@ def track_inprogress(metric, deferred=None):
         return track_inprogress_decorator
     else:
         metric.inc()
-        return deferred.addBoth(dec)
+        return deferred.addBoth(dec)  # type: ignore

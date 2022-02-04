@@ -6,6 +6,20 @@ from typing import TYPE_CHECKING, Awaitable, Callable, Protocol
 if TYPE_CHECKING:
     from prometheus_async.aio.web import MetricsHTTPServer
 
+try:
+    from typing import ParamSpec
+except ImportError:
+    from typing_extensions import ParamSpec
+
+
+__all__ = [
+    "ParamSpec",
+    "Deregisterer",
+    "ServiceDiscovery",
+    "Observer",
+    "Incrementer",
+    "IncDecrementer",
+]
 
 Deregisterer = Callable[[], Awaitable[None]]
 
