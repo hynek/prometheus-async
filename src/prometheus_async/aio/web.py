@@ -36,7 +36,7 @@ if TYPE_CHECKING:
 
     from typing import Callable
 
-    from .types import Deregisterer, ServiceDiscovery
+    from ..types import Deregisterer, ServiceDiscovery
 
 
 def _choose_generator(accept_header: str | None) -> tuple[Callable, str]:

@@ -31,7 +31,7 @@ except ImportError:
     pass
 
 if TYPE_CHECKING:
-    from .types import Deregisterer
+    from ..types import Deregisterer
     from .web import MetricsHTTPServer
 
 __all__ = ["ConsulAgent"]
