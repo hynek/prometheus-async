@@ -13,7 +13,7 @@ requires-python = ">=3.7"
 # Keep in-sync with testenv:oldest!
 dependencies = [
     "prometheus_client >= 0.8.0",
-    "typing_extensions >= 3.10.0",
+    "typing_extensions >= 3.10.0; python_version<'3.10'",
     "wrapt",
 ]
 license = { file = "LICENSE" }
