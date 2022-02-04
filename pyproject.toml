@@ -155,3 +155,25 @@ profile = "attrs"
 
 [tool.mypy]
 warn_unused_ignores = true
+follow_imports = "normal"
+ignore_missing_imports = true
+disallow_untyped_calls = true
+warn_no_return = true
+warn_redundant_casts = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+
+[[tool.mypy.overrides]]
+module = "conftest.*"
+ignore_errors = true
+
+
+[[tool.mypy.overrides]]
+module = "prometheus_client.*"
+follow_imports = "skip"
