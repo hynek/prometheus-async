@@ -40,7 +40,7 @@ __all__ = ["aio"]
 
 try:
     from . import tx  # noqa -- flake8 doesn't understand __all__.append
+
+    __all__.append("tx")
 except ImportError:
     pass
-else:
-    __all__.append("tx")

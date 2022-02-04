@@ -24,6 +24,7 @@ from time import perf_counter
 from typing import TYPE_CHECKING, Callable, TypeVar, overload
 
 from twisted.internet.defer import Deferred
+from twisted.python.failure import Failure
 from wrapt import decorator
 
 from ..types import IncDecrementer, ParamSpec
@@ -31,8 +32,6 @@ from ..types import IncDecrementer, ParamSpec
 
 if TYPE_CHECKING:
     from typing import Any
-
-    from twisted.python.failure import Failure
 
     from ..types import Observer
 
