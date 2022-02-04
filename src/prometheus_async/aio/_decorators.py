@@ -15,9 +15,10 @@
 """
 Decorators for asyncio.
 """
+from __future__ import annotations
 
 from time import perf_counter
-from typing import Awaitable, Callable, Type, TypeVar, overload
+from typing import Awaitable, Callable, TypeVar, overload
 
 from wrapt import decorator
 
@@ -41,7 +42,7 @@ def time(metric, future: Awaitable[T]) -> Awaitable[T]:
     ...
 
 
-def time(metric, future=None):
+def time(metric, future: Awaitable[T] | None = None):
     r"""
     Call ``metric.observe(time)`` with the runtime in seconds.
 
@@ -80,19 +81,24 @@ def time(metric, future=None):
 
 @overload
 def count_exceptions(
-    metric, exc: Type[BaseException] = BaseException
+    metric, *, exc: type[BaseException] = BaseException
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     ...
 
 
 @overload
 def count_exceptions(
-    metric, future: Awaitable[T], exc: Type[BaseException] = BaseException
+    metric, future: Awaitable[T], *, exc: type[BaseException] = BaseException
 ) -> Awaitable[T]:
     ...
 
 
-def count_exceptions(metric, future=None, exc=BaseException):
+def count_exceptions(
+    metric,
+    future: Awaitable[T] | None = None,
+    *,
+    exc: type[BaseException] = BaseException,
+):
     r"""
     Call ``metric.inc()`` whenever *exc* is caught.
 

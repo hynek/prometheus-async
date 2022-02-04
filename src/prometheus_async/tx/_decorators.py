@@ -92,7 +92,7 @@ def time(metric: Observer, deferred: D | None = None) -> D | C:
 
 @overload
 def count_exceptions(
-    metric: IncDecrementer, exc: type[BaseException] = ...
+    metric: IncDecrementer, *, exc: type[BaseException] = ...
 ) -> Callable[P, C]:
     ...
 
@@ -101,6 +101,7 @@ def count_exceptions(
 def count_exceptions(
     metric: IncDecrementer,
     deferred: D,
+    *,
     exc: type[BaseException] = ...,
 ) -> D:
     ...
@@ -109,6 +110,7 @@ def count_exceptions(
 def count_exceptions(
     metric: IncDecrementer,
     deferred: D | None = None,
+    *,
     exc: type[BaseException] = BaseException,
 ) -> D | Callable[P, C]:
     """
