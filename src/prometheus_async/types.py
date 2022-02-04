@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import sys
+
 from typing import TYPE_CHECKING, Awaitable, Callable
 
 
@@ -11,9 +13,12 @@ try:
 except ImportError:
     from typing_extensions import ParamSpec
 
-try:
+# This construct works better with Mypy.
+# Doing the obvious ImportError route leads to an 'Incompatible import of
+# "Protocol"' error.
+if sys.version_info >= (3, 8):
     from typing import Protocol
-except ImportError:
+else:
     from typing_extensions import Protocol
 
 
