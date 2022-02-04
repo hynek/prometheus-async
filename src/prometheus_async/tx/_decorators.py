@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING, Callable, TypeVar, overload
 from twisted.internet.defer import Deferred
 from wrapt import decorator
 
-from prometheus_async.types import IncDecrementer
+from ..types import IncDecrementer, ParamSpec
 
 
 if TYPE_CHECKING:
@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 
     from twisted.python.failure import Failure
 
-    from ..types import Observer, ParamSpec
+    from ..types import Observer
 
 
 T = TypeVar("T")
