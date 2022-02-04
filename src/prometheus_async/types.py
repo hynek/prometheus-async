@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Awaitable, Callable, Protocol
+from typing import TYPE_CHECKING, Awaitable, Callable
 
 
 if TYPE_CHECKING:
@@ -10,6 +10,11 @@ try:
     from typing import ParamSpec
 except ImportError:
     from typing_extensions import ParamSpec
+
+try:
+    from typing import Protocol
+except ImportError:
+    from typing_extensions import Protocol
 
 
 __all__ = [
