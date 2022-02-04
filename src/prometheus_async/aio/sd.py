@@ -31,9 +31,8 @@ except ImportError:
     pass
 
 if TYPE_CHECKING:
-    from typing import Callable
-
-    from prometheus_async.aio.web import MetricsHTTPServer
+    from .types import Deregisterer
+    from .web import MetricsHTTPServer
 
 __all__ = ["ConsulAgent"]
 
@@ -73,7 +72,7 @@ class ConsulAgent:
 
     async def register(
         self, metrics_server: MetricsHTTPServer
-    ) -> Callable | None:
+    ) -> Deregisterer | None:
         """
         :return: A coroutine callable to deregister or ``None``.
         """
