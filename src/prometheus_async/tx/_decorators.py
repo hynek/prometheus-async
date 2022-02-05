@@ -27,18 +27,14 @@ from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
 from wrapt import decorator
 
-from ..types import IncDecrementer, ParamSpec
+from ..types import IncDecrementer
 
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from ..types import Observer
+    from ..types import C, Observer, P, T
 
-
-T = TypeVar("T")
-P = ParamSpec("P")
-C = TypeVar("C", bound=Callable)
 
 D = TypeVar("D", bound=Deferred)
 F = TypeVar("F", bound=Failure)

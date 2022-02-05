@@ -18,26 +18,17 @@ Decorators for asyncio.
 from __future__ import annotations
 
 from time import perf_counter
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, overload
 
 
 if TYPE_CHECKING:
-    from ..types import Observer, IncDecrementer
+    from ..types import Observer, IncDecrementer, P, R, T
 
 from wrapt import decorator
 
-from ..types import ParamSpec
-
-
-P = ParamSpec("P")
-R = TypeVar("R", bound=Awaitable)
-T = TypeVar("T")
-
 
 @overload
-def time(
-    metric: Observer,
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+def time(metric: Observer) -> Callable[[Callable[P, R]], Callable[P, R]]:
     ...
 
 

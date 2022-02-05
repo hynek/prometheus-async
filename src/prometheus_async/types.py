@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 
-from typing import TYPE_CHECKING, Awaitable, Callable
+from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
 
 
 if TYPE_CHECKING:
@@ -30,6 +30,12 @@ __all__ = [
     "Incrementer",
     "IncDecrementer",
 ]
+
+P = ParamSpec("P")
+R = TypeVar("R", bound=Awaitable)
+T = TypeVar("T")
+C = TypeVar("C", bound=Callable)
+
 
 Deregisterer = Callable[[], Awaitable[None]]
 
