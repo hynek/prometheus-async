@@ -18,7 +18,10 @@
 Service discovery for web exposure.
 """
 
+from __future__ import annotations
+
 from functools import partial
+from typing import TYPE_CHECKING
 
 
 try:
@@ -27,6 +30,9 @@ try:
 except ImportError:
     pass
 
+if TYPE_CHECKING:
+    from ..types import Deregisterer
+    from .web import MetricsHTTPServer
 
 __all__ = ["ConsulAgent"]
 
@@ -51,11 +57,11 @@ class ConsulAgent:
     def __init__(
         self,
         *,
-        name="app-metrics",
-        service_id=None,
-        tags=(),
-        token=None,
-        deregister=True
+        name: str = "app-metrics",
+        service_id: str | None = None,
+        tags: tuple[str, ...] = (),
+        token: str | None = None,
+        deregister: bool = True,
     ):
         self.name = name
         self.service_id = service_id or name
@@ -64,7 +70,9 @@ class ConsulAgent:
         self.deregister = deregister
         self.consul = _LocalConsulAgentClient(token=token)
 
-    async def register(self, metrics_server):
+    async def register(
+        self, metrics_server: MetricsHTTPServer
+    ) -> Deregisterer | None:
         """
         :return: A coroutine callable to deregister or ``None``.
         """
@@ -77,7 +85,7 @@ class ConsulAgent:
         if resp is None:
             return None
 
-        async def deregister():
+        async def deregister() -> None:
             if self.deregister is True:
                 await self.consul.deregister_service(self.service_id)
 
@@ -89,9 +97,9 @@ class _LocalConsulAgentClient:  # pragma: no cover -- needs local consul client
     Minimal client to speak to a Consul agent on localhost:8500.
     """
 
-    def __init__(self, token):
+    def __init__(self, token: str | None) -> None:
         self.agent_url = yarl.URL.build(
-            scheme="http", host="127.0.0.1", port="8500", path="/v1/agent"
+            scheme="http", host="127.0.0.1", port=8500, path="/v1/agent"
         )
 
         if token:
@@ -103,12 +111,18 @@ class _LocalConsulAgentClient:  # pragma: no cover -- needs local consul client
             aiohttp.ClientSession, headers=self.headers
         )
 
-    async def get_services(self):
+    async def get_services(self) -> dict:
         async with self.session_factory() as session:
             resp = await session.get(self.agent_url / "services")
             return await resp.json()
 
-    async def register_service(self, name, service_id, tags, metrics_server):
+    async def register_service(
+        self,
+        name: str,
+        service_id: str,
+        tags: list[str] | None,
+        metrics_server: MetricsHTTPServer,
+    ) -> aiohttp.ClientResponse | None:
         async with self.session_factory() as session:
             resp = await session.put(
                 self.agent_url / "service/register",
@@ -124,7 +138,11 @@ class _LocalConsulAgentClient:  # pragma: no cover -- needs local consul client
         if resp.status == 200:
             return resp
 
-    async def deregister_service(self, service_id):
+        return None
+
+    async def deregister_service(
+        self, service_id: str
+    ) -> aiohttp.ClientResponse:
         async with self.session_factory() as session:
             resp = await session.put(
                 self.agent_url / "service/deregister" / service_id

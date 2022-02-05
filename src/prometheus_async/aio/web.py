@@ -18,19 +18,28 @@
 aiohttp-based metrics exposure.
 """
 
+from __future__ import annotations
+
 import asyncio
 import queue
 import threading
 
-from collections import namedtuple
-from typing import Callable, Optional, Tuple
+from typing import TYPE_CHECKING, NamedTuple
 
 from aiohttp import web
 from prometheus_client import CONTENT_TYPE_LATEST, REGISTRY, generate_latest
 from prometheus_client.openmetrics import exposition as openmetrics
 
 
-def _choose_generator(accept_header: Optional[str]) -> Tuple[Callable, str]:
+if TYPE_CHECKING:
+    import ssl
+
+    from typing import Callable
+
+    from ..types import Deregisterer, ServiceDiscovery
+
+
+def _choose_generator(accept_header: str | None) -> tuple[Callable, str]:
     """
     Return the correct generate function according to *accept_header*.
 
@@ -47,7 +56,7 @@ def _choose_generator(accept_header: Optional[str]) -> Tuple[Callable, str]:
     return generate_latest, CONTENT_TYPE_LATEST
 
 
-async def server_stats(request):
+async def server_stats(request: web.Request) -> web.Response:
     """
     Return a web response with the plain text version of the metrics.
 
@@ -67,7 +76,7 @@ async def server_stats(request):
 _REF = '<html><body><a href="/metrics">Metrics</a></body></html>'
 
 
-async def _cheap(request):
+async def _cheap(request: web.Request) -> web.Response:
     """
     A view that links to metrics.
 
@@ -77,8 +86,12 @@ async def _cheap(request):
 
 
 async def start_http_server(
-    *, addr="", port=0, ssl_ctx=None, service_discovery=None
-):
+    *,
+    addr: str = "",
+    port: int = 0,
+    ssl_ctx: ssl.SSLContext | None = None,
+    service_discovery: ServiceDiscovery | None = None,
+) -> MetricsHTTPServer:
     """
     Start an HTTP(S) server on *addr*:*port*.
 
@@ -112,6 +125,7 @@ async def start_http_server(
     )
     if service_discovery is not None:
         ms._deregister = await service_discovery.register(ms)
+
     return ms
 
 
@@ -130,7 +144,19 @@ class MetricsHTTPServer:
         service discovery system?
     """
 
-    def __init__(self, socket, runner, app, https):
+    socket: Socket
+    https: bool
+    _runner: web.AppRunner
+    _app: web.Application
+    _deregister: Deregisterer | None
+
+    def __init__(
+        self,
+        socket: Socket,
+        runner: web.AppRunner,
+        app: web.Application,
+        https: bool,
+    ):
         self._app = app
         self._runner = runner
         self._deregister = None
@@ -139,22 +165,25 @@ class MetricsHTTPServer:
         self.https = https
 
     @classmethod
-    def from_server(cls, runner, app, https):
-        # XXX: see https://github.com/aio-libs/aiohttp/issues/3036
-        sock = tuple(runner.sites)[0]._server.sockets[0].getsockname()
+    def from_server(
+        cls, runner: web.AppRunner, app: web.Application, https: bool
+    ) -> MetricsHTTPServer:
         return cls(
-            socket=Socket(*sock[:2]), runner=runner, app=app, https=https
+            socket=Socket(*runner.addresses[0][:2]),
+            runner=runner,
+            app=app,
+            https=https,
         )
 
     @property
-    def is_registered(self):
+    def is_registered(self) -> bool:
         """
         Is the web endpoint registered with a service discovery system?
         """
         return self._deregister is not None
 
     @property
-    def url(self):
+    def url(self) -> str:
         addr = self.socket.addr
         return "http{s}://{host}:{port}/".format(
             s="s" if self.https else "",
@@ -162,7 +191,7 @@ class MetricsHTTPServer:
             port=self.socket.port,
         )
 
-    async def close(self):
+    async def close(self) -> None:
         """
         Stop the server and clean up.
         """
@@ -171,7 +200,9 @@ class MetricsHTTPServer:
         await self._runner.cleanup()
 
 
-Socket = namedtuple("Socket", "addr port")
+class Socket(NamedTuple):
+    addr: str
+    port: int
 
 
 class ThreadedMetricsHTTPServer:
@@ -189,12 +220,17 @@ class ThreadedMetricsHTTPServer:
         service discovery system?
     """
 
-    def __init__(self, http_server, thread, loop):
+    def __init__(
+        self,
+        http_server: MetricsHTTPServer,
+        thread: threading.Thread,
+        loop: asyncio.AbstractEventLoop,
+    ) -> None:
         self._http_server = http_server
         self._thread = thread
         self._loop = loop
 
-    def close(self):
+    def close(self) -> None:
         """
         Stop the server, close the event loop, and join the thread.
         """
@@ -204,25 +240,29 @@ class ThreadedMetricsHTTPServer:
         self._loop.close()
 
     @property
-    def https(self):
+    def https(self) -> bool:
         return self._http_server.https
 
     @property
-    def socket(self):
+    def socket(self) -> Socket:
         return self._http_server.socket
 
     @property
-    def url(self):
+    def url(self) -> str:
         return self._http_server.url
 
     @property
-    def is_registered(self):
+    def is_registered(self) -> bool:
         return self._http_server.is_registered
 
 
 def start_http_server_in_thread(
-    *, port=0, addr="", ssl_ctx=None, service_discovery=None
-):
+    *,
+    port: int = 0,
+    addr: str = "",
+    ssl_ctx: ssl.SSLContext | None = None,
+    service_discovery: ServiceDiscovery | None = None,
+) -> ThreadedMetricsHTTPServer:
     """
     Start an asyncio HTTP(S) server in a new thread with an own event loop.
 
@@ -232,10 +272,10 @@ def start_http_server_in_thread(
 
     :rtype: ThreadedMetricsHTTPServer
     """
-    q = queue.Queue()
+    q: queue.Queue = queue.Queue()
     loop = asyncio.new_event_loop()
 
-    def server():
+    def server() -> None:
         asyncio.set_event_loop(loop)
         http = loop.run_until_complete(
             start_http_server(

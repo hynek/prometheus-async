@@ -7,13 +7,17 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "prometheus-async"
-authors = [{name = "Hynek Schlawack", email = "hs@ox.cx"}]
+authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
 dynamic = ["version", "description"]
 requires-python = ">=3.7"
 # Keep in-sync with testenv:oldest!
-dependencies = ["prometheus_client >= 0.8.0", "wrapt"]
+dependencies = [
+    "prometheus_client >= 0.8.0",
+    "typing_extensions >= 3.10.0; python_version<'3.10'",
+    "wrapt",
+]
 license = { file = "LICENSE" }
-readme = { content-type = "text/x-rst", file = "README.rst"}
+readme = { content-type = "text/x-rst", file = "README.rst" }
 keywords = ["metrics", "prometheus", "twisted", "asyncio", "async"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -43,14 +47,11 @@ Ko-fi = "https://ko-fi.com/the_hynek"
 aiohttp = ["aiohttp>=3"]
 consul = ["aiohttp>=3"]
 twisted = ["twisted"]
-tests = [
-    "coverage[toml]",
-    "pytest",
-    "pytest-asyncio",
-]
+tests = ["coverage[toml]", "pytest", "pytest-asyncio"]
 docs = [
     "aiohttp",
     "furo",
+    "sphinx-notfound-page",
     "sphinx",
     "sphinxcontrib-asyncio",
     "twisted",
@@ -64,6 +65,7 @@ dev = [
     "pytest-twisted",
     "tomli",
     "cogapp",
+    "mypy",
     # [[[cog
     # import pathlib, tomli
     # cfg = tomli.loads(pathlib.Path("pyproject.toml").read_text())
@@ -76,6 +78,7 @@ dev = [
     "pytest-asyncio",
     "aiohttp",
     "furo",
+    "sphinx-notfound-page",
     "sphinx",
     "sphinxcontrib-asyncio",
     "twisted",
@@ -137,6 +140,9 @@ exclude_lines = [
     "^ +\\.\\.\\.$",
     "-> ['\"]?NoReturn['\"]?:",
 ]
+omit = [
+    "src/prometheus_async/types.py"
+]
 
 
 [tool.black]
@@ -145,3 +151,28 @@ line-length = 79
 
 [tool.isort]
 profile = "attrs"
+
+
+[tool.mypy]
+warn_unused_ignores = true
+follow_imports = "normal"
+ignore_missing_imports = true
+disallow_untyped_calls = true
+warn_no_return = true
+warn_redundant_casts = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "conftest.*"
+ignore_errors = true
+
+# As of 2022-02-05, prometheus-client's type hints are spotty and lead to false
+# errors on production-style Mypy configurations.
+[[tool.mypy.overrides]]
+module = "prometheus_client.*"
+follow_imports = "skip"
