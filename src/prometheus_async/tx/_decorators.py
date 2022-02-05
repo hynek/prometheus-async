@@ -41,7 +41,7 @@ F = TypeVar("F", bound=Failure)
 
 
 @overload
-def time(metric: Observer) -> Callable[P, C]:
+def time(metric: Observer) -> Callable[[Callable[P, D]], Callable[P, D]]:
     ...
 
 

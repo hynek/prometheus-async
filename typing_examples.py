@@ -62,5 +62,11 @@ tx.time(REQ_DURATION, Deferred())
 
 
 @tx.time(REQ_DURATION)
-def returns_deferred() -> Deferred:
+def returns_deferred(param: int) -> Deferred:
     return Deferred()
+
+
+returns_deferred(1)
+
+# Invalid, takes an int.
+returns_deferred("str")  # type: ignore
