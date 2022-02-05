@@ -24,11 +24,6 @@ from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
 if TYPE_CHECKING:
     from prometheus_async.aio.web import MetricsHTTPServer
 
-try:
-    from typing import ParamSpec
-except ImportError:
-    from typing_extensions import ParamSpec
-
 # This construct works better with Mypy.
 # Doing the obvious ImportError route leads to an 'Incompatible import of
 # "Protocol"' error.
@@ -37,6 +32,10 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Protocol
 
+if sys.version_info >= (3, 10):
+    from typing import ParamSpec
+else:
+    from typing_extensions import ParamSpec
 
 __all__ = [
     "ParamSpec",
