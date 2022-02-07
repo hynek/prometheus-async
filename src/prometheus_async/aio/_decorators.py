@@ -86,7 +86,7 @@ def time(
 @overload
 def count_exceptions(
     metric: IncDecrementer, *, exc: type[BaseException] = BaseException
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Callable[[Callable[P, R]], Callable[P, Awaitable[R]]]:
     ...
 
 
@@ -105,7 +105,7 @@ def count_exceptions(
     future: Awaitable[T] | None = None,
     *,
     exc: type[BaseException] = BaseException,
-) -> Callable[[Callable[P, R]], Callable[P, R]] | Awaitable[T]:
+) -> Callable[[Callable[P, R]], Callable[P, Awaitable[R]]] | Awaitable[T]:
     r"""
     Call ``metric.inc()`` whenever *exc* is caught.
 
@@ -115,22 +115,24 @@ def count_exceptions(
     """
     if future is None:
 
-        @decorator
-        async def count(
-            wrapped: Callable[..., R], _: Any, args: Any, kw: Any
-        ) -> R:
-            try:
-                rv = await wrapped(*args, **kw)
-            except exc:
-                metric.inc()
-                raise
-            return rv
+        def count(wrapped: Callable[P, R]) -> Callable[P, Awaitable[R]]:
+            @wraps(wrapped)
+            async def inner(*args: P.args, **kw: P.kwargs) -> R:
+                try:
+                    rv = await wrapped(*args, **kw)
+                except exc:
+                    metric.inc()
+                    raise
+
+                return rv
+
+            return inner
 
         return count
     else:
         f = future
 
-        async def count() -> T:
+        async def count_future() -> T:
             try:
                 rv = await f
             except exc:
@@ -138,13 +140,13 @@ def count_exceptions(
                 raise
             return rv
 
-        return count()
+        return count_future()
 
 
 @overload
 def track_inprogress(
     metric: IncDecrementer,
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Callable[[Callable[P, R]], Callable[P, Awaitable[R]]]:
     ...
 
 
