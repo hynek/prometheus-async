@@ -92,13 +92,13 @@ def reset_registry(monkeypatch):
         REGISTRY.unregister(c)
 
 
-@pytest.fixture
-def fo():
+@pytest.fixture(name="fake_observer")
+def _fake_observer():
     return FakeObserver()
 
 
-@pytest.fixture
-def fc():
+@pytest.fixture(name="fake_counter")
+def _fake_counter():
     return FakeCounter()
 
 
@@ -107,8 +107,8 @@ def _fake_gauge():
     return FakeGauge()
 
 
-@pytest.fixture
-def patch_timer(monkeypatch):
+@pytest.fixture(name="patch_timer")
+def _patch_timer(monkeypatch):
     try:
         from prometheus_async.tx import _decorators
 

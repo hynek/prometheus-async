@@ -45,14 +45,14 @@ async def coro():
     await asyncio.sleep(0)
 
 
+@pytest.mark.asyncio
 class TestTime:
-    @pytest.mark.asyncio
-    async def test_still_coroutine_function(self, fo):
+    async def test_still_coroutine_function(self, fake_observer):
         """
         It's ensured that a decorated function still passes as a coroutine
         function.  Otherwise PYTHONASYNCIODEBUG=1 breaks.
         """
-        func = aio.time(fo)(coro)
+        func = aio.time(fake_observer)(coro)
         new_coro = func()
 
         assert inspect.iscoroutine(new_coro)
@@ -60,14 +60,13 @@ class TestTime:
 
         await new_coro
 
-    @pytest.mark.asyncio
     @pytest.mark.usefixtures("patch_timer")
-    async def test_decorator_sync(self, fo):
+    async def test_decorator_sync(self, fake_observer):
         """
         time works with sync results functions.
         """
 
-        @aio.time(fo)
+        @aio.time(fake_observer)
         async def func():
             if True:
                 return 42
@@ -75,16 +74,15 @@ class TestTime:
                 await asyncio.sleep(0)
 
         assert 42 == await func()
-        assert [1] == fo._observed
+        assert [1] == fake_observer._observed
 
-    @pytest.mark.asyncio
     @pytest.mark.usefixtures("patch_timer")
-    async def test_decorator(self, fo):
+    async def test_decorator(self, fake_observer):
         """
         time works with asyncio results functions.
         """
 
-        @aio.time(fo)
+        @aio.time(fake_observer)
         async def func():
             await asyncio.sleep(0)
             return 42
@@ -92,22 +90,21 @@ class TestTime:
         rv = func()
 
         assert asyncio.iscoroutine(rv)
-        assert [] == fo._observed
+        assert [] == fake_observer._observed
 
         rv = await rv
 
-        assert [1] == fo._observed
+        assert [1] == fake_observer._observed
         assert 42 == rv
 
-    @pytest.mark.asyncio
     @pytest.mark.usefixtures("patch_timer")
-    async def test_decorator_exc(self, fo):
+    async def test_decorator_exc(self, fake_observer):
         """
         Does not swallow exceptions.
         """
         v = ValueError("foo")
 
-        @aio.time(fo)
+        @aio.time(fake_observer)
         async def func():
             await asyncio.sleep(0)
             raise v
@@ -116,67 +113,64 @@ class TestTime:
             await func()
 
         assert v is e.value
-        assert [1] == fo._observed
+        assert [1] == fake_observer._observed
 
-    @pytest.mark.asyncio
     @pytest.mark.usefixtures("patch_timer")
-    async def test_future(self, fo):
+    async def test_future(self, fake_observer):
         """
         time works with a asyncio.Future.
         """
         fut = asyncio.Future()
-        coro = aio.time(fo, fut)
+        coro = aio.time(fake_observer, fut)
 
-        assert [] == fo._observed
+        assert [] == fake_observer._observed
 
         fut.set_result(42)
 
         assert 42 == await coro
-        assert [1] == fo._observed
+        assert [1] == fake_observer._observed
 
-    @pytest.mark.asyncio
     @pytest.mark.usefixtures("patch_timer")
-    async def test_future_exc(self, fo):
+    async def test_future_exc(self, fake_observer):
         """
         Does not swallow exceptions.
         """
         fut = asyncio.Future()
-        coro = aio.time(fo, fut)
+        coro = aio.time(fake_observer, fut)
         v = ValueError("foo")
 
-        assert [] == fo._observed
+        assert [] == fake_observer._observed
 
         fut.set_exception(v)
 
         with pytest.raises(ValueError) as e:
             await coro
 
-        assert [1] == fo._observed
+        assert [1] == fake_observer._observed
         assert v is e.value
 
 
+@pytest.mark.asyncio
 class TestCountExceptions:
-    @pytest.mark.asyncio
-    async def test_decorator_no_exc(self, fc):
+    async def test_decorator_no_exc(self, fake_counter):
         """
         If no exception is raised, the counter does not change.
         """
 
-        @aio.count_exceptions(fc)
+        @aio.count_exceptions(fake_counter)
         async def func():
             await asyncio.sleep(0.0)
             return 42
 
         assert 42 == await func()
-        assert 0 == fc._val
+        assert 0 == fake_counter._val
 
-    @pytest.mark.asyncio
-    async def test_decorator_wrong_exc(self, fc):
+    async def test_decorator_wrong_exc(self, fake_counter):
         """
         If a wrong exception is raised, the counter does not change.
         """
 
-        @aio.count_exceptions(fc, exc=ValueError)
+        @aio.count_exceptions(fake_counter, exc=ValueError)
         async def func():
             await asyncio.sleep(0.0)
             raise Exception()
@@ -184,15 +178,14 @@ class TestCountExceptions:
         with pytest.raises(Exception):
             await func()
 
-        assert 0 == fc._val
+        assert 0 == fake_counter._val
 
-    @pytest.mark.asyncio
-    async def test_decorator_exc(self, fc):
+    async def test_decorator_exc(self, fake_counter):
         """
         If the correct exception is raised, count it.
         """
 
-        @aio.count_exceptions(fc, exc=ValueError)
+        @aio.count_exceptions(fake_counter, exc=ValueError)
         async def func():
             await asyncio.sleep(0.0)
             raise ValueError()
@@ -200,50 +193,47 @@ class TestCountExceptions:
         with pytest.raises(ValueError):
             await func()
 
-        assert 1 == fc._val
+        assert 1 == fake_counter._val
 
-    @pytest.mark.asyncio
-    async def test_future_no_exc(self, fc):
+    async def test_future_no_exc(self, fake_counter):
         """
         If no exception is raised, the counter does not change.
         """
         fut = asyncio.Future()
-        coro = aio.count_exceptions(fc, future=fut)
+        coro = aio.count_exceptions(fake_counter, future=fut)
 
         fut.set_result(42)
 
         assert 42 == await coro
-        assert 0 == fc._val
+        assert 0 == fake_counter._val
 
-    @pytest.mark.asyncio
-    async def test_future_wrong_exc(self, fc):
+    async def test_future_wrong_exc(self, fake_counter):
         """
         If a wrong exception is raised, the counter does not change.
         """
         fut = asyncio.Future()
-        coro = aio.count_exceptions(fc, exc=ValueError, future=fut)
+        coro = aio.count_exceptions(fake_counter, exc=ValueError, future=fut)
         exc = Exception()
 
         fut.set_exception(exc)
 
         with pytest.raises(Exception):
             assert 42 == await coro
-        assert 0 == fc._val
+        assert 0 == fake_counter._val
 
-    @pytest.mark.asyncio
-    async def test_future_exc(self, fc):
+    async def test_future_exc(self, fake_counter):
         """
         If the correct exception is raised, count it.
         """
         fut = asyncio.Future()
-        coro = aio.count_exceptions(fc, exc=ValueError, future=fut)
+        coro = aio.count_exceptions(fake_counter, exc=ValueError, future=fut)
         exc = ValueError()
 
         fut.set_exception(exc)
 
         with pytest.raises(Exception):
             assert 42 == await coro
-        assert 1 == fc._val
+        assert 1 == fake_counter._val
 
 
 @pytest.mark.asyncio
