@@ -20,14 +20,15 @@ Decorators for asyncio.
 
 from __future__ import annotations
 
+from functools import wraps
 from time import perf_counter
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, overload
 
+from wrapt import decorator
+
 
 if TYPE_CHECKING:
-    from ..types import Observer, IncDecrementer, P, R, T
-
-from wrapt import decorator
+    from ..types import IncDecrementer, Observer, P, R, T
 
 
 @overload
@@ -156,7 +157,7 @@ def track_inprogress(
 
 def track_inprogress(
     metric: IncDecrementer, future: Awaitable[T] | None = None
-) -> Callable[[Callable[P, R]], Callable[P, R]] | Awaitable[T]:
+) -> Callable[[Callable[P, R]], Callable[P, Awaitable[R]]] | Awaitable[T]:
     r"""
     Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
 
@@ -166,28 +167,30 @@ def track_inprogress(
     """
     if future is None:
 
-        @decorator
-        async def track(
-            wrapped: Callable[..., R], _: Any, args: Any, kw: Any
-        ) -> R:
-            metric.inc()
-            try:
-                rv = await wrapped(*args, **kw)
-            finally:
-                metric.dec()
+        def track(wrapped: Callable[P, R]) -> Callable[P, Awaitable[R]]:
+            @wraps(wrapped)
+            async def inner(*args: P.args, **kw: P.kwargs) -> R:
+                metric.inc()
+                try:
+                    rv = await wrapped(*args, **kw)
+                finally:
+                    metric.dec()
 
-            return rv
+                return rv
+
+            return inner
 
         return track
     else:
         f = future
         metric.inc()
 
-        async def track() -> T:
+        async def track_future() -> T:
             try:
                 rv = await f
             finally:
                 metric.dec()
+
             return rv
 
-        return track()
+        return track_future()
