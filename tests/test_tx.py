@@ -170,52 +170,52 @@ class TestCountExceptions:
 
 class TestTrackInprogress:
     @pytest_twisted.inlineCallbacks
-    def test_deferred(self, fg):
+    def test_deferred(self, fake_gauge):
         """
         Incs and decs if its passed a Deferred.
         """
-        d = tx.track_inprogress(fg, Deferred())
+        d = tx.track_inprogress(fake_gauge, Deferred())
 
-        assert 1 == fg._val
+        assert 1 == fake_gauge._val
 
         d.callback(42)
         rv = yield d
 
         assert 42 == rv
-        assert 0 == fg._val
+        assert 0 == fake_gauge._val
 
     @pytest_twisted.inlineCallbacks
-    def test_decorator_deferred(self, fg):
+    def test_decorator_deferred(self, fake_gauge):
         """
         Incs and decs if the decorated function returns a Deferred.
         """
         d = Deferred()
 
-        @tx.track_inprogress(fg)
+        @tx.track_inprogress(fake_gauge)
         def func():
             return d
 
         rv = func()
 
-        assert 1 == fg._val
+        assert 1 == fake_gauge._val
 
         d.callback(42)
         rv = yield rv
 
         assert 42 == rv
-        assert 0 == fg._val
+        assert 0 == fake_gauge._val
 
-    def test_decorator_value(self, fg):
+    def test_decorator_value(self, fake_gauge):
         """
         Incs and decs if the decorated function returns a value.
         """
 
-        @tx.track_inprogress(fg)
+        @tx.track_inprogress(fake_gauge)
         def func():
             return 42
 
         rv = func()
 
         assert 42 == rv
-        assert 0 == fg._val
-        assert 2 == fg._calls
+        assert 0 == fake_gauge._val
+        assert 2 == fake_gauge._calls

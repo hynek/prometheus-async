@@ -102,8 +102,8 @@ def fc():
     return FakeCounter()
 
 
-@pytest.fixture
-def fg():
+@pytest.fixture(name="fake_gauge")
+def _fake_gauge():
     return FakeGauge()
 
 

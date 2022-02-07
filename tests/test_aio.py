@@ -246,35 +246,48 @@ class TestCountExceptions:
         assert 1 == fc._val
 
 
+@pytest.mark.asyncio
 class TestTrackInprogress:
-    @pytest.mark.asyncio
-    async def test_coroutine(self, fg):
+    async def test_async_decorator(self, fake_gauge):
         """
-        Incs and decs.
+        Works as a decorator of async functions.
         """
-        f = aio.track_inprogress(fg)(coro)
+
+        @aio.track_inprogress(fake_gauge)
+        async def f():
+            await asyncio.sleep(0)
 
         await f()
 
-        assert 0 == fg._val
-        assert 2 == fg._calls
+        assert 0 == fake_gauge._val
+        assert 2 == fake_gauge._calls
 
-    @pytest.mark.asyncio
-    async def test_future(self, fg):
+    async def test_coroutine(self, fake_gauge):
+        """
+        Incs and decs.
+        """
+        f = aio.track_inprogress(fake_gauge)(coro)
+
+        await f()
+
+        assert 0 == fake_gauge._val
+        assert 2 == fake_gauge._calls
+
+    async def test_future(self, fake_gauge):
         """
         Incs and decs.
         """
         fut = asyncio.Future()
 
-        wrapped = aio.track_inprogress(fg, fut)
+        wrapped = aio.track_inprogress(fake_gauge, fut)
 
-        assert 1 == fg._val
+        assert 1 == fake_gauge._val
 
         fut.set_result(42)
 
         await wrapped
 
-        assert 0 == fg._val
+        assert 0 == fake_gauge._val
 
 
 class FakeSD:
@@ -436,9 +449,9 @@ test_server_stats_created """
 
 
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
+@pytest.mark.asyncio
 class TestConsulAgent:
     @pytest.mark.parametrize("deregister", [True, False])
-    @pytest.mark.asyncio
     async def test_integration(self, deregister):
         """
         Integration test with a real consul agent. Start a service, register
@@ -484,7 +497,6 @@ class TestConsulAgent:
             assert 200 == resp.status
 
     @pytest.mark.parametrize("deregister", [True, False])
-    @pytest.mark.asyncio
     @pytest.mark.skipif(sys.version_info < (3, 8), reason="AsyncMock is 3.8+")
     async def test_mocked(self, deregister):
         """
@@ -526,7 +538,6 @@ class TestConsulAgent:
         else:
             con.deregister_service.assert_not_called()
 
-    @pytest.mark.asyncio
     async def test_none_if_register_fails(self):
         """
         If register fails, return None.
