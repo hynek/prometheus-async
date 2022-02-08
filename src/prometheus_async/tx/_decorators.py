@@ -20,8 +20,9 @@ Decorators for Twisted.
 
 from __future__ import annotations
 
+from functools import wraps
 from time import perf_counter
-from typing import TYPE_CHECKING, Callable, TypeVar, overload
+from typing import TYPE_CHECKING, TypeVar, overload
 
 from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
@@ -31,7 +32,7 @@ from ..types import IncDecrementer
 
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Callable
 
     from ..types import C, Observer, P, T
 
@@ -41,7 +42,7 @@ F = TypeVar("F", bound=Failure)
 
 
 @overload
-def time(metric: Observer) -> Callable[[Callable[P, D]], Callable[P, D]]:
+def time(metric: Observer) -> Callable[[Callable[P, T]], Callable[P, T]]:
     ...
 
 
@@ -50,7 +51,9 @@ def time(metric: Observer, deferred: D) -> D:
     ...
 
 
-def time(metric: Observer, deferred: D | None = None) -> D | C:
+def time(
+    metric: Observer, deferred: D | None = None
+) -> D | Callable[[Callable[P, T]], Callable[P, T]]:
     r"""
     Call ``metric.observe(time)`` with runtime in seconds.
 
@@ -62,20 +65,23 @@ def time(metric: Observer, deferred: D | None = None) -> D | C:
     """
     if deferred is None:
 
-        @decorator
-        def time_decorator(f: C, _: Any, args: Any, kw: Any) -> C | D:
-            def observe(value: T) -> T:
-                metric.observe(perf_counter() - start_time)
-                return value
+        def measure(wrapped: Callable[P, T]) -> Callable[P, T]:
+            @wraps(wrapped)
+            def inner(*args: P.args, **kw: P.kwargs) -> T:
+                def observe(value: T) -> T:
+                    metric.observe(perf_counter() - start_time)
+                    return value
 
-            start_time = perf_counter()
-            rv = f(*args, **kw)
-            if isinstance(rv, Deferred):
-                return rv.addBoth(observe)  # type: ignore
-            else:
-                return observe(rv)
+                start_time = perf_counter()
+                rv = wrapped(*args, **kw)
+                if isinstance(rv, Deferred):
+                    return rv.addBoth(observe)  # type: ignore
+                else:
+                    return observe(rv)
 
-        return time_decorator
+            return inner
+
+        return measure
     else:
 
         def observe(value: T) -> T:
