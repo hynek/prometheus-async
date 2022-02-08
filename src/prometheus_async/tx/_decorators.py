@@ -84,12 +84,12 @@ def time(
         return measure
     else:
 
-        def observe(value: T) -> T:
+        def measure_deferred(value: T) -> T:
             metric.observe(perf_counter() - start_time)
             return value
 
         start_time = perf_counter()
-        return deferred.addBoth(observe)  # type: ignore
+        return deferred.addBoth(measure_deferred)  # type: ignore
 
 
 @overload
