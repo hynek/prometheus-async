@@ -22,10 +22,12 @@ from __future__ import annotations
 
 from functools import wraps
 from time import perf_counter
-from typing import TYPE_CHECKING, Awaitable, Callable, overload
+from typing import TYPE_CHECKING, overload
 
 
 if TYPE_CHECKING:
+    from typing import Awaitable, Callable
+
     from ..types import IncDecrementer, Observer, P, T
 
 
