@@ -26,15 +26,14 @@ from typing import TYPE_CHECKING, TypeVar, overload
 
 from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
-from wrapt import decorator
 
 from ..types import IncDecrementer
 
 
 if TYPE_CHECKING:
-    from typing import Any, Callable
+    from typing import Callable
 
-    from ..types import C, Observer, P, T
+    from ..types import Observer, P, T
 
 
 D = TypeVar("D", bound=Deferred)
@@ -154,7 +153,9 @@ def count_exceptions(
 
 
 @overload
-def track_inprogress(metric: IncDecrementer) -> Callable[P, C]:
+def track_inprogress(
+    metric: IncDecrementer,
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
     ...
 
 
@@ -165,7 +166,7 @@ def track_inprogress(metric: IncDecrementer, deferred: D) -> D:
 
 def track_inprogress(
     metric: IncDecrementer, deferred: D | None = None
-) -> D | Callable[P, C]:
+) -> D | Callable[[Callable[P, T]], Callable[P, T]]:
     """
     Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
 
@@ -180,19 +181,22 @@ def track_inprogress(
 
     if deferred is None:
 
-        @decorator
         def track_inprogress_decorator(
-            f: C, _: Any, args: Any, kw: Any
-        ) -> C | D:
-            metric.inc()
-            try:
-                rv = f(*args, **kw)
-            finally:
-                if isinstance(rv, Deferred):
-                    return rv.addBoth(dec)  # type: ignore
-                else:
-                    metric.dec()
-                    return rv
+            wrapped: Callable[P, T]
+        ) -> Callable[P, T]:
+            @wraps(wrapped)
+            def inner(*args: P.args, **kw: P.kwargs) -> T:
+                metric.inc()
+                try:
+                    rv = wrapped(*args, **kw)
+                finally:
+                    if isinstance(rv, Deferred):
+                        return rv.addBoth(dec)  # type: ignore
+                    else:
+                        metric.dec()
+                        return rv
+
+            return inner
 
         return track_inprogress_decorator
     else:
