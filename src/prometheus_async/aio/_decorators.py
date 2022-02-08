@@ -146,7 +146,7 @@ def count_exceptions(
 @overload
 def track_inprogress(
     metric: IncDecrementer,
-) -> Callable[[Callable[P, R]], Callable[P, Awaitable[R]]]:
+) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
     ...
 
 
@@ -159,7 +159,9 @@ def track_inprogress(
 
 def track_inprogress(
     metric: IncDecrementer, future: Awaitable[T] | None = None
-) -> Callable[[Callable[P, R]], Callable[P, Awaitable[R]]] | Awaitable[T]:
+) -> Callable[
+    [Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]
+] | Awaitable[T]:
     r"""
     Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
 
@@ -169,9 +171,11 @@ def track_inprogress(
     """
     if future is None:
 
-        def track(wrapped: Callable[P, R]) -> Callable[P, Awaitable[R]]:
+        def track(
+            wrapped: Callable[P, Awaitable[T]]
+        ) -> Callable[P, Awaitable[T]]:
             @wraps(wrapped)
-            async def inner(*args: P.args, **kw: P.kwargs) -> R:
+            async def inner(*args: P.args, **kw: P.kwargs) -> T:
                 metric.inc()
                 try:
                     rv = await wrapped(*args, **kw)
