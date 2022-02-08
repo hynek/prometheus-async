@@ -80,8 +80,7 @@ def time(
 
         async def measure_future(start_time: float) -> T:
             try:
-                rv = await f
-                return rv
+                return await f
             finally:
                 observe(start_time)
 
@@ -129,12 +128,10 @@ def count_exceptions(
             @wraps(wrapped)
             async def inner(*args: P.args, **kw: P.kwargs) -> T:
                 try:
-                    rv = await wrapped(*args, **kw)
+                    return await wrapped(*args, **kw)
                 except exc:
                     metric.inc()
                     raise
-
-                return rv
 
             return inner
 
@@ -144,11 +141,10 @@ def count_exceptions(
 
         async def count_future() -> T:
             try:
-                rv = await f
+                return await f
             except exc:
                 metric.inc()
                 raise
-            return rv
 
         return count_future()
 
@@ -188,11 +184,9 @@ def track_inprogress(
             async def inner(*args: P.args, **kw: P.kwargs) -> T:
                 metric.inc()
                 try:
-                    rv = await wrapped(*args, **kw)
+                    return await wrapped(*args, **kw)
                 finally:
                     metric.dec()
-
-                return rv
 
             return inner
 
@@ -203,10 +197,8 @@ def track_inprogress(
 
         async def track_future() -> T:
             try:
-                rv = await f
+                return await f
             finally:
                 metric.dec()
-
-            return rv
 
         return track_future()
