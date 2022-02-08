@@ -95,7 +95,7 @@ def time(
 @overload
 def count_exceptions(
     metric: IncDecrementer, *, exc: type[BaseException] = ...
-) -> Callable[P, C]:
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
     ...
 
 
@@ -114,7 +114,7 @@ def count_exceptions(
     deferred: D | None = None,
     *,
     exc: type[BaseException] = BaseException,
-) -> D | Callable[P, C]:
+) -> D | Callable[[Callable[P, T]], Callable[P, T]]:
     """
     Call ``metric.inc()`` whenever *exc* is caught.
 
@@ -130,20 +130,23 @@ def count_exceptions(
 
     if deferred is None:
 
-        @decorator
         def count_exceptions_decorator(
-            f: C, _: Any, args: Any, kw: Any
-        ) -> C | D:
-            try:
-                rv = f(*args, **kw)
-            except exc:
-                metric.inc()
-                raise
+            wrapped: Callable[P, T]
+        ) -> Callable[P, T]:
+            @wraps(wrapped)
+            def inner(*args: P.args, **kw: P.kwargs) -> T:
+                try:
+                    rv = wrapped(*args, **kw)
+                except exc:
+                    metric.inc()
+                    raise
 
-            if isinstance(rv, Deferred):
-                return rv.addErrback(inc)  # type: ignore
-            else:
-                return rv
+                if isinstance(rv, Deferred):
+                    return rv.addErrback(inc)  # type: ignore
+                else:
+                    return rv
+
+            return inner
 
         return count_exceptions_decorator
     else:
