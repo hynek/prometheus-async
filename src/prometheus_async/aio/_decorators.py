@@ -20,18 +20,21 @@ Decorators for asyncio.
 
 from __future__ import annotations
 
+from functools import wraps
 from time import perf_counter
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, overload
+from typing import TYPE_CHECKING, overload
 
 
 if TYPE_CHECKING:
-    from ..types import Observer, IncDecrementer, P, R, T
+    from typing import Awaitable, Callable
 
-from wrapt import decorator
+    from ..types import IncDecrementer, Observer, P, T
 
 
 @overload
-def time(metric: Observer) -> Callable[[Callable[P, R]], Callable[P, R]]:
+def time(
+    metric: Observer,
+) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
     ...
 
 
@@ -42,7 +45,9 @@ def time(metric: Observer, future: Awaitable[T]) -> Awaitable[T]:
 
 def time(
     metric: Observer, future: Awaitable[T] | None = None
-) -> Awaitable[T] | Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Awaitable[T] | Callable[
+    [Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]
+]:
     r"""
     Call ``metric.observe(time)`` with the runtime in seconds.
 
@@ -56,36 +61,37 @@ def time(
 
     if future is None:
 
-        @decorator
-        async def time_decorator(
-            wrapped: Callable[..., R], _: Any, args: Any, kw: Any
-        ) -> R:
-            start_time = perf_counter()
-            try:
-                rv = await wrapped(*args, **kw)
-                return rv
-            finally:
-                observe(start_time)
+        def measure(
+            wrapped: Callable[P, Awaitable[T]]
+        ) -> Callable[P, Awaitable[T]]:
+            @wraps(wrapped)
+            async def inner(*args: P.args, **kw: P.kwargs) -> T:
+                start_time = perf_counter()
+                try:
+                    return await wrapped(*args, **kw)
+                finally:
+                    observe(start_time)
 
-        return time_decorator
+            return inner
+
+        return measure
     else:
         f = future
 
-        async def measure(start_time: float) -> T:
+        async def measure_future(start_time: float) -> T:
             try:
-                rv = await f
-                return rv
+                return await f
             finally:
                 observe(start_time)
 
         start_time = perf_counter()
-        return measure(start_time)
+        return measure_future(start_time)
 
 
 @overload
 def count_exceptions(
     metric: IncDecrementer, *, exc: type[BaseException] = BaseException
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
     ...
 
 
@@ -104,7 +110,9 @@ def count_exceptions(
     future: Awaitable[T] | None = None,
     *,
     exc: type[BaseException] = BaseException,
-) -> Callable[[Callable[P, R]], Callable[P, R]] | Awaitable[T]:
+) -> Callable[
+    [Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]
+] | Awaitable[T]:
     r"""
     Call ``metric.inc()`` whenever *exc* is caught.
 
@@ -114,36 +122,37 @@ def count_exceptions(
     """
     if future is None:
 
-        @decorator
-        async def count(
-            wrapped: Callable[..., R], _: Any, args: Any, kw: Any
-        ) -> R:
-            try:
-                rv = await wrapped(*args, **kw)
-            except exc:
-                metric.inc()
-                raise
-            return rv
+        def count(
+            wrapped: Callable[P, Awaitable[T]]
+        ) -> Callable[P, Awaitable[T]]:
+            @wraps(wrapped)
+            async def inner(*args: P.args, **kw: P.kwargs) -> T:
+                try:
+                    return await wrapped(*args, **kw)
+                except exc:
+                    metric.inc()
+                    raise
+
+            return inner
 
         return count
     else:
         f = future
 
-        async def count() -> T:
+        async def count_future() -> T:
             try:
-                rv = await f
+                return await f
             except exc:
                 metric.inc()
                 raise
-            return rv
 
-        return count()
+        return count_future()
 
 
 @overload
 def track_inprogress(
     metric: IncDecrementer,
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
     ...
 
 
@@ -156,7 +165,9 @@ def track_inprogress(
 
 def track_inprogress(
     metric: IncDecrementer, future: Awaitable[T] | None = None
-) -> Callable[[Callable[P, R]], Callable[P, R]] | Awaitable[T]:
+) -> Callable[
+    [Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]
+] | Awaitable[T]:
     r"""
     Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
 
@@ -166,28 +177,28 @@ def track_inprogress(
     """
     if future is None:
 
-        @decorator
-        async def track(
-            wrapped: Callable[..., R], _: Any, args: Any, kw: Any
-        ) -> R:
-            metric.inc()
-            try:
-                rv = await wrapped(*args, **kw)
-            finally:
-                metric.dec()
+        def track(
+            wrapped: Callable[P, Awaitable[T]]
+        ) -> Callable[P, Awaitable[T]]:
+            @wraps(wrapped)
+            async def inner(*args: P.args, **kw: P.kwargs) -> T:
+                metric.inc()
+                try:
+                    return await wrapped(*args, **kw)
+                finally:
+                    metric.dec()
 
-            return rv
+            return inner
 
         return track
     else:
         f = future
         metric.inc()
 
-        async def track() -> T:
+        async def track_future() -> T:
             try:
-                rv = await f
+                return await f
             finally:
                 metric.dec()
-            return rv
 
-        return track()
+        return track_future()

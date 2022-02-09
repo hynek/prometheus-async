@@ -49,8 +49,6 @@ __all__ = [
 P = ParamSpec("P")
 R = TypeVar("R", bound=Awaitable)
 T = TypeVar("T")
-C = TypeVar("C", bound=Callable)
-
 
 Deregisterer = Callable[[], Awaitable[None]]
 
