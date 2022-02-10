@@ -21,8 +21,6 @@ Backward-incompatible changes:
 
 - Support for Python 2.7, 3.5, and 3.6 has been dropped.
 - The *loop* argument has been removed from ``prometheus_async.aio.start_http_server()``.
-- Since we now run on modern Python versions only, the usage of *wrapt* has been replaced by ``functools.wraps()``.
-  `#24 <https://github.com/hynek/prometheus-async/pull/24>`_
 
 
 Deprecations:
