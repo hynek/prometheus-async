@@ -20,14 +20,43 @@ Decorators for asyncio.
 
 from __future__ import annotations
 
+import types
+
+from functools import partial, update_wrapper
 from time import perf_counter
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, overload
 
+from wrapt import decorator
+
 
 if TYPE_CHECKING:
-    from ..types import Observer, IncDecrementer, P, R, T
+    from ..types import IncDecrementer, Observer, P, R, T
 
-from wrapt import decorator
+
+class _TimeAio:
+    def __init__(
+        self,
+        observe: Callable[[float], None],
+        wrapped: Callable[P, Awaitable[T]],
+    ) -> None:
+        self.observe = observe
+        self.wrapped = wrapped
+
+        update_wrapper(self, wrapped)
+
+    async def __call__(self, *args: P.args, **kw: P.kwargs) -> T:
+        start_time = perf_counter()
+        try:
+            return await self.wrapped(*args, **kw)
+        finally:
+            self.observe(start_time)
+
+    def __get__(self, instance: Any, cls: Any) -> Callable[P, Awaitable[T]]:
+        # Bind our wrapped method to the instance to avoid passing it as
+        # a positional argument.
+        self.wrapped = types.MethodType(self.wrapped, instance)
+
+        return self
 
 
 @overload
@@ -55,19 +84,7 @@ def time(
         metric.observe(perf_counter() - start_time)
 
     if future is None:
-
-        @decorator
-        async def time_decorator(
-            wrapped: Callable[..., R], _: Any, args: Any, kw: Any
-        ) -> R:
-            start_time = perf_counter()
-            try:
-                rv = await wrapped(*args, **kw)
-                return rv
-            finally:
-                observe(start_time)
-
-        return time_decorator
+        return partial(_TimeAio, observe)  # type: ignore
     else:
         f = future
 
