@@ -50,7 +50,9 @@ class _TimeAio:
             self.observe(start_time)
 
     def __get__(self, instance: Any, cls: Any) -> Callable[P, Awaitable[T]]:
-        self.wrapped = self.wrapped.__get__(instance, cls)
+        # Bind our wrapped callable to its instance so we don't pass `self`
+        # as a positional argument, which breaks other decorators.
+        self.wrapped = self.wrapped.__get__(instance, cls)  # type: ignore
         return self
 
 
