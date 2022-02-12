@@ -53,7 +53,7 @@ class _TimeAio:
         # Bind our wrapped callable to its instance so we don't pass `self`
         # as a positional argument, which breaks other decorators.
         self.wrapped = self.wrapped.__get__(instance, cls)  # type: ignore
-        return self
+        return self  # type: ignore
 
 
 @overload
