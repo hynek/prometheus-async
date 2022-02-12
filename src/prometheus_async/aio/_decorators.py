@@ -20,8 +20,6 @@ Decorators for asyncio.
 
 from __future__ import annotations
 
-import types
-
 from functools import partial, update_wrapper
 from time import perf_counter
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, overload
@@ -52,10 +50,7 @@ class _TimeAio:
             self.observe(start_time)
 
     def __get__(self, instance: Any, cls: Any) -> Callable[P, Awaitable[T]]:
-        # Bind our wrapped method to the instance to avoid passing it as
-        # a positional argument.
-        self.wrapped = types.MethodType(self.wrapped, instance)
-
+        self.wrapped = self.wrapped.__get__(instance, cls)
         return self
 
 

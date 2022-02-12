@@ -220,6 +220,7 @@ class TestTime:
         assert after_instance is not None
         assert after_args == before_args is not None
         assert after_kw == before_kw is not None
+        assert [1] == fake_observer._observed
 
 
 @pytest.mark.asyncio
