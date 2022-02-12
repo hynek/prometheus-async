@@ -222,6 +222,33 @@ class TestTime:
         assert after_kw == before_kw is not None
         assert [1] == fake_observer._observed
 
+    @pytest.mark.usefixtures("patch_timer")
+    async def test_reuse(self, fake_observer):
+        """
+        It's possible to re-use decorators between functions and methods.
+        """
+        dec = aio.time(fake_observer)
+
+        @dec
+        async def coro(x):
+            return str(x)
+
+        class C:
+            @dec
+            async def coro(self, x, y):
+                return x + y
+
+        class D:
+            @dec
+            async def coro(self):
+                return 42
+
+        assert "42" == await coro(42)
+        assert 6 == await C().coro(4, 2)
+        assert 42 == await D().coro()
+        # Timers are independent:
+        assert [1, 1, 1] == fake_observer._observed
+
 
 @pytest.mark.asyncio
 class TestCountExceptions:
