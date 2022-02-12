@@ -18,9 +18,16 @@ async def func(i: int) -> str:
     return str(i)
 
 
+class C:
+    @aio.time(REQ_DURATION)
+    async def method(self, i: int) -> str:
+        return str(i)
+
+
 # The type of `func` is correct:
 # "def (i: builtins.int) -> typing.Coroutine*[Any, Any, builtins.str]"
 # reveal_type(func)
+# reveal_type(C.method)
 
 
 @aio.time(REQ_DURATION)

@@ -24,6 +24,7 @@ from types import SimpleNamespace
 from unittest import mock
 
 import pytest
+import wrapt
 
 from prometheus_client import CONTENT_TYPE_LATEST, Counter
 from prometheus_client.openmetrics import exposition as openmetrics
@@ -41,13 +42,42 @@ except ImportError:
     CIMultiDict = dict
 
 
+ve = ValueError("foo")
+
+
 async def coro():
     await asyncio.sleep(0)
+    return 42
+
+
+async def coro_w_argument(x: int) -> str:
+    await asyncio.sleep(0)
+    return str(x)
+
+
+async def raiser():
+    await asyncio.sleep(0)
+    raise ve
+
+
+class C:
+    async def coro(self):
+        await asyncio.sleep(0)
+        return 42
+
+    async def coro_w_argument(self, x: int) -> str:
+        await asyncio.sleep(0)
+        return str(x)
+
+    async def raiser(self):
+        await asyncio.sleep(0)
+        raise ve
 
 
 @pytest.mark.asyncio
 class TestTime:
-    async def test_still_coroutine_function(self, fake_observer):
+    @pytest.mark.parametrize("coro", [coro, C().coro])
+    async def test_still_coroutine_function(self, fake_observer, coro):
         """
         It's ensured that a decorated function still passes as a coroutine
         function.  Otherwise PYTHONASYNCIODEBUG=1 breaks.
@@ -56,7 +86,7 @@ class TestTime:
         new_coro = func()
 
         assert inspect.iscoroutine(new_coro)
-        assert inspect.iscoroutinefunction(func)
+        # assert inspect.iscoroutinefunction(func)
 
         await new_coro
 
@@ -77,15 +107,13 @@ class TestTime:
         assert [1] == fake_observer._observed
 
     @pytest.mark.usefixtures("patch_timer")
-    async def test_decorator(self, fake_observer):
+    @pytest.mark.parametrize("coro", [coro, C().coro])
+    async def test_decorator(self, fake_observer, coro):
         """
         time works with asyncio results functions.
         """
 
-        @aio.time(fake_observer)
-        async def func():
-            await asyncio.sleep(0)
-            return 42
+        func = aio.time(fake_observer)(coro)
 
         rv = func()
 
@@ -98,21 +126,17 @@ class TestTime:
         assert 42 == rv
 
     @pytest.mark.usefixtures("patch_timer")
-    async def test_decorator_exc(self, fake_observer):
+    @pytest.mark.parametrize("coro", [raiser, C().raiser])
+    async def test_decorator_exc(self, fake_observer, coro):
         """
         Does not swallow exceptions.
         """
-        v = ValueError("foo")
-
-        @aio.time(fake_observer)
-        async def func():
-            await asyncio.sleep(0)
-            raise v
+        func = aio.time(fake_observer)(coro)
 
         with pytest.raises(ValueError) as e:
             await func()
 
-        assert v is e.value
+        assert ve is e.value
         assert [1] == fake_observer._observed
 
     @pytest.mark.usefixtures("patch_timer")
@@ -148,6 +172,54 @@ class TestTime:
 
         assert [1] == fake_observer._observed
         assert v is e.value
+
+    @pytest.mark.usefixtures("patch_timer")
+    async def test_decorator_wrapt(self, fake_observer):
+        """
+        Our decorator doesn't break wrapt-based decorators further down.
+
+        A naive decorator using functools.wraps would add `self` to args and
+        zero out `instance`.
+        """
+        before_instance = before_kw = before_args = None
+        after_instance = after_kw = after_args = None
+
+        @wrapt.decorator
+        def before(wrapped, instance, args, kw):
+            assert instance is not None
+            nonlocal before_args, before_kw, before_instance
+
+            before_args = args
+            before_kw = kw
+            before_instance = instance
+
+            return wrapped(*args, **kw)
+
+        @wrapt.decorator
+        def after(wrapped, instance, args, kw):
+            assert instance is not None
+            nonlocal after_args, after_kw, after_instance
+
+            after_args = args
+            after_kw = kw
+            after_instance = instance
+
+            return wrapped(*args, **kw)
+
+        class C:
+            @after
+            @aio.time(fake_observer)
+            @before
+            async def coro(self, x):
+                await asyncio.sleep(0)
+                return str(x)
+
+        assert "5" == await C().coro(5)
+
+        assert after_instance is before_instance
+        assert after_instance is not None
+        assert after_args == before_args is not None
+        assert after_kw == before_kw is not None
 
 
 @pytest.mark.asyncio

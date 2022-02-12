@@ -47,7 +47,7 @@ Ko-fi = "https://ko-fi.com/the_hynek"
 aiohttp = ["aiohttp>=3"]
 consul = ["aiohttp>=3"]
 twisted = ["twisted"]
-tests = ["coverage[toml]", "pytest", "pytest-asyncio"]
+tests = ["coverage[toml]", "pytest", "pytest-asyncio", "wrapt"]
 docs = [
     "aiohttp",
     "furo",
@@ -76,6 +76,7 @@ dev = [
     "coverage[toml]",
     "pytest",
     "pytest-asyncio",
+    "wrapt",
     "aiohttp",
     "furo",
     "sphinx-notfound-page",
