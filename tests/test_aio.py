@@ -243,11 +243,16 @@ class TestTime:
             async def coro(self):
                 return 42
 
-        assert "42" == await coro(42)
+        @dec
+        async def coro2():
+            return 23
+
         assert 6 == await C().coro(4, 2)
+        assert "42" == await coro(42)
         assert 42 == await D().coro()
+        assert 23 == await coro2()
         # Timers are independent:
-        assert [1, 1, 1] == fake_observer._observed
+        assert [1, 1, 1, 1] == fake_observer._observed
 
 
 @pytest.mark.asyncio
