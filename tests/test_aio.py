@@ -179,30 +179,32 @@ class TestTime:
         Our decorator doesn't break wrapt-based decorators further down.
 
         A naive decorator using functools.wraps would add `self` to args and
-        zero out `instance`.
+        zero out `instance`. Potentially breaking signatures.
         """
-        before_instance = before_kw = before_args = None
-        after_instance = after_kw = after_args = None
+        before_sig = before_instance = before_kw = before_args = None
+        after_sig = after_instance = after_kw = after_args = None
 
         @wrapt.decorator
         def before(wrapped, instance, args, kw):
             assert instance is not None
-            nonlocal before_args, before_kw, before_instance
+            nonlocal before_args, before_kw, before_instance, before_sig
 
             before_args = args
             before_kw = kw
             before_instance = instance
+            before_sig = inspect.signature(wrapped)
 
             return wrapped(*args, **kw)
 
         @wrapt.decorator
         def after(wrapped, instance, args, kw):
             assert instance is not None
-            nonlocal after_args, after_kw, after_instance
+            nonlocal after_args, after_kw, after_instance, after_sig
 
             after_args = args
             after_kw = kw
             after_instance = instance
+            after_sig = inspect.signature(wrapped)
 
             return wrapped(*args, **kw)
 
@@ -214,12 +216,18 @@ class TestTime:
                 await asyncio.sleep(0)
                 return str(x)
 
-        assert "5" == await C().coro(5)
+        i1 = C()
+        i2 = C()
+
+        assert "5" == await i1.coro(5)
+        assert "42" == await i2.coro(42)
 
         assert after_instance is before_instance
         assert after_instance is not None
         assert after_args == before_args is not None
         assert after_kw == before_kw is not None
+        assert before_sig == after_sig
+        assert [1, 1] == fake_observer._observed
 
 
 @pytest.mark.asyncio
