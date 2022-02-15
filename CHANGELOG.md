@@ -31,7 +31,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 - Added support for [OpenMetrics](https://openmetrics.io) exposition in `prometheus_async.aio.web.server_stats()` and thus `prometheus_async.aio.web.start_http_server_in_thread()`.
   [#23](https://github.com/hynek/prometheus-async/issues/23)
 
-------------------------------------------------------------------------
+---
 
 ## 19.2.0 (2019-01-17)
 
@@ -49,7 +49,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
     Sorry for the inconvenience that has been caused!
 
-------------------------------------------------------------------------
+---
 
 ## 19.1.0 (2019-01-15)
 
@@ -65,7 +65,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   Dropped most dependencies and switched to decorator.py to avoid a C dependency (wrapt) that produces functions that can't be pickled.
 
-------------------------------------------------------------------------
+---
 
 ## 18.4.0 (2018-12-07)
 
@@ -81,7 +81,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   Restored compatibility with `prometheus_client` 0.5.
 
-------------------------------------------------------------------------
+---
 
 ## 18.3.0 (2018-06-21)
 
@@ -97,7 +97,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   The HTTP access log when using `prometheus_async.start_http_server()` is disabled now. It was activated accidentally when moving to `aiohttp`'s application runner APIs.
 
-------------------------------------------------------------------------
+---
 
 ## 18.2.0 (2018-05-29)
 
@@ -113,7 +113,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   Port to `aiohttp`'s application runner APIs to avoid those pesky deprecation warnings. As a consequence, the *loop* argument has been removed from internal APIs and became a no-op in public APIs.
 
-------------------------------------------------------------------------
+---
 
 ## 18.1.0 (2018-02-15)
 
@@ -130,7 +130,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   `python-consul` is no longer required for asyncio Consul service discovery. A plain `aiohttp` is enough now.
 
-------------------------------------------------------------------------
+---
 
 ## 17.5.0 (2017-10-30)
 
@@ -143,7 +143,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 -   The thread created by `prometheus_async.aio.start_http_server_in_thread()` has a human-readable name now.
 -   Fixed compatibility with `aiohttp` 2.3.
 
-------------------------------------------------------------------------
+---
 
 ## 17.4.0 (2017-08-14)
 
@@ -159,7 +159,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   Set proper content type header for the root redirection page.
 
-------------------------------------------------------------------------
+---
 
 ## 17.3.0 (2017-06-01)
 
@@ -175,7 +175,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   `prometheus_async.aio.web.start_http_server()` now passes the *loop* argument to `aiohttp.web.Application.make_handler()` instead of `Application`'s initializer. This fixes a "loop argument is deprecated" warning.
 
-------------------------------------------------------------------------
+---
 
 ## 17.2.0 (2017-03-21)
 
@@ -187,7 +187,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   `prometheus_async.aio.web` now supports `aiohttp` 2.0.
 
-------------------------------------------------------------------------
+---
 
 ## 17.1.0 (2017-01-14)
 
@@ -195,7 +195,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   Fix monotonic timer on Python 2. [\#7](https://github.com/hynek/prometheus_async/issues/7)
 
-------------------------------------------------------------------------
+---
 
 ## 16.2.0 (2016-10-28)
 
@@ -203,7 +203,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   When using the aiohttp metrics exporter, create the web application using an explicit loop argument. [\#6](https://github.com/hynek/prometheus_async/pull/6)
 
-------------------------------------------------------------------------
+---
 
 ## 16.1.0 (2016-09-23)
 
@@ -211,7 +211,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 -   Service discovery deregistration is optional now.
 
-------------------------------------------------------------------------
+---
 
 ## 16.0.0 (2016-05-19)
 
