@@ -295,6 +295,8 @@ linkcheck_ignore = [
     # Anchors are a problem
     r"https://github.com/prometheus/client_python#twisted",
     r"https://github.com/prometheus/client_python#counter",
+    # This breaks releases because of non-existent tags.
+    r"https://github.com/hynek/prometheus-async/compare/.*",
 ]
 
 
