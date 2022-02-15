@@ -111,4 +111,4 @@ We do **not** plan add more.
 Adding own service discovery methods is simple:
 all you need is to provide an instance with a coroutine `register(self, metrics_server, loop)` that registers the passed `metrics_server` with the service of your choicer and returns another coroutine that is called for de-registration when the metrics server is shut down.
 
-Have a look at [our implementations](https://github.com/hynek/prometheus_async/blob/main/src/prometheus_async/aio/sd.py) if you need inspiration or check out the `ServiceDiscovery` {class}`typing.Protocol` in the [`types` module](https://github.com/hynek/prometheus_async/blob/main/src/prometheus_async/types.py)
+Have a look at [our implementations](https://github.com/hynek/prometheus-async/blob/main/src/prometheus_async/aio/sd.py) if you need inspiration or check out the `ServiceDiscovery` {class}`typing.Protocol` in the [`types` module](https://github.com/hynek/prometheus-async/blob/main/src/prometheus_async/types.py)

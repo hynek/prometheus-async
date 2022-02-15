@@ -47,5 +47,5 @@ The source code is hosted on [GitHub] and the documentation on [Read The Docs].
 [Python client]: https://github.com/prometheus/client_python
 [*Prometheus*]: https://prometheus.io/
 [*Twisted*]: https://twisted.org
-[GitHub]: https://github.com/hynek/prometheus_async
+[GitHub]: https://github.com/hynek/prometheus-async
 [Read The Docs]: https://prometheus-async.readthedocs.io/

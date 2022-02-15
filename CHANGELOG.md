@@ -148,7 +148,7 @@ Whenever breaking changes are needed, they are:
 ### Fixed
 
 - Fix monotonic timer on Python 2.
-  [#7](https://github.com/hynek/prometheus_async/issues/7)
+  [#7](https://github.com/hynek/prometheus-async/issues/7)
 
 
 ## [16.2.0](https://github.com/hynek/prometheus-async/compare/16.1.0...16.2.0) - 2016-10-28
@@ -156,7 +156,7 @@ Whenever breaking changes are needed, they are:
 ### Changed
 
 - When using the *aiohttp* metrics exporter, create the web application using an explicit loop argument.
-  [#6](https://github.com/hynek/prometheus_async/pull/6)
+  [#6](https://github.com/hynek/prometheus-async/pull/6)
 
 
 ## [16.1.0](https://github.com/hynek/prometheus-async/compare/16.0.0...16.1.0) - 2016-09-23
