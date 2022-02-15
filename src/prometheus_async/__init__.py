@@ -19,7 +19,7 @@ Async helpers for prometheus_client.
 """
 
 
-__version__ = "22.1.0.dev0"
+__version__ = "22.1.0"
 
 __title__ = "prometheus_async"
 # __doc__ is None in when running with -OO / PYTHONOPTIMIZE=2.
