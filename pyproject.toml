@@ -17,7 +17,7 @@ dependencies = [
     "wrapt",
 ]
 license = { file = "LICENSE" }
-readme = { content-type = "text/x-rst", file = "README.rst" }
+readme = { content-type = "text/markdown", file = "README.md" }
 keywords = ["metrics", "prometheus", "twisted", "asyncio", "async"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -47,10 +47,11 @@ Ko-fi = "https://ko-fi.com/the_hynek"
 aiohttp = ["aiohttp>=3"]
 consul = ["aiohttp>=3"]
 twisted = ["twisted"]
-tests = ["coverage[toml]", "pytest", "pytest-asyncio", "wrapt"]
+tests = ["coverage[toml]", "pytest", "pytest-asyncio"]
 docs = [
     "aiohttp",
     "furo",
+    "myst-parser",
     "sphinx-notfound-page",
     "sphinx",
     "sphinxcontrib-asyncio",
@@ -76,9 +77,9 @@ dev = [
     "coverage[toml]",
     "pytest",
     "pytest-asyncio",
-    "wrapt",
     "aiohttp",
     "furo",
+    "myst-parser",
     "sphinx-notfound-page",
     "sphinx",
     "sphinxcontrib-asyncio",
@@ -94,7 +95,7 @@ include = [
     ".pre-commit-config.yaml",
     ".readthedocs.yml",
     "*.ini",
-    "*.rst",
+    "*.md",
     "LICENSE.*",
     "docs",
     "tests",

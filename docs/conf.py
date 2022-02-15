@@ -58,6 +58,7 @@ def find_version(*file_paths):
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    "myst_parser",
     "notfound.extension",
     "sphinx.ext.autodoc",
     "sphinx.ext.autodoc.typehints",
