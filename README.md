@@ -13,7 +13,7 @@
    <img src="https://static.pepy.tech/personalized-badge/prometheus-async?period=month&amp;units=international_system&amp;left_color=grey&amp;right_color=blue&amp;left_text=Downloads%20/%20Month" alt="Downloads / Month" />
 </a>
 
- <!-- teaser-begin -->
+<!-- teaser-begin -->
 
 *prometheus-async* adds support for asynchronous frameworks to the official [Python client] for the [*Prometheus*] metrics and monitoring system.
 
