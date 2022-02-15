@@ -314,11 +314,12 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 # texinfo_no_detailmenu = False
 
+# GitHub has rate limits
 linkcheck_ignore = [
-    # throws a 406 for unknown reasons
-    r"https://github.com/prometheus/client_python#twisted",
-    r"https://github.com/prometheus/client_python#counter",
+    r"https://github.com/.*/(issues|pull)/\d+",
+    r"https://twitter.com/.*",
 ]
+
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
