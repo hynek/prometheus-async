@@ -163,6 +163,8 @@ $ consul agent -dev -advertise 127.0.0.1
 
 If your change is noteworthy, there needs to be a changelog entry in `CHANGELOG.md` so our users can learn about it!
 
+- It follows [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/).
+  Please add one of the change types if it's still missing for the current release (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, or `Security`) as a third-level (`###`) heading.
 - As with other docs, please use [semantic newlines] in the changelog.
 - Wrap symbols like modules, functions, or classes into backticks so they are rendered in a `monospace font`.
 - Wrap arguments into asterisks like in docstrings:
