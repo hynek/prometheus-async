@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, overload
 
 
 if TYPE_CHECKING:
-    from ..types import Observer, IncDecrementer, P, R, T
+    from ..types import Observer, Incrementer, IncDecrementer, P, R, T
 
 from wrapt import decorator
 
@@ -84,14 +84,14 @@ def time(
 
 @overload
 def count_exceptions(
-    metric: IncDecrementer, *, exc: type[BaseException] = BaseException
+    metric: Incrementer, *, exc: type[BaseException] = BaseException
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     ...
 
 
 @overload
 def count_exceptions(
-    metric: IncDecrementer,
+    metric: Incrementer,
     future: Awaitable[T],
     *,
     exc: type[BaseException] = BaseException,
@@ -100,7 +100,7 @@ def count_exceptions(
 
 
 def count_exceptions(
-    metric: IncDecrementer,
+    metric: Incrementer,
     future: Awaitable[T] | None = None,
     *,
     exc: type[BaseException] = BaseException,

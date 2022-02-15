@@ -27,13 +27,11 @@ from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
 from wrapt import decorator
 
-from ..types import IncDecrementer
-
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from ..types import C, Observer, P, T
+    from ..types import C, IncDecrementer, Incrementer, Observer, P, T
 
 
 D = TypeVar("D", bound=Deferred)
@@ -88,14 +86,14 @@ def time(metric: Observer, deferred: D | None = None) -> D | C:
 
 @overload
 def count_exceptions(
-    metric: IncDecrementer, *, exc: type[BaseException] = ...
+    metric: Incrementer, *, exc: type[BaseException] = ...
 ) -> Callable[P, C]:
     ...
 
 
 @overload
 def count_exceptions(
-    metric: IncDecrementer,
+    metric: Incrementer,
     deferred: D,
     *,
     exc: type[BaseException] = ...,
@@ -104,7 +102,7 @@ def count_exceptions(
 
 
 def count_exceptions(
-    metric: IncDecrementer,
+    metric: Incrementer,
     deferred: D | None = None,
     *,
     exc: type[BaseException] = BaseException,
