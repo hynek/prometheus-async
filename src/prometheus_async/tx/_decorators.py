@@ -21,21 +21,16 @@ Decorators for Twisted.
 from __future__ import annotations
 
 from time import perf_counter
-from typing import TYPE_CHECKING, Callable, TypeVar, overload
+from typing import TYPE_CHECKING, Callable, overload
 
 from twisted.internet.defer import Deferred
-from twisted.python.failure import Failure
 from wrapt import decorator
 
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from ..types import C, IncDecrementer, Incrementer, Observer, P, T
-
-
-D = TypeVar("D", bound=Deferred)
-F = TypeVar("F", bound=Failure)
+    from ..types import C, D, F, IncDecrementer, Incrementer, Observer, P, T
 
 
 @overload

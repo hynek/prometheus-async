@@ -11,6 +11,76 @@ By participating in this project you agree to abide by its terms.
 Please report any harm to [Hynek Schlawack] in any way you find appropriate.
 
 
+## Local Development Environment
+
+You can (and should) run our test suite using [*tox*].
+However, you’ll probably want a more traditional environment as well.
+We highly recommend to develop using the latest Python release because we try to take advantage of modern features whenever possible.
+
+First create a [virtual environment](https://virtualenv.pypa.io/) so you don't break your system-wide Python installation.
+It’s out of scope for this document to list all the ways to manage virtual environments in Python, but if you don’t already have a pet way, take some time to look at tools like [*direnv*](https://hynek.me/til/python-project-local-venvs/), [*virtualfish*](https://virtualfish.readthedocs.io/), and [*virtualenvwrapper*](https://virtualenvwrapper.readthedocs.io/).
+
+Next, get an up to date checkout of the *prometheus-async* repository:
+
+```console
+$ git clone git@github.com:hynek/prometheus-async.git
+```
+
+or if you want to use *git* via `https`:
+
+```console
+$ git clone https://github.com/hynek/prometheus-async.git
+```
+
+Change into the newly created directory and **after activating your virtual environment** install an editable version of *prometheus-async* along with its tests and docs requirements:
+
+```console
+$ cd prometheus-async
+$ pip install --upgrade pip  # PLEASE don't skip this step
+$ pip install -e '.[dev]'
+```
+
+At this point,
+
+```console
+$ python -m pytest
+```
+
+should work and pass, as should:
+
+```console
+$ cd docs
+$ make html
+```
+
+The built documentation can then be found in `docs/_build/html/`.
+
+To avoid committing code that violates our style guide, we strongly advise you to install [*pre-commit*] [^dev] hooks:
+
+```console
+$ pre-commit install
+```
+
+You can also run them anytime (as our tox does) using:
+
+```console
+$ pre-commit run --all-files
+```
+
+[^dev]: *pre-commit* should have been installed into your virtualenv automatically when you ran `pip install -e '.[dev]'` above.
+        If *pre-commit* is missing, your probably need to run `pip install -e '.[dev]'` again.
+
+
+### Consul
+
+If you want to run the *full* test suite, you'll also need a [*Consul*]( https://www.consul.io/) agent running.
+Once it's installed, you can run it in development mode:
+
+```console
+$ consul agent -dev -advertise 127.0.0.1
+```
+
+
 ## Workflow
 
 - No contribution is too small!
@@ -64,30 +134,26 @@ Please report any harm to [Hynek Schlawack] in any way you find appropriate.
 
   In that case you should look into [*asdf*](https://asdf-vm.com) or [*pyenv*](https://github.com/pyenv/pyenv), which make it very easy to install many different Python versions in parallel.
 - Write [good test docstrings](https://jml.io/pages/test-docstrings.html).
-- To ensure new features work well with the rest of the system, they should be also added to our [*Hypothesis*](https://hypothesis.readthedocs.io/) testing strategy, which can be found in `tests/strategies.py`.
-- If you've changed or added public APIs, please update our type stubs (files ending in `.pyi`).
 
 
 ## Documentation
 
-- Use [semantic newlines] in [*reStructuredText*] files (files ending in `.rst`):
+- Use [semantic newlines] in *Markdown* files (files ending in `.md`):
 
-  ```rst
+  ```markdown
   This is a sentence.
   This is another sentence.
   ```
 
 - If you start a new section, add two blank lines before and one blank line after the header, except if two headers follow immediately after each other:
 
-  ```rst
+  ```markdown
   Last line of previous section.
 
 
-  Header of New Top Section
-  -------------------------
+  ## Header of New Top Section
 
-  Header of New Section
-  ^^^^^^^^^^^^^^^^^^^^^
+  ### Header of New Section
 
   First line of new section.
   ```
@@ -95,10 +161,10 @@ Please report any harm to [Hynek Schlawack] in any way you find appropriate.
 
 ### Changelog
 
-If your change is noteworthy, there needs to be a changelog entry in `CHANGELOG.rst` so our users can learn about it!
+If your change is noteworthy, there needs to be a changelog entry in `CHANGELOG.md` so our users can learn about it!
 
 - As with other docs, please use [semantic newlines] in the changelog.
-- Wrap symbols like modules, functions, or classes into double backticks so they are rendered in a `monospace font`.
+- Wrap symbols like modules, functions, or classes into backticks so they are rendered in a `monospace font`.
 - Wrap arguments into asterisks like in docstrings:
   `Added new argument *an_argument*.`
 - If you mention functions or other callables, add parentheses at the end of their names: `prometheus_async.func()` or `prometheus_async.Class.method()`.
@@ -106,91 +172,21 @@ If your change is noteworthy, there needs to be a changelog entry in `CHANGELOG.
 - Prefer simple past tense or constructions with "now".
   For example:
 
-  + Added ``prometheus_async.func()``.
-  + ``prometheus_async.func()`` now doesn't crash the Large Hadron Collider anymore when passed the *foobar* argument.
+  + Added `prometheus_async.func()`.
+  + `prometheus_async.func()` now doesn't crash the Large Hadron Collider anymore when passed the *foobar* argument.
 
 Example entries:
 
-```rst
-Added ``prometheus_async.func()``.
+```markdown
+Added `prometheus_async.func()`.
 The feature really *is* awesome.
 ```
 
 or:
 
-```rst
-``prometheus_async.func()`` now doesn't crash the Large Hadron Collider anymore when passed the *foobar* argument.
+```markdown
+`prometheus_async.func()` now doesn't crash the Large Hadron Collider anymore when passed the *foobar* argument.
 The bug really *was* nasty.
-```
-
-
-## Local Development Environment
-
-You can (and should) run our test suite using [*tox*].
-However, you’ll probably want a more traditional environment as well.
-We highly recommend to develop using the latest Python release because we try to take advantage of modern features whenever possible.
-
-First create a [virtual environment](https://virtualenv.pypa.io/) so you don't break your system-wide Python installation.
-It’s out of scope for this document to list all the ways to manage virtual environments in Python, but if you don’t already have a pet way, take some time to look at tools like [*direnv*](https://hynek.me/til/python-project-local-venvs/), [*virtualfish*](https://virtualfish.readthedocs.io/), and [*virtualenvwrapper*](https://virtualenvwrapper.readthedocs.io/).
-
-Next, get an up to date checkout of the *prometheus-async* repository:
-
-```console
-$ git clone git@github.com:hynek/prometheus-async.git
-```
-
-or if you want to use git via `https`:
-
-```console
-$ git clone https://github.com/hynek/prometheus-async.git
-```
-
-Change into the newly created directory and **after activating your virtual environment** install an editable version of *prometheus-async* along with its tests and docs requirements:
-
-```console
-$ cd prometheus-async
-$ pip install --upgrade pip setuptools  # PLEASE don't skip this step
-$ pip install -e '.[dev]'
-```
-
-At this point,
-
-```console
-$ python -m pytest
-```
-
-should work and pass, as should:
-
-```console
-$ cd docs
-$ make html
-```
-
-The built documentation can then be found in `docs/_build/html/`.
-
-To avoid committing code that violates our style guide, we strongly advise you to install [*pre-commit*] [^dev] hooks:
-
-```console
-$ pre-commit install
-```
-
-You can also run them anytime (as our tox does) using:
-
-```console
-$ pre-commit run --all-files
-```
-
-[^dev]: *pre-commit* should have been installed into your virtualenv automatically when you ran `pip install -e '.[dev]'` above.
-        If *pre-commit* is missing, your probably need to run `pip install -e '.[dev]'` again.
-
-
-### Consul
-
-If you want to run the *full* test suite, you'll also need a [*Consul*]( https://www.consul.io/) agent running.
-Once it's installed, you can run it in development mode:
-
-```console
-$ consul agent -dev -advertise 127.0.0.1
 ```
 
 
@@ -199,4 +195,3 @@ $ consul agent -dev -advertise 127.0.0.1
 [*pre-commit*]: https://pre-commit.com/
 [*tox*]: https://https://tox.wiki/
 [semantic newlines]: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
-[*reStructuredText*]: https://www.sphinx-doc.org/en/stable/usage/restructuredtext/basics.html

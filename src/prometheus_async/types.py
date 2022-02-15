@@ -24,7 +24,18 @@ from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
 if TYPE_CHECKING:
     from prometheus_async.aio.web import MetricsHTTPServer
 
-# This construct works better with Mypy.
+try:
+    from twisted.internet.defer import Deferred
+    from twisted.python.failure import Failure
+
+    # Having these types here results in nicer API docs without
+    # private modules in identifiers.
+    D = TypeVar("D", bound=Deferred)
+    F = TypeVar("F", bound=Failure)
+except ImportError:
+    pass
+
+# This construct works with Mypy.
 # Doing the obvious ImportError route leads to an 'Incompatible import of
 # "Protocol"' error.
 if sys.version_info >= (3, 8):
