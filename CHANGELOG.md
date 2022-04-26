@@ -26,6 +26,7 @@ Whenever breaking changes are needed, they are:
 
 - The `prometheus_async.types.IncDecrementer` `Protocol` is deprecated and will be removed in a year.
   It was never a public API.
+  [#29]
 
 
 ### Changed
@@ -36,6 +37,10 @@ Whenever breaking changes are needed, they are:
 ### Fixed
 
 - The type hints for `prometheus_async.track_inprogress()` now accept `prometheus_client.Gauge`s.
+  [#29]
+
+
+[#29]: https://github.com/hynek/prometheus-async/pull/29
 
 
 ## [22.1.0](https://github.com/hynek/prometheus-async/compare/19.2.0...22.1.0) - 2022-02-15
