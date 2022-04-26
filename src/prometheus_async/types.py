@@ -86,6 +86,12 @@ class Incrementer(Protocol):
 
 
 class IncDecrementer(Protocol):
+    """
+    Not used anymore!
+
+    .. deprecated:: 22.2.0
+    """
+
     def inc(
         self, amount: float = 1, exemplar: dict[str, str] | None = None
     ) -> None:

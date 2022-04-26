@@ -22,6 +22,22 @@ Whenever breaking changes are needed, they are:
 
 ## [Unreleased](https://github.com/hynek/prometheus-async/compare/22.1.0...HEAD)
 
+### Deprecated
+
+- The `prometheus_async.types.IncDecrementer` `Protocol` is deprecated and will be removed in a year.
+  It was never a public API.
+
+
+### Changed
+
+- Due to improvements of `prometheus_client`'s type hints, we don't block them from Mypy anymore.
+
+
+### Fixed
+
+- The type hints for `prometheus_async.track_inprogress()` now accept `prometheus_client.Gauge`s.
+
+
 ## [22.1.0](https://github.com/hynek/prometheus-async/compare/19.2.0...22.1.0) - 2022-02-15
 
 ### Removed
