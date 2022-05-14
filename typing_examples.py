@@ -4,17 +4,23 @@ Some examples of prometheus-async typing integration.
 
 from asyncio import Future
 
-from prometheus_client.metrics import Summary
+from prometheus_client.metrics import Gauge, Summary
 from twisted.internet.defer import Deferred
 
 from prometheus_async import aio, tx
 
 
 REQ_DURATION = Summary("REQ_DUR", "Request duration")
+IN_PROG = Gauge("IN_PROG", "In progress")
 
 
 @aio.time(REQ_DURATION)
 async def func(i: int) -> str:
+    return str(i)
+
+
+@aio.track_inprogress(IN_PROG)
+async def func2(i: int) -> str:
     return str(i)
 
 

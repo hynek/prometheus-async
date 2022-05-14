@@ -30,7 +30,9 @@ from wrapt import decorator
 if TYPE_CHECKING:
     from typing import Any
 
-    from ..types import C, D, F, IncDecrementer, Incrementer, Observer, P, T
+    from prometheus_client import Gauge
+
+    from ..types import C, D, F, Incrementer, Observer, P, T
 
 
 @overload
@@ -138,17 +140,17 @@ def count_exceptions(
 
 
 @overload
-def track_inprogress(metric: IncDecrementer) -> Callable[P, C]:
+def track_inprogress(metric: Gauge) -> Callable[P, C]:
     ...
 
 
 @overload
-def track_inprogress(metric: IncDecrementer, deferred: D) -> D:
+def track_inprogress(metric: Gauge, deferred: D) -> D:
     ...
 
 
 def track_inprogress(
-    metric: IncDecrementer, deferred: D | None = None
+    metric: Gauge, deferred: D | None = None
 ) -> D | Callable[P, C]:
     """
     Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
