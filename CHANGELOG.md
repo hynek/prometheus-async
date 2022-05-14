@@ -20,6 +20,9 @@ Whenever breaking changes are needed, they are:
 <!-- changelog follows -->
 
 
+## [Unreleased](https://github.com/hynek/prometheus-async/compare/22.2.0...HEAD)
+
+
 ## [22.2.0](https://github.com/hynek/prometheus-async/compare/22.1.0...22.2.0) - 2022-05-14
 
 ### Deprecated
