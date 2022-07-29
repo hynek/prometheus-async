@@ -1,18 +1,20 @@
 # SPDX-License-Identifier: Apache-2.0
 
 [build-system]
-requires = ["flit_core >=3.4,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 
 [project]
 name = "prometheus-async"
+version = "22.3.0.dev0"
 authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
-dynamic = ["version", "description"]
 requires-python = ">=3.7"
+description = "Async helpers for prometheus_client."
 # Keep in-sync with testenv:oldest!
 dependencies = [
     "prometheus_client >= 0.8.0",
+    "importlib_metadata;python_version<'3.8'",
     "typing_extensions >= 3.10.0; python_version<'3.10'",
     "wrapt",
 ]
@@ -37,8 +39,8 @@ classifiers = [
 ]
 
 [project.urls]
-Changelog = "https://prometheus-async.readthedocs.io/en/stable/changelog.html"
 Documentation = "https://prometheus-async.readthedocs.io/"
+Changelog = "https://prometheus-async.readthedocs.io/en/stable/changelog.html"
 "Source Code" = "https://github.com/hynek/prometheus-async/"
 Funding = "https://hynek.me/say-thanks/"
 Ko-fi = "https://ko-fi.com/the_hynek"
@@ -58,53 +60,12 @@ docs = [
     "twisted",
 ]
 
-# Combine tests and docs and a few more dev tools to a dev environment.
-# Refresh using `tox -e cog`
-
 dev = [
+    "prometheus-async[tests,docs]",
     "pre-commit",
     "pytest-twisted",
     "tomli",
-    "cogapp",
     "mypy",
-    # [[[cog
-    # import pathlib, tomli
-    # cfg = tomli.loads(pathlib.Path("pyproject.toml").read_text())
-    # opt = cfg["project"]["optional-dependencies"]
-    # for dep in opt["tests"] + opt["docs"]:
-    #     print(f'"{dep}",')
-    # ]]]
-    "coverage[toml]",
-    "pytest",
-    "pytest-asyncio",
-    "aiohttp",
-    "furo",
-    "myst-parser",
-    "sphinx-notfound-page",
-    "sphinx",
-    "sphinxcontrib-asyncio",
-    "twisted",
-    # [[[end]]]
-]
-
-[tool.flit.module]
-name = "prometheus_async"
-
-[tool.flit.sdist]
-include = [
-    ".pre-commit-config.yaml",
-    ".readthedocs.yml",
-    "*.ini",
-    "*.md",
-    "LICENSE.*",
-    "docs",
-    "tests",
-    ".github",
-]
-exclude = [
-    "docs/_build",
-    "tests/__pycache__",
-    "tests/.mypy_cache",
 ]
 
 

@@ -22,6 +22,11 @@ Whenever breaking changes are needed, they are:
 
 ## [Unreleased](https://github.com/hynek/prometheus-async/compare/22.2.0...HEAD)
 
+### Changed
+
+- The build backend has been switched to [*Hatch*](https://hatch.pypa.io/).
+
+
 
 ## [22.2.0](https://github.com/hynek/prometheus-async/compare/22.1.0...22.2.0) - 2022-05-14
 

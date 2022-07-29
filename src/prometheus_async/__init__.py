@@ -14,20 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Async helpers for prometheus_client.
-"""
-
-
-__version__ = "22.3.0.dev0"
-
 __title__ = "prometheus_async"
-# __doc__ is None in when running with -OO / PYTHONOPTIMIZE=2.
-__description__ = (__doc__ or "").strip()
-__uri__ = "https://prometheus-async.readthedocs.io/"
 
 __author__ = "Hynek Schlawack"
-__email__ = "hs@ox.cx"
 
 __license__ = "Apache License, Version 2.0"
 __copyright__ = f"Copyright (c) 2016 {__author__}"
@@ -44,3 +33,39 @@ try:
     __all__.append("tx")
 except ImportError:
     pass
+
+
+def __getattr__(name: str) -> str:
+    dunder_to_metadata = {
+        "__version__": "version",
+        "__description__": "summary",
+        "__uri__": "",
+        "__email__": "",
+    }
+    if name not in dunder_to_metadata.keys():
+        raise AttributeError(f"module {__name__} has no attribute {name}")
+
+    import sys
+    import warnings
+
+    if sys.version_info < (3, 8):
+        from importlib_metadata import metadata
+    else:
+        from importlib.metadata import metadata
+
+    warnings.warn(
+        f"Accessing prometheus_async.{name} is deprecated and will be "
+        "removed in a future release. Use importlib.metadata directly "
+        "to query for prometheus_async's packaging metadata.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+
+    meta = metadata("prometheus-async")
+
+    if name == "__uri__":
+        return meta["Project-URL"].split(" ", 1)[-1]
+    elif name == "__email__":
+        return meta["Author-email"].split("<", 1)[1].rstrip(">")
+
+    return meta[dunder_to_metadata[name]]

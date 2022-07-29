@@ -2,8 +2,12 @@
 *.pyc
 .cache
 .coverage*
+.direnv
+.envrc
+.mypy_cache
 .pytest_cache
 .tox
+.vscode
 dist
 docs/_build
 pip-wheel-metadata
