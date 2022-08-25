@@ -11,8 +11,8 @@ version = "22.3.0.dev0"
 authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
 requires-python = ">=3.7"
 description = "Async helpers for prometheus_client."
-# Keep in-sync with testenv:oldest!
 dependencies = [
+    # Keep min. version in-sync with testenv:oldest!
     "prometheus_client >= 0.8.0",
     "importlib_metadata;python_version<'3.8'",
     "typing_extensions >= 3.10.0; python_version<'3.10'",
@@ -52,26 +52,22 @@ consul = ["aiohttp>=3"]
 twisted = ["twisted"]
 tests = ["coverage[toml]", "pytest", "pytest-asyncio"]
 docs = [
-    "aiohttp",
+    "prometheus-async[aiohttp,twisted]",
     "furo",
     "myst-parser",
     "sphinx-notfound-page",
     "sphinx",
     "sphinxcontrib-asyncio",
-    "twisted",
 ]
-
 dev = [
-    "prometheus-async[tests,docs]",
-    "pre-commit",
+    "prometheus-async[tests,twisted,docs]",
     "pytest-twisted",
-    "tomli",
     "mypy",
 ]
 
 
 [tool.pytest.ini_options]
-addopts = "-ra --strict-markers"
+addopts = ["-ra", "--strict-markers", "--strict-config"]
 xfail_strict = true
 testpaths = "tests"
 filterwarnings = [
@@ -104,9 +100,7 @@ exclude_lines = [
     "^ +\\.\\.\\.$",
     "-> ['\"]?NoReturn['\"]?:",
 ]
-omit = [
-    "src/prometheus_async/types.py"
-]
+omit = ["src/prometheus_async/types.py"]
 
 
 [tool.black]
