@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 
 [project]
 name = "prometheus-async"
-version = "22.3.0.dev0"
+dynamic = ["version"]
 authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
 requires-python = ">=3.7"
 description = "Async helpers for prometheus_client."
@@ -64,6 +64,11 @@ dev = [
     "pytest-twisted",
     "mypy",
 ]
+
+
+[tool.hatch.version]
+source = "vcs"
+raw-options = { version_scheme = "no-guess-dev" }
 
 
 [tool.pytest.ini_options]
