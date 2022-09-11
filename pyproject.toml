@@ -61,7 +61,6 @@ docs = [
 ]
 dev = [
     "prometheus-async[tests,twisted,docs]",
-    "pytest-twisted",
     "mypy",
 ]
 
