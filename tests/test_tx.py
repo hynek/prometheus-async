@@ -50,6 +50,46 @@ def _from_async_fn(async_fn):
     return wrapper
 
 
+class TestFromAsyncFn:
+    def test_no_result(self):
+        @_from_async_fn
+        async def demo():
+            return await Deferred()
+
+        with pytest.raises(
+            RuntimeError,
+            match=r"Success result expected on <Deferred at 0x.*>, "
+            "found no result instead",
+        ):
+            demo()
+
+    def test_failure_result(self):
+        class SentinelException(Exception):
+            pass
+
+        sentinel_exception = SentinelException("sentinel exception")
+
+        @_from_async_fn
+        async def demo():
+            return await fail(sentinel_exception)
+
+        with pytest.raises(
+            SentinelException, match=r"sentinel exception"
+        ) as exc_info:
+            demo()
+
+        assert exc_info.value is sentinel_exception
+
+    def test_success_result(self):
+        sentinel = object()
+
+        @_from_async_fn
+        async def demo():
+            return await succeed(sentinel)
+
+        assert demo() is sentinel
+
+
 class TestTime:
     @pytest.mark.usefixtures("patch_timer")
     def test_decorator_sync(self, fake_observer):
