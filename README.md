@@ -43,6 +43,15 @@ For that, helper functions have been added that run them in separate threads (*a
 The source code is hosted on [GitHub] and the documentation on [Read The Docs].
 
 
+## *prometheus-async* for Enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of *prometheus-async* and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source packages you use to build your applications.
+Save time, reduce risk, and improve code health, while paying the maintainers of the exact packages you use.
+[Learn more.](https://tidelift.com/subscription/pkg/pypi-prometheus-async?utm_source=pypi-prometheus-async&utm_medium=referral&utm_campaign=enterprise)
+
+
 [*asyncio*]: https://docs.python.org/3/library/asyncio.html
 [Python client]: https://github.com/prometheus/client_python
 [*Prometheus*]: https://prometheus.io/
