@@ -35,7 +35,8 @@ def _from_async_fn(async_fn):
         )
         try:
             if not results:
-                # none of the tests here use the reactor and so Deferred should always
+                # none of the tests here use the reactor and so
+                # the Deferred should always
                 # immediately complete and this branch will never execute
                 raise RuntimeError(
                     f"Success result expected on {d!r}, "
