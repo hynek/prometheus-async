@@ -24,6 +24,9 @@ from prometheus_async import tx
 
 
 def _from_async_fn(async_fn):
+    # this code is based on
+    # https://docs.twisted.org/en/twisted-22.8.0/api/twisted.trial._synctest._Assertions.html#successResultOf
+    # except it takes a coroutine function and wraps it in a Deferred first
     @functools.wraps(async_fn)
     def wrapper(*args, **kwargs):
         results = []
