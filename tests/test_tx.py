@@ -64,7 +64,8 @@ class TestFromAsyncFn:
 
         with pytest.raises(
             RuntimeError,
-            match=r"Success result expected on <Deferred at 0x.*>, " "found no result instead",
+            match=r"Success result expected on <Deferred at 0x.*>, "
+            "found no result instead",
         ):
             demo()
 
