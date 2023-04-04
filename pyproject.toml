@@ -56,7 +56,8 @@ docs = [
     "furo",
     "myst-parser",
     "sphinx-notfound-page",
-    "sphinx",
+    # Spinx 6 breaks sphinxcontrib-asyncio
+    "sphinx<6",
     "sphinxcontrib-asyncio",
 ]
 dev = [
