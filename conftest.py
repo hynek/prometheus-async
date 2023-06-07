@@ -15,6 +15,8 @@
 # limitations under the License.
 
 
+from contextlib import suppress
+
 import pytest
 
 
@@ -109,15 +111,12 @@ def _fake_gauge():
 
 @pytest.fixture(name="patch_timer")
 def _patch_timer(monkeypatch):
-    try:
+    with suppress(ImportError):
         from prometheus_async.tx import _decorators
 
         monkeypatch.setattr(_decorators, "perf_counter", mk_monotonic_timer())
-    except BaseException:
-        pass
-    try:
+
+    with suppress(ImportError):
         from prometheus_async.aio import _decorators
 
         monkeypatch.setattr(_decorators, "perf_counter", mk_monotonic_timer())
-    except BaseException:
-        pass

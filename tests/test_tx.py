@@ -70,17 +70,17 @@ class TestFromAsyncFn:
             demo()
 
     def test_failure_result(self):
-        class SentinelException(Exception):
+        class SentinelError(Exception):
             pass
 
-        sentinel_exception = SentinelException("sentinel exception")
+        sentinel_exception = SentinelError("sentinel exception")
 
         @_from_async_fn
         async def demo():
             return await fail(sentinel_exception)
 
         with pytest.raises(
-            SentinelException, match=r"sentinel exception"
+            SentinelError, match=r"sentinel exception"
         ) as exc_info:
             demo()
 

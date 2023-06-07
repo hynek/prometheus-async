@@ -57,10 +57,7 @@ docs = [
     "sphinx<6",
     "sphinxcontrib-asyncio",
 ]
-dev = [
-    "prometheus-async[tests,twisted,docs]",
-    "mypy",
-]
+dev = ["prometheus-async[tests,twisted,docs]", "mypy"]
 
 
 [tool.hatch.version]
@@ -109,10 +106,6 @@ omit = ["src/prometheus_async/types.py"]
 line-length = 79
 
 
-[tool.isort]
-profile = "attrs"
-
-
 [tool.mypy]
 warn_unused_ignores = true
 follow_imports = "normal"
@@ -128,5 +121,43 @@ module = "tests.*"
 ignore_errors = true
 
 [[tool.mypy.overrides]]
+module = "tests.typing.*"
+ignore_errors = false
+
+[[tool.mypy.overrides]]
 module = "conftest.*"
 ignore_errors = true
+
+
+[tool.ruff]
+src = ["src", "tests", "docs/conf.py"]
+select = [
+    "E",   # pycodestyle
+    "W",   # pycodestyle
+    "F",   # Pyflakes
+    "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "YTT", # flake8-2020
+    "S",   # flake8-bandit
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "T10", # flake8-debugger
+    "ISC", # flake8-implicit-str-concat
+    "RET", # flake8-return
+    "SIM", # flake8-simplify
+    "DTZ", # flake8-datetimez
+    "I",   # isort
+    "PGH", # pygrep-hooks
+    "PLC", # Pylint
+    "PIE", # flake8-pie
+    "RUF", # ruff
+]
+ignore = [
+    "RUF001", # leave my smart characters alone
+    "S101",   # assert
+    "SIM300", # Yoda rocks in asserts
+]
+
+[tool.ruff.isort]
+lines-between-types = 1
+lines-after-imports = 2

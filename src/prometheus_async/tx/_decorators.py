@@ -66,19 +66,18 @@ def time(metric: Observer, deferred: D | None = None) -> D | C:
             start_time = perf_counter()
             rv = f(*args, **kw)
             if isinstance(rv, Deferred):
-                return rv.addBoth(observe)  # type: ignore
-            else:
-                return observe(rv)
+                return rv.addBoth(observe)  # type: ignore[return-value]
+
+            return observe(rv)
 
         return time_decorator
-    else:
 
-        def observe(value: T) -> T:
-            metric.observe(perf_counter() - start_time)
-            return value
+    def observe(value: T) -> T:
+        metric.observe(perf_counter() - start_time)
+        return value
 
-        start_time = perf_counter()
-        return deferred.addBoth(observe)  # type: ignore
+    start_time = perf_counter()
+    return deferred.addBoth(observe)  # type: ignore[return-value]
 
 
 @overload
@@ -113,7 +112,7 @@ def count_exceptions(
     """
 
     def inc(fail: F) -> F:
-        fail.trap(exc)  # type: ignore
+        fail.trap(exc)  # type: ignore[no-untyped-call]
         metric.inc()
         return fail
 
@@ -130,13 +129,13 @@ def count_exceptions(
                 raise
 
             if isinstance(rv, Deferred):
-                return rv.addErrback(inc)  # type: ignore
-            else:
-                return rv
+                return rv.addErrback(inc)  # type: ignore[return-value]
+
+            return rv
 
         return count_exceptions_decorator
-    else:
-        return deferred.addErrback(inc)  # type: ignore
+
+    return deferred.addErrback(inc)  # type: ignore[return-value]
 
 
 @overload
@@ -175,12 +174,12 @@ def track_inprogress(
                 rv = f(*args, **kw)
             finally:
                 if isinstance(rv, Deferred):
-                    return rv.addBoth(dec)  # type: ignore
-                else:
-                    metric.dec()
-                    return rv
+                    return rv.addBoth(dec)  # type: ignore[return-value]  # noqa: B012
+
+                metric.dec()
+                return rv  # noqa: B012
 
         return track_inprogress_decorator
-    else:
-        metric.inc()
-        return deferred.addBoth(dec)  # type: ignore
+
+    metric.inc()
+    return deferred.addBoth(dec)  # type: ignore[return-value]

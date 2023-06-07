@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, overload
 if TYPE_CHECKING:
     from prometheus_client import Gauge
 
-    from ..types import Observer, Incrementer, P, R, T
+    from ..types import Incrementer, Observer, P, R, T
 
 from wrapt import decorator
 
@@ -70,18 +70,18 @@ def time(
                 observe(start_time)
 
         return time_decorator
-    else:
-        f = future
 
-        async def measure(start_time: float) -> T:
-            try:
-                rv = await f
-                return rv
-            finally:
-                observe(start_time)
+    f = future
 
-        start_time = perf_counter()
-        return measure(start_time)
+    async def measure(start_time: float) -> T:
+        try:
+            rv = await f
+            return rv
+        finally:
+            observe(start_time)
+
+    start_time = perf_counter()
+    return measure(start_time)
 
 
 @overload
@@ -128,7 +128,8 @@ def count_exceptions(
             return rv
 
         return count
-    else:
+
+    else:  # noqa: RET505 -- prevents redefinition of "count".
         f = future
 
         async def count() -> T:
@@ -179,7 +180,8 @@ def track_inprogress(
             return rv
 
         return track
-    else:
+
+    else:  # noqa: RET505 -- prevents redefinition of "track".
         f = future
         metric.inc()
 

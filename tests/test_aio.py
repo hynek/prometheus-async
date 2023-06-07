@@ -100,8 +100,8 @@ class TestTime:
         async def func():
             if True:
                 return 42
-            else:
-                await asyncio.sleep(0)
+
+            await asyncio.sleep(0)  # noqa: RET503
 
         assert 42 == await func()
         assert [1] == fake_observer._observed
@@ -250,12 +250,12 @@ class TestCountExceptions:
         If a wrong exception is raised, the counter does not change.
         """
 
-        @aio.count_exceptions(fake_counter, exc=ValueError)
+        @aio.count_exceptions(fake_counter, exc=TypeError)
         async def func():
             await asyncio.sleep(0.0)
-            raise Exception()
+            raise ValueError()
 
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             await func()
 
         assert 0 == fake_counter._val
@@ -292,12 +292,11 @@ class TestCountExceptions:
         If a wrong exception is raised, the counter does not change.
         """
         fut = asyncio.Future()
-        coro = aio.count_exceptions(fake_counter, exc=ValueError, future=fut)
-        exc = Exception()
+        coro = aio.count_exceptions(fake_counter, exc=TypeError, future=fut)
 
-        fut.set_exception(exc)
+        fut.set_exception(ValueError())
 
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             assert 42 == await coro
         assert 0 == fake_counter._val
 
@@ -307,11 +306,10 @@ class TestCountExceptions:
         """
         fut = asyncio.Future()
         coro = aio.count_exceptions(fake_counter, exc=ValueError, future=fut)
-        exc = ValueError()
 
-        fut.set_exception(exc)
+        fut.set_exception(ValueError())
 
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             assert 42 == await coro
         assert 1 == fake_counter._val
 
@@ -640,6 +638,6 @@ class TestLocalConsulAgentClient:
         """
         If a token is passed, "X-Consul-Token" header is set.
         """
-        con = _LocalConsulAgentClient(token="token42")
+        con = _LocalConsulAgentClient(token="token42")  # noqa: S106
 
         assert "token42" == con.headers["X-Consul-Token"]

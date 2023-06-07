@@ -50,10 +50,13 @@ async def coro() -> None:
     pass
 
 
-aio.time(REQ_DURATION, coro())  # `time` can also be applied to coroutines
+# `time` can also be applied to coroutines
+aio.time(REQ_DURATION, coro())
 
-aio.time(REQ_DURATION, coro)  # type: ignore  # `time` errors on coroutine fns
-aio.time(REQ_DURATION, int)  # type: ignore # `time` errors on non-futures
+# `time` errors on coroutine fns
+aio.time(REQ_DURATION, coro)  # type: ignore[call-overload]
+# `time` errors on non-futures
+aio.time(REQ_DURATION, int)  # type: ignore[call-overload]
 
 # The type of `future_func` is correct:
 # "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
@@ -63,7 +66,7 @@ aio.time(REQ_DURATION, int)  # type: ignore # `time` errors on non-futures
 # "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
 
 
-@aio.time(REQ_DURATION)  # type: ignore
+@aio.time(REQ_DURATION)  # type: ignore[type-var]
 def should_be_async_func(i: int) -> str:
     return str(i)
 
@@ -82,4 +85,4 @@ def returns_deferred(param: int) -> Deferred:
 returns_deferred(1)
 
 # Invalid, takes an int.
-returns_deferred("str")  # type: ignore
+returns_deferred("str")  # type: ignore[arg-type]

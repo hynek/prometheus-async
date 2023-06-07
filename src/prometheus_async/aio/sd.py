@@ -144,7 +144,6 @@ class _LocalConsulAgentClient:  # pragma: no cover -- needs local consul client
         self, service_id: str
     ) -> aiohttp.ClientResponse:
         async with self.session_factory() as session:
-            resp = await session.put(
+            return await session.put(
                 self.agent_url / "service/deregister" / service_id
             )
-            return resp
