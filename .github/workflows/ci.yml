@@ -110,18 +110,6 @@ jobs:
 
       - run: python -Im tox run -e docs
 
-  package:
-    name: Build & verify package
-    runs-on: ubuntu-latest
-    env:
-      SETUPTOOLS_SCM_PRETEND_VERSION: ""
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: hynek/build-and-inspect-python-package@v1
-
   install-dev:
     name: Verify dev env
     runs-on: ${{ matrix.os }}
@@ -147,7 +135,6 @@ jobs:
       - coverage
       - docs
       - install-dev
-      - package
       - mypy-pkg
 
     runs-on: ubuntu-latest
