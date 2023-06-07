@@ -33,29 +33,39 @@ Please report any harm to [Hynek Schlawack] in any way you find appropriate.
 
 You can (and should) run our test suite using [*tox*].
 However, you’ll probably want a more traditional environment as well.
-We highly recommend to develop using the latest Python release because we try to take advantage of modern features whenever possible.
 
-First create a [virtual environment](https://virtualenv.pypa.io/) so you don't break your system-wide Python installation.
-It’s out of scope for this document to list all the ways to manage virtual environments in Python, but if you don’t already have a pet way, take some time to look at tools like [*direnv*](https://hynek.me/til/python-project-local-venvs/), [*virtualfish*](https://virtualfish.readthedocs.io/), and [*virtualenvwrapper*](https://virtualenvwrapper.readthedocs.io/).
+First, create a virtual environment so you don't break your system-wide Python installation.
+We recommend using the Python version from the `.python-version` file in project's root directory.
 
-Next, get an up-to-date checkout of the *prometheus-async* repository:
+If you're using [*direnv*](https://direnv.net), you can automate the creation of a virtual environment with the correct Python version by adding the following `.envrc` to the project root after cloning it:
 
-```console
-$ git clone git@github.com:hynek/prometheus-async.git
+```bash
+layout python python$(cat .python-version)
 ```
 
-or if you prefer to use *Git* via `https`:
+[Create a fork](https://github.com/hynek/prometheus-async/fork) of the repository and clone it:
 
 ```console
-$ git clone https://github.com/hynek/prometheus-async.git
+$ git clone git@github.com:YOU/prometheus-async.git
 ```
 
-Change into the newly created directory and **after activating your virtual environment** install an editable version of *prometheus-async* along with its tests and docs requirements:
+Or if you prefer to use Git via HTTPS:
+
+```console
+$ git clone https://github.com/YOU/prometheus-async.git
+```
+> **Warning**
+> - **Before** you start working on a new pull request, use the "*Sync fork*" button in GitHub's web UI to ensure your fork is up to date.
+> - **Always create a new branch off `main` for each new pull request.**
+>   Yes, you can work on `main` in your fork and submit pull requests.
+>   But this will *inevitably* lead to you not being able to synchronize your fork with upstream and having to start over.
+
+Change into the newly created directory and **after activating your virtual environment** install it with its tests and docs requirements:
 
 ```console
 $ cd prometheus-async
 $ python -m pip install --upgrade pip wheel  # PLEASE don't skip this step
-$ python -m pip install -e '.[dev]'
+$ python -m pip install --editable '.[dev]'
 ```
 
 At this point,
