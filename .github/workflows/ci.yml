@@ -82,7 +82,8 @@ jobs:
           path: htmlcov
         if: ${{ failure() }}
 
-  mypy-all:
+  mypy-pkg:
+    name: Type-check package
     runs-on: ubuntu-latest
 
     steps:
@@ -93,7 +94,7 @@ jobs:
 
       - run: python -Im pip install --upgrade wheel tox
 
-      - run: python -Im tox run -e mypy-all
+      - run: python -Im tox run -e mypy-pkg
 
   docs:
     name: Build docs & run doctests
@@ -147,7 +148,7 @@ jobs:
       - docs
       - install-dev
       - package
-      - mypy-all
+      - mypy-pkg
 
     runs-on: ubuntu-latest
 
