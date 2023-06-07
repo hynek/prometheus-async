@@ -3,22 +3,22 @@
 If you just want to instrument an *asyncio*-based application:
 
 ```console
-$ python -m pip install -U pip
-$ python -m pip install prometheus-async
+$ python -Im pip install -U pip
+$ python -Im pip install prometheus-async
 ```
 
 If you want to expose metrics using *aiohttp*:
 
 ```console
-$ python -m pip install -U pip
-$ python -m pip install prometheus-async[aiohttp]
+$ python -Im pip install -U pip
+$ python -Im pip install prometheus-async[aiohttp]
 ```
 
 If you want to instrument a Twisted application:
 
 ```console
-$ python -m pip install -U pip
-$ python -m pip install prometheus-async[twisted]
+$ python -Im pip install -U pip
+$ python -Im pip install prometheus-async[twisted]
 ```
 
 ```{admonition} Warning
