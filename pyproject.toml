@@ -41,7 +41,6 @@ Documentation = "https://prometheus-async.readthedocs.io/"
 Changelog = "https://prometheus-async.readthedocs.io/en/stable/changelog.html"
 "Source Code" = "https://github.com/hynek/prometheus-async/"
 Funding = "https://hynek.me/say-thanks/"
-Ko-fi = "https://ko-fi.com/the_hynek"
 
 [project.optional-dependencies]
 aiohttp = ["aiohttp>=3"]
