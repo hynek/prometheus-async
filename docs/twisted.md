@@ -48,7 +48,7 @@ class DelayedResource(Resource):
 
 ## Metric Exposure
 
-[*prometheus_client*], the underlying *Prometheus* client library, exposes a {class}`twisted.web.resource.Resource` -- namely [`prometheus_client.twisted.MetricsResource`] -- that makes it extremely easy to expose your metrics.
+[*prometheus_client*], the underlying Prometheus client library, exposes a {class}`twisted.web.resource.Resource` -- namely [`prometheus_client.twisted.MetricsResource`] -- that makes it extremely easy to expose your metrics.
 
 ```python
 from prometheus_client.twisted import MetricsResource
@@ -65,7 +65,7 @@ reactor.run()
 ```
 
 As a slightly more in-depth example, the following exposes the application's metrics under `/metrics` and sets up a [`prometheus_client.Counter`] for inbound HTTP requests.
-It also uses [*Klein*] to set up the routes instead of relying directly on [`twisted.web`] for routing.
+It also uses [Klein] to set up the routes instead of relying directly on [`twisted.web`] for routing.
 
 ```python
 from prometheus_client.twisted import MetricsResource
@@ -96,7 +96,7 @@ reactor.listenTCP(8000, factory)
 reactor.run()
 ```
 
-[*Klein*]: https://github.com/twisted/klein
+[Klein]: https://github.com/twisted/klein
 [*prometheus_client*]: https://github.com/prometheus/client_python#twisted
 [`prometheus_client.Counter`]: https://github.com/prometheus/client_python#counter
 [`prometheus_client.twisted.metricsresource`]: https://github.com/prometheus/client_python/blob/master/prometheus_client/twisted/_exposition.py

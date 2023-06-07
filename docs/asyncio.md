@@ -98,7 +98,7 @@ app.router.add_get("/metrics", aio.web.server_stats)
 
 Web exposure is much more useful if it comes with an easy way to integrate it with service discovery.
 
-Currently *prometheus-async* only ships integration with a local *Consul* agent using *aiohttp*.
+Currently *prometheus-async* only ships integration with a local Consul agent using *aiohttp*.
 We do **not** plan add more.
 
 ```{eval-rst}

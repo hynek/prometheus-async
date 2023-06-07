@@ -15,9 +15,9 @@
 
 <!-- teaser-begin -->
 
-*prometheus-async* adds support for asynchronous frameworks to the official [Python client] for the [*Prometheus*] metrics and monitoring system.
+*prometheus-async* adds support for asynchronous frameworks to the official [Python client](https://github.com/prometheus/client_python) for the [Prometheus](https://prometheus.io/) metrics and monitoring system.
 
-Currently [*asyncio*] and [*Twisted*] on Python 3.7 and later are supported.
+Currently [*asyncio*](https://docs.python.org/3/library/asyncio.html) and [Twisted](https://twisted.org) are supported.
 
 It works by wrapping the metrics from the official client:
 
@@ -40,7 +40,16 @@ async def req(request):
 Even for *synchronous* applications, the metrics exposure methods can be useful since they are more powerful than the one shipped with the official client.
 For that, helper functions have been added that run them in separate threads (*asyncio*-only).
 
-The source code is hosted on [GitHub] and the documentation on [Read The Docs].
+The source code is hosted on [GitHub](https://github.com/hynek/prometheus-async) and the documentation on [Read The Docs](https://prometheus-async.readthedocs.io/).
+
+
+## Credits
+
+*prometheus-async* is written and maintained by [Hynek Schlawack](https://hynek.me/).
+
+The development is kindly supported by [Variomedia AG](https://www.variomedia.de/).
+
+Other contributors can be found in [GitHub's overview](https://github.com/hynek/prometheus-async/graphs/contributors).
 
 
 ## *prometheus-async* for Enterprise
@@ -50,11 +59,3 @@ Available as part of the Tidelift Subscription.
 The maintainers of *prometheus-async* and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source packages you use to build your applications.
 Save time, reduce risk, and improve code health, while paying the maintainers of the exact packages you use.
 [Learn more.](https://tidelift.com/subscription/pkg/pypi-prometheus-async?utm_source=pypi-prometheus-async&utm_medium=referral&utm_campaign=enterprise)
-
-
-[*asyncio*]: https://docs.python.org/3/library/asyncio.html
-[Python client]: https://github.com/prometheus/client_python
-[*Prometheus*]: https://prometheus.io/
-[*Twisted*]: https://twisted.org
-[GitHub]: https://github.com/hynek/prometheus-async
-[Read The Docs]: https://prometheus-async.readthedocs.io/
