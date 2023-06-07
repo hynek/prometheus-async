@@ -43,7 +43,7 @@ jobs:
       - run: python -Im pip install --upgrade wheel tox
 
       - run: python -Im tox run -f py$(echo ${{ matrix.python-version }} | tr -d .)
-      - run: python -Im tox run -e mypy
+      - run: python -Im tox run -e mypy-api
 
       - name: Upload coverage data
         uses: actions/upload-artifact@v3
@@ -79,6 +79,16 @@ jobs:
           path: htmlcov
         if: ${{ failure() }}
 
+  mypy-all:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+
+      - run: python -Im pip install --upgrade wheel tox
+
+      - run: python -Im tox run mypy-all
 
   docs:
     name: Build docs & run doctests
@@ -128,6 +138,7 @@ jobs:
       - docs
       - install-dev
       - package
+      - mypy-all
 
     runs-on: ubuntu-latest
 
