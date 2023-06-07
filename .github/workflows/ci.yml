@@ -20,12 +20,18 @@ env:
 
 jobs:
   tests:
-    name: Tests on ${{ matrix.python-version }}
+    name: Tests & Mypy on ${{ matrix.python-version }}
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version:
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
 
     steps:
       - uses: actions/checkout@v3
@@ -36,6 +42,7 @@ jobs:
       - run: python -Im pip install --upgrade wheel tox
 
       - run: python -Im tox run -f py$(echo ${{ matrix.python-version }} | tr -d .)
+      - run: python -Im tox run -e mypy
 
       - name: Upload coverage data
         uses: actions/upload-artifact@v3
@@ -71,27 +78,6 @@ jobs:
           path: htmlcov
         if: ${{ failure() }}
 
-  mypy:
-    name: Mypy on ${{ matrix.python-version }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version:
-          - "3.7"
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - run: python -Im pip install --upgrade wheel tox
-
-      - run: python -Im tox run -e mypy
 
   docs:
     name: Build docs & run doctests
