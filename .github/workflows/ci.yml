@@ -20,22 +20,31 @@ env:
 
 jobs:
   tests:
-    name: Tests on ${{ matrix.python-version }}
+    name: Tests & Mypy on ${{ matrix.python-version }}
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version:
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
+          cache: pip
 
       - run: python -Im pip install --upgrade wheel tox
 
       - run: python -Im tox run -f py$(echo ${{ matrix.python-version }} | tr -d .)
+      - run: python -Im tox run -e mypy-api
 
       - name: Upload coverage data
         uses: actions/upload-artifact@v3
@@ -51,6 +60,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        with:
+          cache: pip
 
       - run: python -Im pip install --upgrade coverage[toml]
 
@@ -71,27 +82,19 @@ jobs:
           path: htmlcov
         if: ${{ failure() }}
 
-  mypy:
-    name: Mypy on ${{ matrix.python-version }}
+  mypy-pkg:
+    name: Type-check package
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version:
-          - "3.7"
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          cache: pip
+
       - run: python -Im pip install --upgrade wheel tox
 
-      - run: python -Im tox run -e mypy
+      - run: python -Im tox run -e mypy-pkg
 
   docs:
     name: Build docs & run doctests
@@ -102,6 +105,7 @@ jobs:
         with:
           # Keep in sync with tox.ini/docs & .readthedocs.yaml
           python-version: "3.11"
+          cache: pip
       - run: python -Im pip install --upgrade wheel tox
 
       - run: python -Im tox run -e docs
@@ -128,6 +132,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        with:
+          cache: pip
+
       - run: python -Im pip install -e .[dev]
       - run: python -Ic 'import prometheus_async; print(prometheus_async.__version__)'
 
@@ -141,6 +148,7 @@ jobs:
       - docs
       - install-dev
       - package
+      - mypy-pkg
 
     runs-on: ubuntu-latest
 
