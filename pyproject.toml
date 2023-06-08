@@ -107,14 +107,15 @@ line-length = 79
 
 
 [tool.mypy]
-warn_unused_ignores = true
-follow_imports = "normal"
+strict = true
+
+show_error_codes = true
+enable_error_code = ["ignore-without-code"]
 ignore_missing_imports = true
-disallow_untyped_calls = true
-warn_no_return = true
-warn_redundant_casts = true
-disallow_untyped_defs = true
-check_untyped_defs = true
+
+warn_return_any = false
+allow_any_generics = true
+allow_untyped_decorators = true
 
 [[tool.mypy.overrides]]
 module = "tests.*"
