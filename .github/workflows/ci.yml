@@ -54,8 +54,9 @@ jobs:
           if-no-files-found: ignore
 
   coverage:
-    runs-on: ubuntu-latest
+    name: Combine & check coverage.
     needs: tests
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
@@ -73,6 +74,11 @@ jobs:
         run: |
           python -Im coverage combine
           python -Im coverage html --skip-covered --skip-empty
+
+          # Report and write to summary.
+          python -Im coverage report | sed 's/^/    /' >> $GITHUB_STEP_SUMMARY
+
+          # Report again and fail if under 100%.
           python -Im coverage report --fail-under=100
 
       - name: Upload HTML report if check failed.
