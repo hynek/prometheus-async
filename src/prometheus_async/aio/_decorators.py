@@ -64,8 +64,7 @@ def time(
         ) -> R:
             start_time = perf_counter()
             try:
-                rv = await wrapped(*args, **kw)
-                return rv
+                return await wrapped(*args, **kw)
             finally:
                 observe(start_time)
 
@@ -75,8 +74,7 @@ def time(
 
     async def measure(start_time: float) -> T:
         try:
-            rv = await f
-            return rv
+            return await f
         finally:
             observe(start_time)
 
