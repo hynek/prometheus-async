@@ -12,13 +12,13 @@ authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
 requires-python = ">=3.7"
 description = "Async helpers for prometheus_client."
 dependencies = [
-    # Keep min. version in-sync with testenv:oldest!
+    # Keep min. version in-sync with constraints in oldest-supported.txt!
     "prometheus_client >= 0.8.0",
-    "importlib_metadata;python_version<'3.8'",
+    "importlib_metadata; python_version<'3.8'",
     "typing_extensions >= 3.10.0; python_version<'3.10'",
     "wrapt",
 ]
-license = { text = "MIT" }
+license = "MIT"
 readme = { content-type = "text/markdown", file = "README.md" }
 keywords = ["metrics", "prometheus", "twisted", "asyncio", "async"]
 classifiers = [
@@ -39,7 +39,7 @@ classifiers = [
 [project.urls]
 Documentation = "https://prometheus-async.readthedocs.io/"
 Changelog = "https://prometheus-async.readthedocs.io/en/stable/changelog.html"
-"Source Code" = "https://github.com/hynek/prometheus-async/"
+GitHub = "https://github.com/hynek/prometheus-async/"
 Funding = "https://hynek.me/say-thanks/"
 
 [project.optional-dependencies]
@@ -60,7 +60,6 @@ dev = ["prometheus-async[tests,twisted,docs]", "mypy"]
 [tool.hatch.version]
 source = "vcs"
 raw-options = { local_scheme = "no-local-version" }
-
 
 
 [tool.pytest.ini_options]
