@@ -52,9 +52,7 @@ docs = [
     "furo",
     "myst-parser",
     "sphinx-notfound-page",
-    # Spinx 6 breaks sphinxcontrib-asyncio
-    "sphinx<6",
-    "sphinxcontrib-asyncio",
+    "sphinx",
 ]
 dev = ["prometheus-async[tests,twisted,docs]", "mypy"]
 

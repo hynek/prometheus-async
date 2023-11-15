@@ -14,7 +14,7 @@ The asyncio-related APIs can be found within the `prometheus_async.aio` package.
 All of these functions take a *prometheus_client* metrics object and can either be applied as a decorator to functions and methods, or they can be passed an {class}`asyncio.Future` for a second argument.
 
 ```{eval-rst}
-.. autocofunction:: time
+.. autofunction:: time
 ```
 
 The most common use case is using it as a decorator:
@@ -35,8 +35,8 @@ async def req(request):
 ```
 
 ```{eval-rst}
-.. autocofunction:: count_exceptions
-.. autocofunction:: track_inprogress
+.. autofunction:: count_exceptions
+.. autofunction:: track_inprogress
 
 ```
 
@@ -52,7 +52,7 @@ async def req(request):
 *prometheus-async* offers methods to expose your metrics using [*aiohttp*](https://aiohttp.readthedocs.io/) under `prometheus_async.aio.web`:
 
 ```{eval-rst}
-.. autocofunction:: start_http_server
+.. autofunction:: start_http_server
 .. autofunction:: start_http_server_in_thread
 ```
 

@@ -39,7 +39,6 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
-    "sphinxcontrib.asyncio",
 ]
 
 
@@ -85,6 +84,19 @@ exclude_patterns = ["_build"]
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
 # default_role = None
+
+nitpick_ignore = [
+    ("py:class", "Gauge"),
+    ("py:class", "Incrementer"),
+    ("py:class", "Observer"),
+    ("py:class", "ServiceDiscovery"),
+    ("py:class", "P"),
+    ("py:class", "T"),
+    ("py:class", "R"),
+    ("py:class", "D"),
+    ("py:class", "C"),
+    ("py:class", "twisted.web.resource.Resource"),
+]
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
@@ -299,10 +311,8 @@ linkcheck_ignore = [
     r"https://github.com/hynek/prometheus-async/compare/.*",
 ]
 
-
-# Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    "https://docs.python.org/3": None,
-    "https://aiohttp.readthedocs.io/en/stable/": None,
-    "https://docs.twistedmatrix.com/en/stable/": None,
+    "python": ("https://docs.python.org/3", None),
+    "aiohttp": ("https://aiohttp.readthedocs.io/en/stable/", None),
+    "twisted": ("https://docs.twistedmatrix.com/en/stable/", None),
 }
