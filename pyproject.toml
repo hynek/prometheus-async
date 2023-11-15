@@ -54,7 +54,7 @@ docs = [
     "sphinx-notfound-page",
     "sphinx",
 ]
-dev = ["prometheus-async[tests,twisted,docs]", "mypy"]
+dev = ["prometheus-async[tests,aiohttp,twisted]", "mypy"]
 
 
 [tool.hatch.version]

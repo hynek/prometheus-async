@@ -34,13 +34,13 @@ Please report any harm to [Hynek Schlawack] in any way you find appropriate.
 You can (and should) run our test suite using [*tox*].
 However, you’ll probably want a more traditional environment as well.
 
-First, create a virtual environment so you don't break your system-wide Python installation.
-We recommend using the Python version from the `.python-version` file in project's root directory.
+First, create a [virtual environment](https://virtualenv.pypa.io/) so you don't break your system-wide Python installation.
+We recommend using the Python version from the `.python-version-default` file in project's root directory.
 
-If you're using [*direnv*](https://direnv.net), you can automate the creation of a virtual environment with the correct Python version by adding the following `.envrc` to the project root after cloning it:
+If you're using [*direnv*](https://direnv.net), you can automate the creation of a virtual environment with the correct Python version by adding the following `.envrc` to the project root:
 
 ```bash
-layout python python$(cat .python-version)
+layout python python$(cat .python-version-default)
 ```
 
 [Create a fork](https://github.com/hynek/prometheus-async/fork) of the repository and clone it:
@@ -54,7 +54,8 @@ Or if you prefer to use Git via HTTPS:
 ```console
 $ git clone https://github.com/YOU/prometheus-async.git
 ```
-> **Warning**
+
+> [!WARNING]
 > - **Before** you start working on a new pull request, use the "*Sync fork*" button in GitHub's web UI to ensure your fork is up to date.
 > - **Always create a new branch off `main` for each new pull request.**
 >   Yes, you can work on `main` in your fork and submit pull requests.
@@ -64,8 +65,8 @@ Change into the newly created directory and **after activating your virtual envi
 
 ```console
 $ cd prometheus-async
-$ python -m pip install --upgrade pip wheel  # PLEASE don't skip this step
-$ python -m pip install --editable '.[dev]'
+$ python -Im pip install --upgrade pip wheel  # PLEASE don't skip this step
+$ python -Im pip install --editable '.[dev]'
 ```
 
 At this point,
@@ -74,14 +75,26 @@ At this point,
 $ python -m pytest
 ```
 
-should work and pass, as should:
+should work and pass.
+
+When working on the documentation, use:
 
 ```console
-$ cd docs
-$ make html
+$ tox run -e docs-watch
 ```
 
+... to watch your files and automatically rebuild when a file changes.
+And use:
+
+```console
+$ tox run -e docs
+```
+
+... to build it once and run our doctests.
+
 The built documentation can then be found in `docs/_build/html/`.
+
+---
 
 To avoid committing code that violates our style guide, we strongly advise you to install [*pre-commit*] and its hooks:
 
