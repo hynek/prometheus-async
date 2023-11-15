@@ -25,8 +25,8 @@ from ._decorators import count_exceptions, time, track_inprogress
 __all__ = ["count_exceptions", "sd", "time", "track_inprogress"]
 
 try:
-    from . import web  # noqa: F401
+    from . import web
 
-    __all__.append("web")
+    __all__ += ["web"]
 except ImportError:
     pass

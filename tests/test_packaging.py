@@ -73,4 +73,4 @@ class TestLegacyMetadataHack:
             AttributeError,
             match="module prometheus_async has no attribute __yolo__",
         ):
-            prometheus_async.__yolo__  # noqa: B018
+            prometheus_async.__yolo__

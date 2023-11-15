@@ -48,8 +48,8 @@ def _from_async_fn(async_fn):
 
             return results[0]
         finally:
-            # remove a reference cycle via the Deferred[Failure[E]] or
-            # list[Failure[E]]
+            # remove a reference cycle via the Deferred[Failure[E]]
+            # or list[Failure[E]]
             del d
             del results
 

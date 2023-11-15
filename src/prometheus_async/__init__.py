@@ -28,9 +28,9 @@ from . import aio
 __all__ = ["aio"]
 
 try:
-    from . import tx  # noqa: F401
+    from . import tx
 
-    __all__.append("tx")
+    __all__ += ["tx"]
 except ImportError:
     pass
 
@@ -43,7 +43,8 @@ def __getattr__(name: str) -> str:
         "__email__": "",
     }
     if name not in dunder_to_metadata:
-        raise AttributeError(f"module {__name__} has no attribute {name}")
+        msg = f"module {__name__} has no attribute {name}"
+        raise AttributeError(msg)
 
     import sys
     import warnings

@@ -74,7 +74,7 @@ class C:
         raise ve
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 class TestTime:
     @pytest.mark.parametrize("coro", [coro, C().coro])
     async def test_still_coroutine_function(self, fake_observer, coro):
@@ -86,7 +86,7 @@ class TestTime:
         new_coro = func()
 
         assert inspect.iscoroutine(new_coro)
-        # assert inspect.iscoroutinefunction(func)
+        assert inspect.iscoroutinefunction(func)
 
         await new_coro
 
@@ -230,7 +230,7 @@ class TestTime:
         assert [1, 1] == fake_observer._observed
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 class TestCountExceptions:
     async def test_decorator_no_exc(self, fake_counter):
         """
@@ -253,7 +253,7 @@ class TestCountExceptions:
         @aio.count_exceptions(fake_counter, exc=TypeError)
         async def func():
             await asyncio.sleep(0.0)
-            raise ValueError()
+            raise ValueError
 
         with pytest.raises(ValueError):
             await func()
@@ -268,7 +268,7 @@ class TestCountExceptions:
         @aio.count_exceptions(fake_counter, exc=ValueError)
         async def func():
             await asyncio.sleep(0.0)
-            raise ValueError()
+            raise ValueError
 
         with pytest.raises(ValueError):
             await func()
@@ -314,7 +314,7 @@ class TestCountExceptions:
         assert 1 == fake_counter._val
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 class TestTrackInprogress:
     async def test_async_decorator(self, fake_gauge):
         """
@@ -375,7 +375,7 @@ class FakeSD:
 
 
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 class TestWeb:
     async def test_server_stats_old(self):
         """
@@ -499,7 +499,7 @@ test_server_stats_created """
 
         assert False is t._thread.is_alive()
 
-    @pytest.mark.parametrize("addr,url", [("127.0.0.1", "127.0.0.1:")])
+    @pytest.mark.parametrize(("addr", "url"), [("127.0.0.1", "127.0.0.1:")])
     async def test_url(self, addr, url):
         """
         The URL of a MetricsHTTPServer is correctly computed.
@@ -517,7 +517,7 @@ test_server_stats_created """
 
 
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 class TestConsulAgent:
     @pytest.mark.parametrize("deregister", [True, False])
     async def test_integration(self, deregister):
@@ -638,6 +638,6 @@ class TestLocalConsulAgentClient:
         """
         If a token is passed, "X-Consul-Token" header is set.
         """
-        con = _LocalConsulAgentClient(token="token42")  # noqa: S106
+        con = _LocalConsulAgentClient(token="token42")
 
         assert "token42" == con.headers["X-Consul-Token"]

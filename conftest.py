@@ -84,7 +84,7 @@ class FakeGauge:
 
 
 @pytest.fixture(autouse=True)
-def reset_registry(monkeypatch):
+def _reset_registry(monkeypatch):
     """
     Ensures prometheus_client's CollectorRegistry is empty before each test.
     """

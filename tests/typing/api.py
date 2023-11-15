@@ -30,12 +30,6 @@ class C:
         return str(i)
 
 
-# The type of `func` is correct:
-# "def (i: builtins.int) -> typing.Coroutine*[Any, Any, builtins.str]"
-# reveal_type(func)
-# reveal_type(C.method)
-
-
 @aio.time(REQ_DURATION)
 def future_func(i: int) -> Future[str]:
     return Future()
@@ -57,13 +51,6 @@ aio.time(REQ_DURATION, coro())
 aio.time(REQ_DURATION, coro)  # type: ignore[call-overload]
 # `time` errors on non-futures
 aio.time(REQ_DURATION, int)  # type: ignore[call-overload]
-
-# The type of `future_func` is correct:
-# "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
-# reveal_type(future_func)
-
-# The following is a type error since the function cannot be awaited:
-# "def (i: builtins.int) -> asyncio.futures.Future*[builtins.str]"
 
 
 @aio.time(REQ_DURATION)  # type: ignore[type-var]
