@@ -58,6 +58,10 @@ release = metadata.version("prometheus-async")
 # The short X.Y version.
 version = release.rsplit(".", 1)[0]
 
+if "dev" in release:
+    release = version = "UNRELEASED"
+
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = ["_build"]
