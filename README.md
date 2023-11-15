@@ -40,7 +40,7 @@ async def req(request):
 Even for *synchronous* applications, the metrics exposure methods can be useful since they are more powerful than the one shipped with the official client.
 For that, helper functions have been added that run them in separate threads (*asyncio*-only).
 
-The source code is hosted on [GitHub](https://github.com/hynek/prometheus-async) and the documentation on [Read The Docs](https://prometheus-async.readthedocs.io/).
+The source code is hosted on [GitHub](https://github.com/hynek/prometheus-async) and the documentation on [Read the Docs](https://prometheus-async.readthedocs.io/).
 
 
 ## Credits
