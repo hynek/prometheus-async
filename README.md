@@ -49,8 +49,6 @@ The source code is hosted on [GitHub](https://github.com/hynek/prometheus-async)
 
 The development is kindly supported by my employer [Variomedia AG](https://www.variomedia.de/), *prometheus-async*’s [Tidelift subscribers][TL], and all my amazing [GitHub Sponsors](https://github.com/sponsors/hynek).
 
-A full list of contributors can be found in GitHub’s [overview](https://github.com/hynek/prometheus-async/graphs/contributors).
-
 
 ## *prometheus-async* for Enterprise
 
@@ -60,4 +58,4 @@ The maintainers of *prometheus-async* and thousands of other packages are workin
 Save time, reduce risk, and improve code health, while paying the maintainers of the exact packages you use.
 [Learn more.][TL]
 
-[TL]: https://tidelift.com/subscription/pkg/pypi-prometheus-async?utm_source=pypi-prometheus-async&utm_medium=referral&utm_campaign=enterprise
+[TL]: https://tidelift.com/?utm_source=lifter&utm_medium=referral&utm_campaign=hynek

@@ -1,6 +1,6 @@
 # prometheus-async
 
-Release v{sub-ref}`release` ({doc}`What's new? <changelog>`).
+Release **{sub-ref}`release`**  ([What's new?](https://github.com/hynek/prometheus-async/blob/main/CHANGELOG.md))
 
 ```{include} ../README.md
 :start-after: <!-- teaser-begin -->
@@ -28,11 +28,3 @@ twisted
 
 - {ref}`genindex`
 - {ref}`search`
-
-% stop Sphinx from complaining about orphaned docs, we link them elsewhere
-
-```{toctree}
-:hidden: true
-
-changelog
-```

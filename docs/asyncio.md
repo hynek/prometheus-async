@@ -56,13 +56,15 @@ async def req(request):
 .. autofunction:: start_http_server_in_thread
 ```
 
-```{admonition} Warning
-Please note that if you want to use [*uWSGI*](https://uwsgi-docs.readthedocs.io/) together with `start_http_server_in_thread()`, you have to tell *uWSGI* to enable threads using its [configuration option](https://uwsgi-docs.readthedocs.io/en/latest/Options.html#enable-threads) or by passing it `--enable-threads`.
+:::{important}
+Please note that if you want to use [uWSGI](https://uwsgi-docs.readthedocs.io/) together with `start_http_server_in_thread()`, you have to tell uWSGI to enable threads using its [configuration option](https://uwsgi-docs.readthedocs.io/en/latest/Options.html#enable-threads) or by passing it `--enable-threads`.
 
-Currently the recommended mode to run *uWSGI* with `--master` [is broken](https://github.com/unbit/uwsgi/issues/1609) if you want to clean up using {mod}`atexit` handlers.
+Currently the recommended mode to run uWSGI with `--master` [is broken](https://github.com/unbit/uwsgi/issues/1609) if you want to clean up using {mod}`atexit` handlers.
 
-Therefore the usage of `prometheus_sync.aio.web` together with *uWSGI* is **strongly discouraged**.
-```
+Therefore the usage of `prometheus_sync.aio.web` together with uWSGI is **strongly discouraged**.
+
+As of 2023, the uWSGI project declared to only do emergency maintenance, therefore it's a good idea to migrate away from it anyway.
+:::
 
 ```{eval-rst}
 .. autofunction:: server_stats
@@ -109,6 +111,6 @@ We do **not** plan add more.
 ### Custom Service Discovery
 
 Adding own service discovery methods is simple:
-all you need is to provide an instance with a coroutine `register(self, metrics_server, loop)` that registers the passed `metrics_server` with the service of your choicer and returns another coroutine that is called for de-registration when the metrics server is shut down.
+All you need is to provide an instance with a coroutine `register(self, metrics_server, loop)` that registers the passed `metrics_server` with the service of your choicer and returns another coroutine that is called for de-registration when the metrics server is shut down.
 
 Have a look at [our implementations](https://github.com/hynek/prometheus-async/blob/main/src/prometheus_async/aio/sd.py) if you need inspiration or check out the `ServiceDiscovery` {class}`typing.Protocol` in the [`types` module](https://github.com/hynek/prometheus-async/blob/main/src/prometheus_async/types.py)
