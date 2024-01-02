@@ -1,17 +1,9 @@
 # prometheus-async
 
-<a href="https://prometheus-async.readthedocs.io/en/stable/">
-   <img src="https://img.shields.io/badge/Docs-Read%20The%20Docs-black" alt="Documentation" />
-</a>
-<a href="https://github.com/hynek/prometheus-async/blob/main/LICENSE">
-   <img src="https://img.shields.io/badge/license-Apache--2.0-C06524" alt="License: Apache 2.0" />
-</a>
-<a href="https://pypi.org/project/prometheus-async/">
-   <img src="https://img.shields.io/pypi/v/prometheus-async" alt="PyPI version" />
-</a>
-<a href="https://pepy.tech/project/prometheus-async">
-   <img src="https://static.pepy.tech/personalized-badge/prometheus-async?period=month&amp;units=international_system&amp;left_color=grey&amp;right_color=blue&amp;left_text=Downloads%20/%20Month" alt="Downloads / Month" />
-</a>
+<a href="https://prometheus-async.readthedocs.io/en/stable/"><img src="https://img.shields.io/badge/Docs-Read%20The%20Docs-black" alt="Documentation" /></a>
+<a href="https://github.com/hynek/prometheus-async/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-C06524" alt="License: Apache 2.0" /></a>
+<a href="https://pypi.org/project/prometheus-async/"><img src="https://img.shields.io/pypi/v/prometheus-async" alt="PyPI version" /></a>
+<a href="https://pepy.tech/project/prometheus-async"><img src="https://static.pepy.tech/personalized-badge/prometheus-async?period=month&amp;units=international_system&amp;left_color=grey&amp;right_color=blue&amp;left_text=Downloads%20/%20Month" alt="Downloads / Month" /></a>
 
 <!-- teaser-begin -->
 
