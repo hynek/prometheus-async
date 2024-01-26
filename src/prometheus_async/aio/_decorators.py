@@ -33,13 +33,11 @@ from wrapt import decorator
 
 
 @overload
-def time(metric: Observer) -> Callable[[Callable[P, R]], Callable[P, R]]:
-    ...
+def time(metric: Observer) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
 
 
 @overload
-def time(metric: Observer, future: Awaitable[T]) -> Awaitable[T]:
-    ...
+def time(metric: Observer, future: Awaitable[T]) -> Awaitable[T]: ...
 
 
 def time(
@@ -85,8 +83,7 @@ def time(
 @overload
 def count_exceptions(
     metric: Incrementer, *, exc: type[BaseException] = BaseException
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
-    ...
+) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
 
 
 @overload
@@ -95,8 +92,7 @@ def count_exceptions(
     future: Awaitable[T],
     *,
     exc: type[BaseException] = BaseException,
-) -> Awaitable[T]:
-    ...
+) -> Awaitable[T]: ...
 
 
 def count_exceptions(
@@ -144,13 +140,11 @@ def count_exceptions(
 @overload
 def track_inprogress(
     metric: Gauge,
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
-    ...
+) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
 
 
 @overload
-def track_inprogress(metric: Gauge, future: Awaitable[T]) -> Awaitable[T]:
-    ...
+def track_inprogress(metric: Gauge, future: Awaitable[T]) -> Awaitable[T]: ...
 
 
 def track_inprogress(

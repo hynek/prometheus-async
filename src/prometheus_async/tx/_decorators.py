@@ -36,13 +36,11 @@ if TYPE_CHECKING:
 
 
 @overload
-def time(metric: Observer) -> Callable[[Callable[P, D]], Callable[P, D]]:
-    ...
+def time(metric: Observer) -> Callable[[Callable[P, D]], Callable[P, D]]: ...
 
 
 @overload
-def time(metric: Observer, deferred: D) -> D:
-    ...
+def time(metric: Observer, deferred: D) -> D: ...
 
 
 def time(metric: Observer, deferred: D | None = None) -> D | C:
@@ -83,8 +81,7 @@ def time(metric: Observer, deferred: D | None = None) -> D | C:
 @overload
 def count_exceptions(
     metric: Incrementer, *, exc: type[BaseException] = ...
-) -> Callable[P, C]:
-    ...
+) -> Callable[P, C]: ...
 
 
 @overload
@@ -93,8 +90,7 @@ def count_exceptions(
     deferred: D,
     *,
     exc: type[BaseException] = ...,
-) -> D:
-    ...
+) -> D: ...
 
 
 def count_exceptions(
@@ -139,13 +135,11 @@ def count_exceptions(
 
 
 @overload
-def track_inprogress(metric: Gauge) -> Callable[P, C]:
-    ...
+def track_inprogress(metric: Gauge) -> Callable[P, C]: ...
 
 
 @overload
-def track_inprogress(metric: Gauge, deferred: D) -> D:
-    ...
+def track_inprogress(metric: Gauge, deferred: D) -> D: ...
 
 
 def track_inprogress(

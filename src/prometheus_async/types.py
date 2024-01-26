@@ -69,20 +69,17 @@ Deregisterer = Callable[[], Awaitable[None]]
 class ServiceDiscovery(Protocol):
     async def register(
         self, metrics_server: MetricsHTTPServer
-    ) -> Deregisterer | None:
-        ...
+    ) -> Deregisterer | None: ...
 
 
 class Observer(Protocol):
-    def observe(self, value: float) -> None:
-        ...
+    def observe(self, value: float) -> None: ...
 
 
 class Incrementer(Protocol):
     def inc(
         self, amount: float = 1, exemplar: dict[str, str] | None = None
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 class IncDecrementer(Protocol):
@@ -94,8 +91,6 @@ class IncDecrementer(Protocol):
 
     def inc(
         self, amount: float = 1, exemplar: dict[str, str] | None = None
-    ) -> None:
-        ...
+    ) -> None: ...
 
-    def dec(self, amount: float = 1) -> None:
-        ...
+    def dec(self, amount: float = 1) -> None: ...
