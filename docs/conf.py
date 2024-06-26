@@ -91,7 +91,7 @@ highlight_language = "python3"
 # -- Options for HTML output ----------------------------------------------
 
 html_theme = "furo"
-html_theme_options = {"top_of_page_button": None}
+html_theme_options = {"top_of_page_buttons": []}
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "prometheus_asyncdoc"
