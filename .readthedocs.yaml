@@ -1,12 +1,15 @@
 ---
 version: 2
-formats: all
 
 build:
-  os: ubuntu-22.04
+  os: ubuntu-lts-latest
   tools:
-    # Keep version in sync with tox.ini (docs and gh-actions).
+    # Keep version in sync with tox.ini/docs and ci.yml/docs.
     python: "3.12"
+  jobs:
+    # Need the tags to calculate the version.
+    post_checkout:
+      - git fetch --tags
 
 python:
   install:
