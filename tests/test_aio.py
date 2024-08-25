@@ -74,7 +74,7 @@ class C:
         raise ve
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 class TestTime:
     @pytest.mark.parametrize("coro", [coro, C().coro])
     async def test_still_coroutine_function(self, fake_observer, coro):
@@ -230,7 +230,7 @@ class TestTime:
         assert [1, 1] == fake_observer._observed
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 class TestCountExceptions:
     async def test_decorator_no_exc(self, fake_counter):
         """
@@ -314,7 +314,7 @@ class TestCountExceptions:
         assert 1 == fake_counter._val
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 class TestTrackInprogress:
     async def test_async_decorator(self, fake_gauge):
         """
@@ -375,7 +375,7 @@ class FakeSD:
 
 
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 class TestWeb:
     async def test_server_stats_old(self):
         """
@@ -517,7 +517,7 @@ test_server_stats_created """
 
 
 @pytest.mark.skipif(aiohttp is None, reason="Needs aiohttp.")
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 class TestConsulAgent:
     @pytest.mark.parametrize("deregister", [True, False])
     async def test_integration(self, deregister):
