@@ -58,6 +58,10 @@ def _from_async_fn(async_fn):
 
 class TestFromAsyncFn:
     def test_no_result(self):
+        """
+        Missing results are caught.
+        """
+
         @_from_async_fn
         async def demo():
             return await Deferred()
@@ -70,6 +74,10 @@ class TestFromAsyncFn:
             demo()
 
     def test_failure_result(self):
+        """
+        If an async function fails, the error is propagated.
+        """
+
         class SentinelError(Exception):
             pass
 
@@ -87,6 +95,9 @@ class TestFromAsyncFn:
         assert exc_info.value is sentinel_exception
 
     def test_success_result(self):
+        """
+        If an async function succeeds, the success and result are propagated.
+        """
         sentinel = object()
 
         @_from_async_fn

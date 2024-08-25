@@ -103,6 +103,13 @@ omit = ["src/prometheus_async/types.py"]
 line-length = 79
 
 
+[tool.interrogate]
+omit-covered-files = true
+verbose = 2
+fail-under = 100
+whitelist-regex = ["test_.*"]
+
+
 [tool.mypy]
 strict = true
 pretty = true
