@@ -44,10 +44,9 @@ The development is kindly supported by my employer [Variomedia AG](https://www.v
 
 ## *prometheus-async* for Enterprise
 
-Available as part of the Tidelift Subscription.
+Available as part of the [Tidelift Subscription][TL].
 
 The maintainers of *prometheus-async* and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source packages you use to build your applications.
 Save time, reduce risk, and improve code health, while paying the maintainers of the exact packages you use.
-[Learn more.][TL]
 
 [TL]: https://tidelift.com/?utm_source=lifter&utm_medium=referral&utm_campaign=hynek
