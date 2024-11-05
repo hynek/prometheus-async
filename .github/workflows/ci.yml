@@ -31,9 +31,13 @@ jobs:
           - "3.11"
           - "3.12"
           - "3.13"
+    env:
+      PYTHON: ${{ matrix.python-version }}
 
     steps:
       - uses: actions/checkout@v4
+        with:
+           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -42,7 +46,7 @@ jobs:
 
       - run: python -Im pip install --upgrade wheel tox
 
-      - run: python -Im tox run -f py$(echo ${{ matrix.python-version }} | tr -d .)
+      - run: python -Im tox run -f py$(echo $PYTHON | tr -d .)
       - run: python -Im tox run -e mypy-api
 
       - name: Upload coverage data
@@ -60,6 +64,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version-file: .python-version-default
@@ -96,6 +102,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version-file: .python-version-default
@@ -110,6 +118,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           # Keep in sync with tox.ini/docs & .readthedocs.yaml
@@ -128,6 +138,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version-file: .python-version-default
