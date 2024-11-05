@@ -100,10 +100,6 @@ exclude_lines = [
 omit = ["src/prometheus_async/types.py"]
 
 
-[tool.black]
-line-length = 79
-
-
 [tool.interrogate]
 omit-covered-files = true
 verbose = 2
@@ -137,6 +133,7 @@ ignore_errors = true
 
 
 [tool.ruff]
+line-length = 79
 src = ["src", "tests", "docs/conf.py"]
 
 [tool.ruff.lint]
@@ -146,13 +143,14 @@ ignore = [
     "ANN",     # Mypy is better at this
     "ARG",     # unused arguments are common w/ interfaces
     "C901",    # sometimes you trade complexity for performance
-    "COM",     # Black takes care of our commas
+    "COM",     # formatter takes care of our commas
     "D",       # We prefer our own docstring style.
-    "E501",    # leave line-length enforcement to Black
+    "E501",    # leave line-length enforcement to formatter
     "EM101",   # simple strings are fine
     "FBT",     # bools are our friends
     "FIX",     # Yes, we want XXX as a marker.
     "INP001",  # sometimes we want Python files outside of packages
+    "ISC001",  # conflicts with formatter
     "N802",    # some names are non-pep8 due to stdlib logging / Twisted
     "N803",    # ditto
     "N806",    # ditto
