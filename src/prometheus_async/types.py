@@ -49,12 +49,12 @@ else:
     from typing_extensions import ParamSpec
 
 __all__ = [
-    "ParamSpec",
     "Deregisterer",
-    "ServiceDiscovery",
-    "Observer",
-    "Incrementer",
     "IncDecrementer",
+    "Incrementer",
+    "Observer",
+    "ParamSpec",
+    "ServiceDiscovery",
 ]
 
 P = ParamSpec("P")
