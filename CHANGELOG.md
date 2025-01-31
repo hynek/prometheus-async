@@ -25,6 +25,7 @@ Whenever breaking changes are needed, they are:
 ### Removed
 
 - Python 3.7 support.
+  [#75](https://github.com/hynek/prometheus-async/pull/75)
 
 
 ### Changed
