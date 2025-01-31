@@ -9,12 +9,11 @@ build-backend = "hatchling.build"
 name = "prometheus-async"
 dynamic = ["version"]
 authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 description = "Async helpers for prometheus_client."
 dependencies = [
     # Keep min. version in-sync with constraints in oldest-supported.txt!
     "prometheus_client >= 0.8.0",
-    "importlib_metadata; python_version<'3.8'",
     "typing_extensions >= 3.10.0; python_version<'3.10'",
     "wrapt",
 ]
@@ -25,7 +24,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -161,7 +159,7 @@ ignore = [
     "SLF001",  # private members are accessed by friendly functions
     "T201",    # prints are fine
     "TID252",  # relative imports all the way
-    "TCH",     # TYPE_CHECKING blocks break autodocs
+    "TC",      # TYPE_CHECKING blocks break autodocs
     "TD",      # we don't follow other people's todo style
     "TRY003",  # simple strings are fine
     "TRY004",  # too many false negatives
@@ -170,15 +168,11 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"conftest.py" = [
-    "PT005", # we always add underscores and explicit names
-]
 "tests/*" = [
     "B018",    # "useless" expressions can be useful in tests
     "BLE",     # tests have different rules around exceptions
     "EM",      # tests have different rules around exceptions
     "PLC1901", # empty strings are falsey, but are less specific in tests
-    "PT005",   # we always add underscores and explicit name
     "PT011",   # broad exceptions are fine
     "RUF012",  # no type hints in tests
     "S",       # it's test; chill out security

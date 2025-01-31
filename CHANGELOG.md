@@ -22,6 +22,12 @@ Whenever breaking changes are needed, they are:
 
 ## [Unreleased](https://github.com/hynek/prometheus-async/compare/22.2.0...HEAD)
 
+### Removed
+
+- Python 3.7 support.
+  [#75](https://github.com/hynek/prometheus-async/pull/75)
+
+
 ### Changed
 
 - The build backend has been switched to [Hatch](https://hatch.pypa.io/).
