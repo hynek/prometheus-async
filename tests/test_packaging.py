@@ -14,13 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 
-
-if sys.version_info < (3, 8):
-    import importlib_metadata as metadata
-else:
-    from importlib import metadata
+from importlib import metadata
 
 import pytest
 
