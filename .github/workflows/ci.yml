@@ -177,7 +177,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version-file: .python-version-default
-          cache: pip
 
       - run: python -Im pip install -e .[dev]
       - run: python -Ic 'import prometheus_async; print(prometheus_async.__version__)'
