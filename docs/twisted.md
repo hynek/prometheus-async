@@ -100,4 +100,4 @@ reactor.run()
 [*prometheus_client*]: https://github.com/prometheus/client_python#twisted
 [`prometheus_client.Counter`]: https://github.com/prometheus/client_python#counter
 [`prometheus_client.twisted.metricsresource`]: https://github.com/prometheus/client_python/blob/master/prometheus_client/twisted/_exposition.py
-[`twisted.web`]: https://twistedmatrix.com/documents/current/web/howto/web-in-60/index.html
+[`twisted.web`]: https://docs.twistedmatrix.com/en/stable/web/howto/web-in-60/index.html
