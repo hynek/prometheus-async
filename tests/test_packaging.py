@@ -27,38 +27,10 @@ class TestLegacyMetadataHack:
         """
         prometheus_async.__version__ returns the correct version.
         """
-        with pytest.deprecated_call():
-            assert (
-                metadata.version("prometheus-async")
-                == prometheus_async.__version__
-            )
-
-    def test_description(self):
-        """
-        prometheus_async.__description__ returns the correct description.
-        """
-        with pytest.deprecated_call():
-            assert (
-                "Async helpers for prometheus_client."
-                == prometheus_async.__description__
-            )
-
-    def test_uri(self):
-        """
-        prometheus_async.__uri__ returns the correct project URL.
-        """
-        with pytest.deprecated_call():
-            assert (
-                "https://prometheus-async.readthedocs.io/"
-                == prometheus_async.__uri__
-            )
-
-    def test_email(self):
-        """
-        prometheus_async.__email__ returns Hynek's email address.
-        """
-        with pytest.deprecated_call():
-            assert "hs@ox.cx" == prometheus_async.__email__
+        assert (
+            metadata.version("prometheus-async")
+            == prometheus_async.__version__
+        )
 
     def test_does_not_exist(self):
         """

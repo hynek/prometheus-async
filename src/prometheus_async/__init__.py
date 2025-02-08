@@ -36,34 +36,10 @@ except ImportError:
 
 
 def __getattr__(name: str) -> str:
-    dunder_to_metadata = {
-        "__version__": "version",
-        "__description__": "summary",
-        "__uri__": "",
-        "__email__": "",
-    }
-    if name not in dunder_to_metadata:
+    if name != "__version__":
         msg = f"module {__name__} has no attribute {name}"
         raise AttributeError(msg)
 
-    import warnings
+    from importlib.metadata import version
 
-    from importlib.metadata import metadata
-
-    warnings.warn(
-        f"Accessing prometheus_async.{name} is deprecated and will be "
-        "removed in a future release. Use importlib.metadata directly "
-        "to query for prometheus_async's packaging metadata.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-
-    meta = metadata("prometheus-async")
-
-    if name == "__uri__":
-        return meta["Project-URL"].split(" ", 1)[-1]
-
-    if name == "__email__":
-        return meta["Author-email"].split("<", 1)[1].rstrip(">")
-
-    return meta[dunder_to_metadata[name]]
+    return version("prometheus-async")
