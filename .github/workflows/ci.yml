@@ -161,6 +161,19 @@ jobs:
           uvx --with tox-uv
           tox run -e docs
 
+  pyright:
+    name: Check types using pyright
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version-default
+      - uses: hynek/setup-cached-uv@v2
+
+      - run: uvx --with=tox-uv tox run -e pyright
 
   install-dev:
     name: Verify dev env
