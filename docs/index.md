@@ -18,11 +18,18 @@ asyncio
 twisted
 ```
 
-## Credits
+```{toctree}
+:hidden:
+:caption: Meta
 
-```{include} ../README.md
-:start-after: "## Credits\n"
+PyPI <https://pypi.org/project/prometheus-async/>
+GitHub <https://github.com/hynek/prometheus-async/>
+Changelog <https://github.com/hynek/prometheus-async/blob/main/CHANGELOG.md>
+Contributing <https://github.com/hynek/prometheus-async/blob/main/.github/CONTRIBUTING.md>
+Security Policy <https://github.com/hynek/prometheus-async/blob/main/.github/SECURITY.md>
+Funding <https://hynek.me/say-thanks/>
 ```
+
 
 ## Indices and tables
 
