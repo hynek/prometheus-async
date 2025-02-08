@@ -71,7 +71,7 @@ class ServiceDiscovery(Protocol):
 
 
 class Observer(Protocol):
-    def observe(self, value: float) -> None: ...
+    def observe(self, value: float, /) -> None: ...
 
 
 class Incrementer(Protocol):

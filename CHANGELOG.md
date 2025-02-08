@@ -33,6 +33,12 @@ Whenever breaking changes are needed, they are:
 - The build backend has been switched to [Hatch](https://hatch.pypa.io/).
 
 
+### Fixed
+
+- Typing on Pyright.
+  [#77](https://github.com/hynek/prometheus-async/issues/77)
+
+
 ## [22.2.0](https://github.com/hynek/prometheus-async/compare/22.1.0...22.2.0) - 2022-05-14
 
 ### Deprecated
