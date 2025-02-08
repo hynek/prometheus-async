@@ -20,7 +20,7 @@ Whenever breaking changes are needed, they are:
 <!-- changelog follows -->
 
 
-## [Unreleased](https://github.com/hynek/prometheus-async/compare/22.2.0...HEAD)
+## [25.1.0](https://github.com/hynek/prometheus-async/compare/22.2.0...25.1.0) - 2025-02-08
 
 ### Removed
 
