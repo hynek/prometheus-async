@@ -64,17 +64,15 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
-          cache: pip
-
-      - run: python -Im pip install --upgrade tox
+      - uses: hynek/setup-cached-uv@v2
 
       - run: >
-          python -Im
+          uvx --with tox-uv
           tox run
           --installpkg dist/*.whl
           -f py$(echo $PYTHON | tr -d .)
       - run: >
-          python -Im
+          uvx --with tox-uv --python $PYTHON
           tox run
           --installpkg dist/*.whl
           -e mypy-api
@@ -139,11 +137,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version-file: .python-version-default
-          cache: pip
+      - uses: hynek/setup-cached-uv@v2
 
-      - run: python -Im pip install --upgrade wheel tox
-
-      - run: python -Im tox run -e mypy-pkg
+      - run: >
+          uvx --with tox-uv
+          tox run -e mypy-pkg
 
 
   docs:
@@ -157,10 +155,11 @@ jobs:
         with:
           # Keep in sync with tox.ini/docs & .readthedocs.yaml
           python-version: "3.13"
-          cache: pip
-      - run: python -Im pip install --upgrade wheel tox
+      - uses: hynek/setup-cached-uv@v2
 
-      - run: python -Im tox run -e docs
+      - run: >
+          uvx --with tox-uv
+          tox run -e docs
 
 
   install-dev:
