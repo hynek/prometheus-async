@@ -145,7 +145,7 @@ jobs:
 
 
   docs:
-    name: Build docs & run doctests
+    name: Run doctests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -159,7 +159,7 @@ jobs:
 
       - run: >
           uvx --with tox-uv
-          tox run -e docs
+          tox run -e docs-doctests
 
   pyright:
     name: Check types using pyright
