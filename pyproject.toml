@@ -38,19 +38,26 @@ Changelog = "https://prometheus-async.readthedocs.io/en/stable/changelog.html"
 GitHub = "https://github.com/hynek/prometheus-async/"
 Funding = "https://hynek.me/say-thanks/"
 
-[project.optional-dependencies]
+[dependency-groups]
 aiohttp = ["aiohttp>=3"]
 consul = ["aiohttp>=3"]
 twisted = ["twisted"]
 tests = ["coverage[toml]", "pytest", "pytest-asyncio"]
 docs = [
-    "prometheus-async[aiohttp,twisted]",
+    { include-group = "aiohttp" },
+    { include-group = "twisted" },
     "furo",
     "myst-parser",
     "sphinx-notfound-page",
     "sphinx",
 ]
-dev = ["prometheus-async[tests,aiohttp,twisted]", "mypy"]
+dev = [
+    { include-group = "tests" },
+    { include-group = "aiohttp" },
+    { include-group = "twisted" },
+    "mypy",
+    "tox>4",
+]
 
 
 [tool.hatch.version]
