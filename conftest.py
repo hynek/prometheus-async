@@ -16,6 +16,7 @@
 
 
 from contextlib import suppress
+from importlib import metadata
 
 import pytest
 
@@ -25,6 +26,10 @@ try:
 except ImportError:
     twisted = None
     collect_ignore = ["tests/test_tx.py"]
+
+
+def pytest_report_header(config):
+    return f"prometheus_client: {metadata.version('prometheus-client')}"
 
 
 def mk_monotonic_timer():

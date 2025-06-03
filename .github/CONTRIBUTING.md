@@ -61,18 +61,18 @@ $ git clone https://github.com/YOU/prometheus-async.git
 >   Yes, you can work on `main` in your fork and submit pull requests.
 >   But this will *inevitably* lead to you not being able to synchronize your fork with upstream and having to start over.
 
-Change into the newly created directory and **after activating your virtual environment** install it with its tests and docs requirements:
+Change into the newly created directory and **after activating your virtual environment** install it with its tests requirements:
 
 ```console
 $ cd prometheus-async
-$ python -Im pip install --upgrade pip wheel  # PLEASE don't skip this step
-$ python -Im pip install --editable '.[dev]'
+$ python -Im pip install --upgrade pip  # PLEASE don't skip this step
+$ python -Im pip install --editable . --group dev
 ```
 
 At this point,
 
 ```console
-$ python -m pytest
+$ python -Im pytest
 ```
 
 should work and pass.
