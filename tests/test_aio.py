@@ -101,7 +101,7 @@ class TestTime:
             if True:
                 return 42
 
-            await asyncio.sleep(0)  # noqa: RET503
+            await asyncio.sleep(0)
 
         assert 42 == await func()
         assert [1] == fake_observer._observed
