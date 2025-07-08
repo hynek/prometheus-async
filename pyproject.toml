@@ -9,7 +9,7 @@ build-backend = "hatchling.build"
 name = "prometheus-async"
 dynamic = ["version"]
 authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 description = "Async helpers for prometheus_client."
 dependencies = [
     # Keep min. version in-sync with constraints in oldest-supported.txt!
@@ -23,12 +23,12 @@ readme = { content-type = "text/markdown", file = "README.md" }
 keywords = ["metrics", "prometheus", "twisted", "asyncio", "async"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Typing :: Typed",
 ]
 
@@ -157,6 +157,7 @@ ignore = [
     "N802",    # some names are non-pep8 due to stdlib logging / Twisted
     "N803",    # ditto
     "N806",    # ditto
+    "PLC0415", # sometimes, imports must live elsewhere
     "PLR0913", # leave complexity to me
     "PLR2004", # numbers are sometimes fine
     "PLW2901", # overwriting a loop var can be useful

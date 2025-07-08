@@ -20,8 +20,9 @@ Decorators for asyncio.
 
 from __future__ import annotations
 
+from collections.abc import Awaitable
 from time import perf_counter
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, overload
+from typing import TYPE_CHECKING, Any, Callable, overload
 
 
 if TYPE_CHECKING:

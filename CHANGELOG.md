@@ -22,6 +22,15 @@ Whenever breaking changes are needed, they are:
 
 ## [Unreleased](https://github.com/hynek/prometheus-async/compare/25.1.0...HEAD)
 
+### Added
+
+- Python 3.14 support (no code changes necessary).
+
+
+### Removed
+
+- Python 3.8 support.
+
 
 ## [25.1.0](https://github.com/hynek/prometheus-async/compare/22.2.0...25.1.0) - 2025-02-08
 

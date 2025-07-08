@@ -18,7 +18,8 @@ from __future__ import annotations
 
 import sys
 
-from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
+from collections.abc import Awaitable
+from typing import TYPE_CHECKING, Callable, TypeVar
 
 
 if TYPE_CHECKING:
