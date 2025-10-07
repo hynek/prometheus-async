@@ -24,6 +24,7 @@ import asyncio
 import queue
 import threading
 
+from contextlib import suppress
 from typing import TYPE_CHECKING, NamedTuple
 
 from aiohttp import web
@@ -124,7 +125,13 @@ async def start_http_server(
         runner=runner, app=app, https=ssl_ctx is not None
     )
     if service_discovery is not None:
-        ms._deregister = await service_discovery.register(ms)
+        try:
+            ms._deregister = await service_discovery.register(ms)
+        except Exception:
+            # Best effort to clean up the AIOHTTP runner if registration fails.
+            with suppress(Exception):
+                await runner.cleanup()
+            raise
 
     return ms
 
