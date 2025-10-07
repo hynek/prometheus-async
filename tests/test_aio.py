@@ -469,7 +469,7 @@ test_server_stats_created """
         await server.close()
 
     @pytest.mark.parametrize("sd", [None, FakeSD()])
-    def test_start_in_thread(self, sd):
+    async def test_start_in_thread(self, sd):
         """
         Threaded version starts and exits properly, passes on service
         discovery.
