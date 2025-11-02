@@ -21,18 +21,16 @@ Decorators for Twisted.
 from __future__ import annotations
 
 from time import perf_counter
-from typing import TYPE_CHECKING, Callable, overload
+from typing import TYPE_CHECKING, Any, Callable, overload
 
 from twisted.internet.defer import Deferred
 from wrapt import decorator
 
 
 if TYPE_CHECKING:
-    from typing import Any
-
     from prometheus_client import Gauge
 
-    from ..types import C, D, F, Incrementer, Observer, P, T
+from ..types import C, D, F, Incrementer, Observer, P, T
 
 
 @overload
@@ -56,19 +54,24 @@ def time(metric: Observer, deferred: D | None = None) -> D | C:
     if deferred is None:
 
         @decorator
-        def time_decorator(f: C, _: Any, args: Any, kw: Any) -> C | D:
+        def time_decorator(
+            wrapped: Callable[P, C | D],
+            instance: Any,
+            args: tuple[Any, ...],
+            kwargs: dict[str, Any],
+        ) -> C | D:
             def observe(value: T) -> T:
                 metric.observe(perf_counter() - start_time)
                 return value
 
             start_time = perf_counter()
-            rv = f(*args, **kw)
+            rv = wrapped(*args, **kwargs)
             if isinstance(rv, Deferred):
                 return rv.addBoth(observe)  # type: ignore[return-value]
 
             return observe(rv)
 
-        return time_decorator
+        return time_decorator  # type: ignore[return-value]
 
     def observe(value: T) -> T:
         metric.observe(perf_counter() - start_time)
@@ -116,10 +119,13 @@ def count_exceptions(
 
         @decorator
         def count_exceptions_decorator(
-            f: C, _: Any, args: Any, kw: Any
+            wrapped: Callable[P, C | D],
+            instance: Any,
+            args: tuple[Any, ...],
+            kwargs: dict[str, Any],
         ) -> C | D:
             try:
-                rv = f(*args, **kw)
+                rv = wrapped(*args, **kwargs)
             except exc:
                 metric.inc()
                 raise
@@ -129,7 +135,7 @@ def count_exceptions(
 
             return rv
 
-        return count_exceptions_decorator
+        return count_exceptions_decorator  # type: ignore[return-value]
 
     return deferred.addErrback(inc)  # type: ignore[return-value]
 
@@ -161,11 +167,14 @@ def track_inprogress(
 
         @decorator
         def track_inprogress_decorator(
-            f: C, _: Any, args: Any, kw: Any
+            wrapped: Callable[P, C | D],
+            instance: Any,
+            args: tuple[Any, ...],
+            kwargs: dict[str, Any],
         ) -> C | D:
             metric.inc()
             try:
-                rv = f(*args, **kw)
+                rv = wrapped(*args, **kwargs)
             finally:
                 if isinstance(rv, Deferred):
                     return rv.addBoth(dec)  # type: ignore[return-value]  # noqa: B012
@@ -173,7 +182,7 @@ def track_inprogress(
                 metric.dec()
                 return rv  # noqa: B012
 
-        return track_inprogress_decorator
+        return track_inprogress_decorator  # type: ignore[return-value]
 
     metric.inc()
     return deferred.addBoth(dec)  # type: ignore[return-value]
