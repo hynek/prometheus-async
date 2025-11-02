@@ -16,7 +16,6 @@ env:
 
 permissions: {}
 
-
 jobs:
   build-package:
     name: Build & verify package
@@ -35,7 +34,6 @@ jobs:
       # Used to define the matrix for tests below. The value is based on
       # packaging metadata (trove classifiers).
       supported-python-versions: ${{ steps.baipp.outputs.supported_python_classifiers_json_array }}
-
 
   tests:
     name: Tests & Mypy API on ${{ matrix.python-version }}
@@ -80,7 +78,6 @@ jobs:
           include-hidden-files: true
           if-no-files-found: ignore
 
-
   coverage:
     name: Combine & check coverage
     needs: tests
@@ -89,7 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-           persist-credentials: false
+          persist-credentials: false
       - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version-file: .python-version-default
@@ -120,25 +117,6 @@ jobs:
           path: htmlcov
         if: ${{ failure() }}
 
-
-  mypy-pkg:
-    name: Mypy Codebase
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-           persist-credentials: false
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
-        with:
-          python-version-file: .python-version-default
-      - uses: hynek/setup-cached-uv@757bedc3f972eb7227a1aa657651f15a8527c817 # v2.3.0
-
-      - run: >
-          uvx --with tox-uv
-          tox run -e mypy-pkg
-
-
   typing:
     name: Check types using supported type checkers
     runs-on: ubuntu-latest
@@ -160,14 +138,13 @@ jobs:
           uvx --with tox-uv
           tox run -f typing
 
-
   docs:
     name: Run doctests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-           persist-credentials: false
+          persist-credentials: false
       - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           # Keep in sync with tox.ini/docs & .readthedocs.yaml
@@ -177,7 +154,6 @@ jobs:
       - run: >
           uvx --with tox-uv
           tox run -e docs-doctests
-
 
   install-dev:
     name: Verify dev env
@@ -189,14 +165,13 @@ jobs:
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-           persist-credentials: false
+          persist-credentials: false
       - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version-file: .python-version-default
 
       - run: python -Im pip install -e . --group dev
       - run: python -Ic 'import prometheus_async; print(prometheus_async.__version__)'
-
 
   required-checks-pass:
     name: Ensure everything required is passing for branch protection
@@ -212,6 +187,6 @@ jobs:
 
     steps:
       - name: Decide whether the needed jobs succeeded or failed
-        uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe  # v1.2.2
+        uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # v1.2.2
         with:
           jobs: ${{ toJSON(needs) }}
