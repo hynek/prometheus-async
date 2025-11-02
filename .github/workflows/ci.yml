@@ -181,7 +181,7 @@ jobs:
       - coverage
       - docs
       - install-dev
-      - mypy-pkg
+      - typing
 
     runs-on: ubuntu-latest
 
