@@ -67,15 +67,21 @@ if "dev" in release:
 exclude_patterns = ["_build"]
 
 nitpick_ignore = [
+    ("py:class", "C"),
+    ("py:class", "D"),
     ("py:class", "Gauge"),
     ("py:class", "Incrementer"),
     ("py:class", "Observer"),
-    ("py:class", "ServiceDiscovery"),
     ("py:class", "P"),
-    ("py:class", "T"),
+    ("py:class", "prometheus_async.types.C"),
+    ("py:class", "prometheus_async.types.D"),
+    ("py:class", "prometheus_async.types.Observer"),
+    ("py:class", "prometheus_async.types.P"),
+    ("py:class", "prometheus_async.types.R"),
+    ("py:class", "prometheus_async.types.T"),
     ("py:class", "R"),
-    ("py:class", "D"),
-    ("py:class", "C"),
+    ("py:class", "ServiceDiscovery"),
+    ("py:class", "T"),
     ("py:class", "twisted.web.resource.Resource"),
 ]
 

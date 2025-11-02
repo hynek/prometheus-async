@@ -24,13 +24,13 @@ from collections.abc import Awaitable
 from time import perf_counter
 from typing import TYPE_CHECKING, Any, Callable, overload
 
+from wrapt import decorator
+
 
 if TYPE_CHECKING:
     from prometheus_client import Gauge
 
     from ..types import Incrementer, Observer, P, R, T
-
-from wrapt import decorator
 
 
 @overload
@@ -57,17 +57,20 @@ def time(
 
     if future is None:
 
-        @decorator
+        @decorator  # type: ignore[arg-type]
         async def time_decorator(
-            wrapped: Callable[..., R], _: Any, args: Any, kw: Any
+            wrapped: Callable[P, R],
+            instance: Any,
+            args: tuple[Any, ...],
+            kwargs: dict[str, Any],
         ) -> R:
             start_time = perf_counter()
             try:
-                return await wrapped(*args, **kw)
+                return await wrapped(*args, **kwargs)
             finally:
                 observe(start_time)
 
-        return time_decorator
+        return time_decorator  # type: ignore[return-value]
 
     f = future
 
@@ -111,31 +114,33 @@ def count_exceptions(
     """
     if future is None:
 
-        @decorator
-        async def count(
-            wrapped: Callable[..., R], _: Any, args: Any, kw: Any
+        @decorator  # type: ignore[arg-type]
+        async def count_decorator(
+            wrapped: Callable[P, R],
+            instance: Any,
+            args: tuple[Any, ...],
+            kwargs: dict[str, Any],
         ) -> R:
             try:
-                rv = await wrapped(*args, **kw)
+                rv = await wrapped(*args, **kwargs)
             except exc:
                 metric.inc()
                 raise
             return rv
 
-        return count
+        return count_decorator  # type: ignore[return-value]
 
-    else:  # noqa: RET505 -- prevents redefinition of "count".
-        f = future
+    f = future
 
-        async def count() -> T:
-            try:
-                rv = await f
-            except exc:
-                metric.inc()
-                raise
-            return rv
+    async def count_future() -> T:
+        try:
+            rv = await f
+        except exc:
+            metric.inc()
+            raise
+        return rv
 
-        return count()
+    return count_future()
 
 
 @overload
@@ -160,29 +165,32 @@ def track_inprogress(
     """
     if future is None:
 
-        @decorator
-        async def track(
-            wrapped: Callable[..., R], _: Any, args: Any, kw: Any
+        @decorator  # type: ignore[arg-type]
+        async def track_decorator(
+            wrapped: Callable[P, R],
+            instance: Any,
+            args: tuple[Any, ...],
+            kwargs: dict[str, Any],
         ) -> R:
             metric.inc()
             try:
-                rv = await wrapped(*args, **kw)
+                rv = await wrapped(*args, **kwargs)
             finally:
                 metric.dec()
 
             return rv
 
-        return track
+        return track_decorator  # type: ignore[return-value]
 
-    else:  # noqa: RET505 -- prevents redefinition of "track".
+    else:  # noqa: RET505
         f = future
         metric.inc()
 
-        async def track() -> T:
+        async def track_future() -> T:
             try:
                 rv = await f
             finally:
                 metric.dec()
             return rv
 
-        return track()
+        return track_future()
