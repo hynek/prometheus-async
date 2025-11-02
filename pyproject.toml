@@ -58,6 +58,13 @@ dev = [
     "mypy",
     "tox>4",
 ]
+typing = [
+    { include-group = "twisted" },
+    "mypy",
+    "pyrefly",
+    "pyright",
+    "ty",
+]
 
 
 [tool.hatch.version]
