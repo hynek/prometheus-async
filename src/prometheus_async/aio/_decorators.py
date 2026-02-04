@@ -70,7 +70,7 @@ def time(
             finally:
                 observe(start_time)
 
-        return time_decorator  # type: ignore[return-value]
+        return time_decorator
 
     f = future
 
@@ -128,7 +128,7 @@ def count_exceptions(
                 raise
             return rv
 
-        return count_decorator  # type: ignore[return-value]
+        return count_decorator
 
     f = future
 
@@ -180,7 +180,7 @@ def track_inprogress(
 
             return rv
 
-        return track_decorator  # type: ignore[return-value]
+        return track_decorator
 
     else:  # noqa: RET505
         f = future

@@ -24,7 +24,6 @@ extensions = [
     "myst_parser",
     "notfound.extension",
     "sphinx.ext.autodoc",
-    "sphinx.ext.autodoc.typehints",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
@@ -69,8 +68,10 @@ exclude_patterns = ["_build"]
 nitpick_ignore = [
     ("py:class", "C"),
     ("py:class", "D"),
+    ("py:class", "~P"),
     ("py:class", "Gauge"),
     ("py:class", "Incrementer"),
+    ("py:class", "prometheus_async.types.Incrementer"),
     ("py:class", "Observer"),
     ("py:class", "P"),
     ("py:class", "prometheus_async.types.C"),
