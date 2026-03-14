@@ -30,26 +30,26 @@ from wrapt import decorator
 if TYPE_CHECKING:
     from prometheus_client import Gauge
 
-from ..types import C, F, Incrementer, Observer, P, T
+from ..types import F, Incrementer, Observer, P, T
 
 
 @overload
 def time(
     metric: Observer,
 ) -> Callable[
-    [Callable[P, C | Deferred[C]]], Callable[P, C | Deferred[C]]
+    [Callable[P, T | Deferred[T]]], Callable[P, T | Deferred[T]]
 ]: ...
 
 
 @overload
-def time(metric: Observer, deferred: Deferred[C]) -> Deferred[C]: ...
+def time(metric: Observer, deferred: Deferred[T]) -> Deferred[T]: ...
 
 
 def time(
-    metric: Observer, deferred: Deferred[C] | None = None
+    metric: Observer, deferred: Deferred[T] | None = None
 ) -> (
-    Deferred[C]
-    | Callable[[Callable[P, C | Deferred[C]]], Callable[P, C | Deferred[C]]]
+    Deferred[T]
+    | Callable[[Callable[P, T | Deferred[T]]], Callable[P, T | Deferred[T]]]
 ):
     r"""
     Call ``metric.observe(time)`` with runtime in seconds.
@@ -64,11 +64,11 @@ def time(
 
         @decorator
         def time_decorator(
-            wrapped: Callable[P, C | Deferred[C]],
+            wrapped: Callable[P, T | Deferred[T]],
             instance: Any,
             args: tuple[Any, ...],
             kwargs: dict[str, Any],
-        ) -> C | Deferred[C]:
+        ) -> T | Deferred[T]:
             def observe(value: T) -> T:
                 metric.observe(perf_counter() - start_time)
                 return value
@@ -93,24 +93,24 @@ def time(
 @overload
 def count_exceptions(
     metric: Incrementer, *, exc: type[BaseException] = ...
-) -> Callable[[Callable[P, C]], Callable[P, C]]: ...
+) -> Callable[[Callable[P, T]], Callable[P, T]]: ...
 
 
 @overload
 def count_exceptions(
     metric: Incrementer,
-    deferred: Deferred[C],
+    deferred: Deferred[T],
     *,
     exc: type[BaseException] = ...,
-) -> Deferred[C]: ...
+) -> Deferred[T]: ...
 
 
 def count_exceptions(
     metric: Incrementer,
-    deferred: Deferred[C] | None = None,
+    deferred: Deferred[T] | None = None,
     *,
     exc: type[BaseException] = BaseException,
-) -> Deferred[C] | Callable[[Callable[P, C]], Callable[P, C]]:
+) -> Deferred[T] | Callable[[Callable[P, T]], Callable[P, T]]:
     """
     Call ``metric.inc()`` whenever *exc* is caught.
 
@@ -128,11 +128,11 @@ def count_exceptions(
 
         @decorator
         def count_exceptions_decorator(
-            wrapped: Callable[P, C | Deferred[C]],
+            wrapped: Callable[P, T | Deferred[T]],
             instance: Any,
             args: tuple[Any, ...],
             kwargs: dict[str, Any],
-        ) -> C | Deferred[C]:
+        ) -> T | Deferred[T]:
             try:
                 rv = wrapped(*args, **kwargs)
             except exc:
@@ -152,16 +152,16 @@ def count_exceptions(
 @overload
 def track_inprogress(
     metric: Gauge,
-) -> Callable[[Callable[P, C]], Callable[P, C]]: ...
+) -> Callable[[Callable[P, T]], Callable[P, T]]: ...
 
 
 @overload
-def track_inprogress(metric: Gauge, deferred: Deferred[C]) -> Deferred[C]: ...
+def track_inprogress(metric: Gauge, deferred: Deferred[T]) -> Deferred[T]: ...
 
 
 def track_inprogress(
-    metric: Gauge, deferred: Deferred[C] | None = None
-) -> Deferred[C] | Callable[[Callable[P, C]], Callable[P, C]]:
+    metric: Gauge, deferred: Deferred[T] | None = None
+) -> Deferred[T] | Callable[[Callable[P, T]], Callable[P, T]]:
     """
     Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
 
@@ -178,11 +178,11 @@ def track_inprogress(
 
         @decorator
         def track_inprogress_decorator(
-            wrapped: Callable[P, C | Deferred[C]],
+            wrapped: Callable[P, T | Deferred[T]],
             instance: Any,
             args: tuple[Any, ...],
             kwargs: dict[str, Any],
-        ) -> C | Deferred[C]:
+        ) -> T | Deferred[T]:
             metric.inc()
             rv = wrapped(*args, **kwargs)
             if isinstance(rv, Deferred):
