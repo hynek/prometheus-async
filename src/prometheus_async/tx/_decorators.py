@@ -34,7 +34,9 @@ from ..types import C, F, Incrementer, Observer, P, T
 
 
 @overload
-def time(metric: Observer) -> Callable[
+def time(
+    metric: Observer,
+) -> Callable[
     [Callable[P, Deferred[C]]],
     Callable[P, Deferred[C]],
 ]: ...
@@ -44,7 +46,9 @@ def time(metric: Observer) -> Callable[
 def time(metric: Observer, deferred: Deferred[C]) -> Deferred[C]: ...
 
 
-def time(metric: Observer, deferred: Deferred[C] | None = None) -> Deferred[C] | C:
+def time(
+    metric: Observer, deferred: Deferred[C] | None = None
+) -> Deferred[C] | C:
     r"""
     Call ``metric.observe(time)`` with runtime in seconds.
 
