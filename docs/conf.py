@@ -68,6 +68,7 @@ exclude_patterns = ["_build"]
 nitpick_ignore = [
     ("py:class", "C"),
     ("py:class", "D"),
+    ("py:class", "Deferred"),
     ("py:class", "~P"),
     ("py:class", "Gauge"),
     ("py:class", "Incrementer"),
