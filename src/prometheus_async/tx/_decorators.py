@@ -30,18 +30,21 @@ from wrapt import decorator
 if TYPE_CHECKING:
     from prometheus_client import Gauge
 
-from ..types import C, D, F, Incrementer, Observer, P, T
+from ..types import C, F, Incrementer, Observer, P, T
 
 
 @overload
-def time(metric: Observer) -> Callable[[Callable[P, D]], Callable[P, D]]: ...
+def time(metric: Observer) -> Callable[
+    [Callable[P, Deferred[C]]],
+    Callable[P, Deferred[C]],
+]: ...
 
 
 @overload
-def time(metric: Observer, deferred: D) -> D: ...
+def time(metric: Observer, deferred: Deferred[C]) -> Deferred[C]: ...
 
 
-def time(metric: Observer, deferred: D | None = None) -> D | C:
+def time(metric: Observer, deferred: Deferred[C] | None = None) -> Deferred[C] | C:
     r"""
     Call ``metric.observe(time)`` with runtime in seconds.
 
@@ -55,11 +58,11 @@ def time(metric: Observer, deferred: D | None = None) -> D | C:
 
         @decorator
         def time_decorator(
-            wrapped: Callable[P, C | D],
+            wrapped: Callable[P, C | Deferred[C]],
             instance: Any,
             args: tuple[Any, ...],
             kwargs: dict[str, Any],
-        ) -> C | D:
+        ) -> C | Deferred[C]:
             def observe(value: T) -> T:
                 metric.observe(perf_counter() - start_time)
                 return value
@@ -67,7 +70,7 @@ def time(metric: Observer, deferred: D | None = None) -> D | C:
             start_time = perf_counter()
             rv = wrapped(*args, **kwargs)
             if isinstance(rv, Deferred):
-                return rv.addBoth(observe)  # type: ignore[return-value]
+                return rv.addBoth(observe)
 
             return observe(rv)
 
@@ -78,7 +81,7 @@ def time(metric: Observer, deferred: D | None = None) -> D | C:
         return value
 
     start_time = perf_counter()
-    return deferred.addBoth(observe)  # type: ignore[return-value]
+    return deferred.addBoth(observe)
 
 
 @overload
@@ -90,18 +93,18 @@ def count_exceptions(
 @overload
 def count_exceptions(
     metric: Incrementer,
-    deferred: D,
+    deferred: Deferred[C],
     *,
     exc: type[BaseException] = ...,
-) -> D: ...
+) -> Deferred[C]: ...
 
 
 def count_exceptions(
     metric: Incrementer,
-    deferred: D | None = None,
+    deferred: Deferred[C] | None = None,
     *,
     exc: type[BaseException] = BaseException,
-) -> D | Callable[P, C]:
+) -> Deferred[C] | Callable[P, C]:
     """
     Call ``metric.inc()`` whenever *exc* is caught.
 
@@ -119,11 +122,11 @@ def count_exceptions(
 
         @decorator
         def count_exceptions_decorator(
-            wrapped: Callable[P, C | D],
+            wrapped: Callable[P, C | Deferred[C]],
             instance: Any,
             args: tuple[Any, ...],
             kwargs: dict[str, Any],
-        ) -> C | D:
+        ) -> C | Deferred[C]:
             try:
                 rv = wrapped(*args, **kwargs)
             except exc:
@@ -131,13 +134,13 @@ def count_exceptions(
                 raise
 
             if isinstance(rv, Deferred):
-                return rv.addErrback(inc)  # type: ignore[return-value]
+                return rv.addErrback(inc)
 
             return rv
 
         return count_exceptions_decorator  # type: ignore[return-value]
 
-    return deferred.addErrback(inc)  # type: ignore[return-value]
+    return deferred.addErrback(inc)
 
 
 @overload
@@ -147,12 +150,12 @@ def track_inprogress(
 
 
 @overload
-def track_inprogress(metric: Gauge, deferred: D) -> D: ...
+def track_inprogress(metric: Gauge, deferred: Deferred[C]) -> Deferred[C]: ...
 
 
 def track_inprogress(
-    metric: Gauge, deferred: D | None = None
-) -> D | Callable[[Callable[P, C]], Callable[P, C]]:
+    metric: Gauge, deferred: Deferred[C] | None = None
+) -> Deferred[C] | Callable[[Callable[P, C]], Callable[P, C]]:
     """
     Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
 
@@ -169,15 +172,15 @@ def track_inprogress(
 
         @decorator
         def track_inprogress_decorator(
-            wrapped: Callable[P, C | D],
+            wrapped: Callable[P, C | Deferred[C]],
             instance: Any,
             args: tuple[Any, ...],
             kwargs: dict[str, Any],
-        ) -> C | D:
+        ) -> C | Deferred[C]:
             metric.inc()
             rv = wrapped(*args, **kwargs)
             if isinstance(rv, Deferred):
-                return rv.addBoth(dec)  # type:ignore[return-value]
+                return rv.addBoth(dec)
 
             metric.dec()
             return rv
@@ -185,4 +188,4 @@ def track_inprogress(
         return track_inprogress_decorator
 
     metric.inc()
-    return deferred.addBoth(dec)  # type: ignore[return-value]
+    return deferred.addBoth(dec)
