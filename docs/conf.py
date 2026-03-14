@@ -117,5 +117,5 @@ linkcheck_ignore = [
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "aiohttp": ("https://aiohttp.readthedocs.io/en/stable/", None),
-    "twisted": ("https://docs.twistedmatrix.com/en/stable/", None),
+    "twisted": ("https://docs.twisted.org/en/stable/api", None),
 }
