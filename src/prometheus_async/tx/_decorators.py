@@ -36,10 +36,7 @@ from ..types import C, F, Incrementer, Observer, P, T
 @overload
 def time(
     metric: Observer,
-) -> Callable[
-    [Callable[P, Deferred[C]]],
-    Callable[P, Deferred[C]],
-]: ...
+) -> Callable[[Callable[P, C]], Callable[P, C]]: ...
 
 
 @overload
@@ -48,7 +45,7 @@ def time(metric: Observer, deferred: Deferred[C]) -> Deferred[C]: ...
 
 def time(
     metric: Observer, deferred: Deferred[C] | None = None
-) -> Deferred[C] | C:
+) -> Deferred[C] | Callable[[Callable[P, C]], Callable[P, C]]:
     r"""
     Call ``metric.observe(time)`` with runtime in seconds.
 
@@ -78,7 +75,7 @@ def time(
 
             return observe(rv)
 
-        return time_decorator  # type: ignore[return-value]
+        return time_decorator
 
     def observe(value: T) -> T:
         metric.observe(perf_counter() - start_time)
@@ -91,7 +88,7 @@ def time(
 @overload
 def count_exceptions(
     metric: Incrementer, *, exc: type[BaseException] = ...
-) -> Callable[P, C]: ...
+) -> Callable[[Callable[P, C]], Callable[P, C]]: ...
 
 
 @overload
@@ -108,7 +105,7 @@ def count_exceptions(
     deferred: Deferred[C] | None = None,
     *,
     exc: type[BaseException] = BaseException,
-) -> Deferred[C] | Callable[P, C]:
+) -> Deferred[C] | Callable[[Callable[P, C]], Callable[P, C]]:
     """
     Call ``metric.inc()`` whenever *exc* is caught.
 
@@ -142,7 +139,7 @@ def count_exceptions(
 
             return rv
 
-        return count_exceptions_decorator  # type: ignore[return-value]
+        return count_exceptions_decorator
 
     return deferred.addErrback(inc)
 
