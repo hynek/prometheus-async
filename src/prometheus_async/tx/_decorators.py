@@ -141,7 +141,9 @@ def count_exceptions(
 
 
 @overload
-def track_inprogress(metric: Gauge) -> Callable[P, C]: ...
+def track_inprogress(
+    metric: Gauge,
+) -> Callable[[Callable[P, C]], Callable[P, C]]: ...
 
 
 @overload
@@ -150,7 +152,7 @@ def track_inprogress(metric: Gauge, deferred: D) -> D: ...
 
 def track_inprogress(
     metric: Gauge, deferred: D | None = None
-) -> D | Callable[P, C]:
+) -> D | Callable[[Callable[P, C]], Callable[P, C]]:
     """
     Call ``metrics.inc()`` on entry and ``metric.dec()`` on exit.
 
@@ -173,16 +175,14 @@ def track_inprogress(
             kwargs: dict[str, Any],
         ) -> C | D:
             metric.inc()
-            try:
-                rv = wrapped(*args, **kwargs)
-            finally:
-                if isinstance(rv, Deferred):
-                    return rv.addBoth(dec)  # type: ignore[return-value]  # noqa: B012
+            rv = wrapped(*args, **kwargs)
+            if isinstance(rv, Deferred):
+                return rv.addBoth(dec)  # type:ignore[return-value]
 
-                metric.dec()
-                return rv  # noqa: B012
+            metric.dec()
+            return rv
 
-        return track_inprogress_decorator  # type: ignore[return-value]
+        return track_inprogress_decorator
 
     metric.inc()
     return deferred.addBoth(dec)  # type: ignore[return-value]
