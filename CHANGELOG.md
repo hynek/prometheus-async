@@ -22,14 +22,26 @@ Whenever breaking changes are needed, they are:
 
 ## [Unreleased](https://github.com/hynek/prometheus-async/compare/25.1.0...HEAD)
 
+### Removed
+
+- Python 3.8 support.
+
+
 ### Added
 
 - Python 3.14 support (no code changes necessary).
 
 
-### Removed
+### Changed
 
-- Python 3.8 support.
+- Twisted: The type hints now make sense.
+  [#106](https://github.com/hynek/prometheus-async/pull/106)
+
+
+### Fixed
+
+- Twisted: Removed a `return` in a `finally:` block which caused a warning on Python 3.14 and later.
+  [#106](https://github.com/hynek/prometheus-async/pull/106)
 
 
 ## [25.1.0](https://github.com/hynek/prometheus-async/compare/22.2.0...25.1.0) - 2025-02-08
