@@ -68,7 +68,7 @@ jobs:
           uvx --with tox-uv
           tox run
           --installpkg dist/*.whl
-          -f py$(echo $PYTHON | tr -d .)
+          -f $PYTHON
 
       - name: Upload coverage data
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
