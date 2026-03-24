@@ -148,7 +148,7 @@ jobs:
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           # Keep in sync with tox.ini/docs & .readthedocs.yaml
-          python-version: "3.13"
+          python-version: "3.14"
       - uses: hynek/setup-cached-uv@0b9e52652c2d5d4fb6af4598efa3d14e60e934d1 # v2.4.0
 
       - run: >
