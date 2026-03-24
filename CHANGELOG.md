@@ -20,6 +20,9 @@ Whenever breaking changes are needed, they are:
 <!-- changelog follows -->
 
 
+## [Unreleased](https://github.com/hynek/prometheus-async/compare/26.1.0...HEAD)
+
+
 ## [26.1.0](https://github.com/hynek/prometheus-async/compare/25.1.0...26.1.0) - 2026-03-24
 
 ### Removed
