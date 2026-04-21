@@ -3,26 +3,13 @@
 If you just want to instrument an *asyncio*-based application:
 
 ```console
-$ python -Im pip install -U pip
 $ python -Im pip install prometheus-async
 ```
 
-If you want to expose metrics using *aiohttp*:
+If you want to expose metrics using *aiohttp*, you also have to install it along with it.
 
 ```console
-$ python -Im pip install -U pip
-$ python -Im pip install prometheus-async[aiohttp]
+$ python -Im pip install prometheus-async aiohttp
 ```
 
-If you want to instrument a Twisted application:
-
-```console
-$ python -Im pip install -U pip
-$ python -Im pip install prometheus-async[twisted]
-```
-
-```{admonition} Warning
-:class: Warning
-
-Please do not skip the update of *pip*, because *prometheus-async* uses modern packaging features and the installation will most likely fail otherwise.
-```
+*prometheus-async* does not require anything extra to instrument Twisted applications.
