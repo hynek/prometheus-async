@@ -76,7 +76,9 @@ class C:
 
 @pytest.mark.asyncio
 class TestTime:
-    @pytest.mark.parametrize("coro", [coro, C().coro])
+    @pytest.mark.parametrize(
+        "coro", [coro, C().coro], ids=["function", "method"]
+    )
     async def test_still_coroutine_function(self, fake_observer, coro):
         """
         It's ensured that a decorated function still passes as a coroutine
@@ -109,7 +111,9 @@ class TestTime:
         assert [1] == fake_observer._observed
 
     @pytest.mark.usefixtures("patch_timer")
-    @pytest.mark.parametrize("coro", [coro, C().coro])
+    @pytest.mark.parametrize(
+        "coro", [coro, C().coro], ids=["function", "method"]
+    )
     async def test_decorator(self, fake_observer, coro):
         """
         time works with asyncio results functions.
@@ -128,7 +132,9 @@ class TestTime:
         assert 42 == rv
 
     @pytest.mark.usefixtures("patch_timer")
-    @pytest.mark.parametrize("coro", [raiser, C().raiser])
+    @pytest.mark.parametrize(
+        "coro", [raiser, C().raiser], ids=["function", "method"]
+    )
     async def test_decorator_exc(self, fake_observer, coro):
         """
         Does not swallow exceptions.

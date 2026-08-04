@@ -20,8 +20,9 @@ Decorators for Twisted.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from time import perf_counter
-from typing import TYPE_CHECKING, Any, Callable, overload
+from typing import TYPE_CHECKING, Any, overload
 
 from twisted.internet.defer import Deferred
 from wrapt import decorator
