@@ -35,7 +35,7 @@ from prometheus_client.openmetrics import exposition as openmetrics
 if TYPE_CHECKING:
     import ssl
 
-    from typing import Callable
+    from collections.abc import Callable
 
     from ..types import Deregisterer, ServiceDiscovery
 

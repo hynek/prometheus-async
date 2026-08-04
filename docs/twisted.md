@@ -27,15 +27,16 @@ from twisted.internet import reactor
 
 REQ_TIME = Histogram("req_time_seconds", "time spent in requests")
 
-class DelayedResource(Resource):
-   def _delayedRender(self, request):
-      request.write("<html><body>Sorry to keep you waiting.</body></html>")
-      request.finish()
 
-   def render_GET(self, request):
-      d = deferLater(reactor, 5, lambda: request)
-      time(REQ_TIME, d.addCallback(self._delayedRender))
-      return NOT_DONE_YET
+class DelayedResource(Resource):
+    def _delayedRender(self, request):
+        request.write("<html><body>Sorry to keep you waiting.</body></html>")
+        request.finish()
+
+    def render_GET(self, request):
+        d = deferLater(reactor, 5, lambda: request)
+        time(REQ_TIME, d.addCallback(self._delayedRender))
+        return NOT_DONE_YET
 ```
 
 ```{eval-rst}
@@ -78,12 +79,13 @@ from prometheus_client import Counter
 
 
 INBOUND_REQUESTS = Counter(
-   "inbound_requests_total",
-   "Counter (int) of inbound http requests",
-   ["endpoint", "method"]
+    "inbound_requests_total",
+    "Counter (int) of inbound http requests",
+    ["endpoint", "method"],
 )
 
 app = Klein()
+
 
 @app.route("/metrics")
 def metrics(request):

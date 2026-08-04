@@ -65,7 +65,7 @@ jobs:
       - uses: hynek/setup-cached-uv@34e35d30f1ebc7421a5cc733bca38dcc62603960 # v2.6.0
 
       - run: >
-          uvx --with tox-uv
+          uvx --with tox-uv-bare
           tox run
           --installpkg dist/*.whl
           -f $PYTHON
@@ -135,7 +135,7 @@ jobs:
       - uses: hynek/setup-cached-uv@34e35d30f1ebc7421a5cc733bca38dcc62603960 # v2.6.0
 
       - run: >
-          uvx --with tox-uv
+          uvx --with tox-uv-bare
           tox run -f typing
 
   docs:
@@ -147,12 +147,11 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          # Keep in sync with tox.ini/docs & .readthedocs.yaml
-          python-version: "3.14"
+          python-version-file: .python-version-default
       - uses: hynek/setup-cached-uv@34e35d30f1ebc7421a5cc733bca38dcc62603960 # v2.6.0
 
       - run: >
-          uvx --with tox-uv
+          uvx --with tox-uv-bare
           tox run -e docs-doctests
 
   install-dev:

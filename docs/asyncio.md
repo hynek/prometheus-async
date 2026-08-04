@@ -28,6 +28,7 @@ from prometheus_async.aio import time
 
 REQ_TIME = Histogram("req_time_seconds", "time spent in requests")
 
+
 @time(REQ_TIME)
 async def req(request):
     await asyncio.sleep(1)

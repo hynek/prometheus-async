@@ -16,10 +16,8 @@
 
 from __future__ import annotations
 
-import sys
-
-from collections.abc import Awaitable
-from typing import TYPE_CHECKING, Callable, TypeVar
+from collections.abc import Awaitable, Callable
+from typing import TYPE_CHECKING, TypeVar
 
 
 if TYPE_CHECKING:
@@ -39,13 +37,8 @@ except ImportError:
 # This construct works with Mypy.
 # Doing the obvious ImportError route leads to an 'Incompatible import of
 # "Protocol"' error.
-from typing import Protocol
+from typing import ParamSpec, Protocol
 
-
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec
-else:
-    from typing_extensions import ParamSpec
 
 __all__ = [
     "Deregisterer",
