@@ -9,7 +9,6 @@ build-backend = "hatchling.build"
 name = "prometheus-async"
 dynamic = ["version"]
 authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
-requires-python = ">=3.10"
 description = "Async helpers for prometheus_client."
 dependencies = [
     # Keep min. version in-sync with constraints in oldest-supported.txt!
@@ -20,9 +19,9 @@ license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
 readme = { content-type = "text/markdown", file = "README.md" }
 keywords = ["metrics", "prometheus", "twisted", "asyncio", "async"]
+requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -41,7 +40,7 @@ Funding = "https://hynek.me/say-thanks/"
 aiohttp = ["aiohttp>=3"]
 consul = ["aiohttp>=3"]
 twisted = ["twisted"]
-tests = ["coverage[toml]", "pytest", "pytest-asyncio"]
+tests = ["coverage", "pytest", "pytest-asyncio"]
 docs = [
     { include-group = "aiohttp" },
     { include-group = "twisted" },
