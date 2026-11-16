@@ -24,7 +24,7 @@ Whenever breaking changes are needed, they are:
 
 ### Removed
 
-- Python 3.9 support.
+- Python 3.9 & 3.10 support.
 
 
 ### Added
